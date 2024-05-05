@@ -18,9 +18,9 @@ class UserController extends BaseController
         'email' => $request->email,
         'password' => bcrypt($request->password),
         'age' => $request->age,
-            'my_points' => $request->my_points ?? 40,
-            'image' => $request->image,
-            'gendre_id' => $request->gendre_id,
+        'my_points' => $request->my_points ?? 40,
+        'image' => $request->image,
+        'gendre_id' => $request->gendre_id,
     ]);
 
     $token = $user->createToken("API TOKEN")->plainTextToken;

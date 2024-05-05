@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('types', function (Blueprint $table) {
+        Schema::create('shelves', function (Blueprint $table) {
+
             $table->id();
-            $table->string('name');
+            $table->foreignId('book_id')->constrained('books')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->enum('status', ['0', 'reading', 'watch_later', 'finished'])->default('0');
+            $table->integer('progress')->default('0')->nullable();
             $table->timestamps();
+
         });
     }
 
@@ -27,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('types');
+        Schema::dropIfExists('shelves');
     }
 };

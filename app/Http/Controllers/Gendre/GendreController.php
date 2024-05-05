@@ -25,16 +25,19 @@ class GendreController extends BaseController
         return $this->sendResponse($gendre, 'Gendre retrieved successfully.');
     }
 
-    public function update(Request $request, Gendre $gendre)
+    public function update(Request $request, Gendre $id)
     {
         $gendre->update($request->all());
         return $this->sendResponse($gendre, 'Gendre updated successfully.');
     }
 
-    public function destroy(Gendre $gendre)
+    public function delete($id): \Illuminate\Http\JsonResponse
     {
+        $gendre = Gendre::find($id);
+        if (is_null($gendre)) {
+            return $this->sendError('Gendre not found');
+        }
         $gendre->delete();
-        return $this->sendResponse(null, 'Gendre deleted successfully.');
+        return $this->sendResponse(null, 'Gendre deleted successfully');
     }
-
 }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Gendre\GendreController;
+use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +38,25 @@ Route::controller(GendreController::class)->group(function () {
 
     });
 
+//type routes
+    Route::controller(TypeController::class)->group(function () {
+        Route::get('/types', 'index');
+        Route::post('/types', 'store');
+        Route::get('/types/{type}', 'show');
+        Route::put('/types/{type}', 'update');
+        Route::delete('/types/{type}', 'destroy');
+    });
+
+// Book routes
+    Route::controller(BookController::class)->group(function () {
+        Route::get('/books', 'index');
+        Route::post('/books', 'store');
+        Route::get('/books/{id}', 'show')->middleware('auth:sanctum');
+        Route::get('/Abooks/{id}', 'Ashow');
+        Route::post('/Bbooks/search', 'findByName');
+        Route::put('/updateBook/{id}', 'update');
+        Route::get('/books/type/{typeId}', 'showBooksByType');
+    });
 
 
 

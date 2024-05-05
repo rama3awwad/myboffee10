@@ -32,6 +32,15 @@ class User extends Authenticatable
         return $this->belongsTo(Gendre::class, 'gendre_id');
     }
 
+    public function books()
+    {
+        return $this->belongsToMany(Book::class, 'shelves')
+            ->withPivot('status', 'progress')
+            ->withTimestamps();
+    }
+
+
+
     /**
      * The attributes that should be hidden for serialization.
      *
