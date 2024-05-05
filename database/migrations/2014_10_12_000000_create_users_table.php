@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('gendre_id')->foreign()->references('id')->on('gendres')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();
+
         });
     }
 
