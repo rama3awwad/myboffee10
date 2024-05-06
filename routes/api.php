@@ -39,10 +39,9 @@ Route::controller(GendreController::class)->group(function () {
 //type routes
     Route::controller(TypeController::class)->group(function () {
         Route::get('/types', 'index');
-        Route::post('/types', 'store');
-        Route::get('/types/{type}', 'show');
-        Route::put('/types/{type}', 'update');
-        Route::delete('/types/{type}', 'destroy');
+        Route::get('/types/{id}', 'show');
+        Route::put('/types/{id}', 'update');
+        Route::delete('/types/{id}', 'destroy');
     });
 
 // Book routes
