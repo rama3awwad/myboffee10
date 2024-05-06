@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Gendre;
 
 use App\Http\Controllers\BaseController as BaseController;
 use App\Models\Gendre;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class GendreController extends BaseController
@@ -20,16 +21,19 @@ class GendreController extends BaseController
         return $this->sendResponse($gendre, 'Gendre created successfully.');
     }
 
-    public function show(Gendre $gendre)
+    public function show($id): JsonResponse
     {
-        return $this->sendResponse($gendre, 'Gendre retrieved successfully.');
+        $gendre = Gendre::find($id);
+
+        if (is_null($gendre)) {
+            return $this->sendError('Gendre not found');
+        }
+
+        // Assuming you have a method to send a response, similar to your sendResponse method
+        return $this->sendResponse($gendre, 'Gendre retrieved successfully');
     }
 
-    public function update(Request $request, Gendre $id)
-    {
-        $gendre->update($request->all());
-        return $this->sendResponse($gendre, 'Gendre updated successfully.');
-    }
+
 
     public function delete($id): \Illuminate\Http\JsonResponse
     {

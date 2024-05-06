@@ -21,11 +21,9 @@ use Illuminate\Support\Facades\Route;
 //gendre routes
 Route::controller(GendreController::class)->group(function () {
 
-    Route::get('/gendres', 'index');
     Route::post('/gendres', 'store');
-    Route::get('/gendres/{gendre}', 'show');
-    Route::put('/gendres/{gendre}', 'update');
-    Route::delete('/gendres/{gendre}', 'destroy');
+    Route::get('/gendres/{id}', 'show');
+    Route::delete('/gendres/{id}', 'destroy');
 
     });
 
