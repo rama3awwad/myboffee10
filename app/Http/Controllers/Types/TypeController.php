@@ -15,12 +15,7 @@ class TypeController extends BaseController
         return $this->sendResponse($types, 'Types retrieved successfully.');
     }
 
-    //store type
-    public function store(Request $request)
-    {
-        $type = Type::create($request->all());
-        return $this->sendResponse($type, 'Type created successfully.');
-    }
+
 
     //show type by id
     public function show($id)
