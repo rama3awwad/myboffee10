@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('cover');
             $table->string('author_name');
             $table->integer('points')->default(0)->nullable();
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->integer('total_pages');
             $table->integer('type_id')->foreign()->references('id')->on('types')->onDelete('cascade');
 

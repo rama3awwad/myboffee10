@@ -11,6 +11,7 @@ use App\Models\Type;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends BaseController
 {
@@ -24,15 +25,19 @@ class BookController extends BaseController
     //store book
     public function store(BookRequest $request): JsonResponse
     {
-        $image = time() . '-' . $request->title . '.' . $request->file('cover')->extension();
+
+      /*  $pdfName = $request->file->getClientOriginalName();
+        $pdfpath = $request->file->storeAs('books/files', $pdfName,'public');
+        $pdfUrl = Storage::url($pdfpath);*/
+
+
+       $image = time() . '-' . $request->title . '.' . $request->file('cover')->extension();
         $request->cover->move(public_path('books/cover_images'),$image);
         $image='books/cover_images/'.$image;
 
         $file = time() . '-' . $request->title . '.' . $request->file('file')->extension();
         $request->file->move(public_path('books/files'),$file);
         $file='books/files/'.$file;
-
-
 
         // Create a new book record with the uploaded file paths
         $book = Book::create([

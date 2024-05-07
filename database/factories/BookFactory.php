@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Book>
@@ -16,15 +17,20 @@ class BookFactory extends Factory
      */
     public function definition()
     {
+        // Simulate file uploads
+        Storage::fake('public');
+        $filePath = Storage::putFile('books/files', $this->faker->file());
+        $coverPath = Storage::putFile('books/cover_images', $this->faker->image());
+
         return [
             'title' => $this->faker->sentence(),
-            'file' => $this->faker->filePath(), // Assuming you want to generate a fake file path
-            'image' => $this->faker->imageUrl(), // Generates a URL to a random image
+            'file' =>$filePath,
+            'cover'=>$this->faker->imageUrl($width = 400, $height = 600),
             'author_name' => $this->faker->name(),
-            'points' => $this->faker->randomNumber(), // Generates a random number
-            'description' => $this->faker->paragraph(),
-            'total_pages' => $this->faker->randomNumber(),
-            'type_id' => $this->faker->randomElement(\App\Models\Type::pluck('id')->toArray()),
+            'points' => $this->faker->numberBetween(0,10),
+            'description' => $this->faker->sentence(),
+            'total_pages' => $this->faker->numberBetween(1,2000),
+            'type_id' => $this->faker->randomNumber(),
         ];
     }
 }
