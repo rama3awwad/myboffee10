@@ -18,7 +18,7 @@ class TypeSeeder extends Seeder
         $types = [
             ['name' => 'Novels'],
             ['name' => 'Islamic'],
-            ['name' => 'Chidren'],
+            ['name' => 'Chlidren'],
             ['name' => 'Scientific'],
             ['name' => 'Horror'],
             ['name' => 'Human Development'],
