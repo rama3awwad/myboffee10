@@ -15,37 +15,37 @@ class BookSeeder extends Seeder
      */
     public function run()
     {
-      /* $books = [
+        /* $books = [
 
-        foreach ($books as $book) {
-            Book::create($book);
-        }*/
+          foreach ($books as $book) {
+              Book::create($book);
+          }*/
 
-
-    $books = [
-   //novels
-        [
-        'title' => 'أماريتا',
-        'file' => 'أماريتا',
-        'cover' => 'amarita',
-        'author_name' => 'عمرو عبد الحميد',
-        'points' => 0,
-        'description' => '
+        $books = [
+            //novels
+            [
+                'title' => 'أماريتا',
+                'file' => 'أماريتا',
+                'cover' => 'amarita',
+                'author_name' => 'عمرو عبد الحميد',
+                'points' => 0,
+                'description' => '
     لم أرَ من قبل خوف وجوه أهل زيكولا مثلما كنت أراه في تلك اللحظات أسفل أنوار المشاعل، زيكولا القوية التي تباهي أهلها دومًا بقوتها، باتوا عند أول اختبار حقيقي وجوهًا ذابلة مصدومة تخشى لحظاتها القادمة، أرض الرقص والاحتفالات لم تعد إلا أرض الخوف، أعلم أنهم يلعنون أسيل في داخلهم منذ تسربت إليهم الأخبار أنها سبب مايحدث لهم ، لكنهم قد تجاهلوا عمدًا أنهم من اقتنصوا ذكاءها كاملًا دون أن تضر واحدًا منهم يومًا ..',
-        'total_pages' => 324,
-        'type_id' => 1,
-        ],
-          //Islamic
-        [
-            'title' => 'هذه رسالات القرآن فمن يتلقاها',
-            'file' => 'هذه رسالات القرآن فمن يتلقاها',
-            'cover' => 'رسالته',
-            'author_name' => 'فريد الأنصاري',
-            'points' => 5,
-            'description' => 'هذه رسالات قرآنية، قد بعث بها الشيخ فريد الأنصاري -رحمه الله- قبيل رحيله بقليل إلى دار البقاء إلى أتباعه ومحبيه عبر موقعه الفطرية، إذ كان يتواصل من خلالها معهم،حاثا اياهم على التمسك بحبل القرآن الممدود من السماء، الذي طرفه بيد الله وطرفه الآخر بيد من أخذ به من عباد الله الصالحين.',
-            'total_pages' => 107,
-            'type_id' => 2,
-        ],
+                'total_pages' => 324,
+                'type_id' => 1,
+            ],
+
+            //Islamic
+            [
+                'title' => 'هذه رسالات القرآن فمن يتلقاها',
+                'file' => 'هذه رسالات القرآن فمن يتلقاها',
+                'cover' => 'رسالته',
+                'author_name' => 'فريد الأنصاري',
+                'points' => 5,
+                'description' => 'هذه رسالات قرآنية، قد بعث بها الشيخ فريد الأنصاري -رحمه الله- قبيل رحيله بقليل إلى دار البقاء إلى أتباعه ومحبيه عبر موقعه الفطرية، إذ كان يتواصل من خلالها معهم،حاثا اياهم على التمسك بحبل القرآن الممدود من السماء، الذي طرفه بيد الله وطرفه الآخر بيد من أخذ به من عباد الله الصالحين.',
+                'total_pages' => 107,
+                'type_id' => 2,
+            ],
             //Children
             [
                 'title' => 'العجوز والعصفور',
@@ -97,23 +97,26 @@ class BookSeeder extends Seeder
             ],
 
 
-    ];
+        ];
 
         foreach ($books as $book) {
-        $filePath = 'storage/books/files/' . $book['file'] . '.pdf';
-        $coverPath = 'books/cover_images/' . $book['cover'] . '.jpg';
+            $filePath = 'storage/books/files/' . $book['file'] . '.pdf';
+            $coverPath = 'books/cover_images/' . $book['cover'] . '.jpg';
+
+            Book::create([
+                'title' => $book['title'],
+                'file' => $filePath,
+                'cover' => $coverPath,
+                'author_name' => $book['author_name'],
+                'points' => $book['points'],
+                'description' => $book['description'],
+                'total_pages' => $book['total_pages'],
+                'type_id' => $book['type_id'],
+            ]);
+        }
+        Book::factory()->count(50)->create();
+    }
+}
 
 
-        Book::create([
-        'title' => $book['title'],
-        'file' => $filePath,
-        'cover' => $coverPath,
-        'author_name' => $book['author_name'],
-        'points' => $book['points'],
-        'description' => $book['description'],
-        'total_pages' => $book['total_pages'],
-        'type_id' => $book['type_id'],
-        ]);
-        }
-        }
-        }
+
