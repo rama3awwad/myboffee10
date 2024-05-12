@@ -21,7 +21,7 @@ class User extends Authenticatable
         'user_name',
         'email',
         'password',
-        'my_coins',
+        'my_points',
         'age',
         'image',
         'gendre_id'
