@@ -115,7 +115,8 @@ class BookController extends BaseController
         return $this->sendResponse($book, 'Book retrieved successfully');
     }
 
-    //search book by name
+
+    //search book by its name
     public function findByName(Request $request): \Illuminate\Http\JsonResponse
     {
         $bookName = $request->input('name');
@@ -164,6 +165,21 @@ class BookController extends BaseController
 
         return $this->sendResponse($book, 'Book updated successfully.');
     }
+
+    public function delete($id): \Illuminate\Http\JsonResponse
+    {
+        $book = Book::find($id);
+        if (is_null($book)) {
+            return $this->sendError('Book not found');
+        }
+
+        Storage::delete($book->cover);
+        Storage::delete($book->file);
+
+        $book->delete();
+        return $this->sendResponse(null, 'Book deleted successfully');
+    }
+
 
     // Show all books of a specific type
     public function showBooksByType($typeId): JsonResponse
