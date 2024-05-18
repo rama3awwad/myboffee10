@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index()
     {
         $post = Post::all();
         return $this->sendResponse($post, 'Posts retrieved successfully');
