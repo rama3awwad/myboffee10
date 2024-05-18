@@ -24,5 +24,14 @@ class UserSeeder extends Seeder
             'age' => '40',
             'gendre_id' => '1'
         ]);*/
+        User::create([
+            'user_name' => 'admin',
+            'email' => 'rama.3awwad11@gmail.com',
+            'password' => bcrypt('admin11'),
+            'my_points' => 99999,
+            'age' => '30',
+
+            'gendre_id' => 1,
+        ]);
     }
 }
