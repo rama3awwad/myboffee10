@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Book\BookController;
+use App\Http\Controllers\Book\FavoriteBookController;
+use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
 use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
@@ -74,8 +76,20 @@ Route::controller(FavoritePostController::class)->group(function () {
 
   });
 
+//review routes
+Route::controller(ReviweController::class)->group(function () {
+    Route::get('/showAllReviwes', 'index')->middleware('auth:sanctum');
+    Route::post('/addReviwe', 'create')->middleware('auth:sanctum');
+    Route::delete('/deleteReviwe/{id}', 'delete')->middleware('auth:sanctum');
 
+  });
 
+  Route::controller(FavoriteBookController::class)->group(function () {
+    Route::get('/showAllFavoriteBooks', 'showFavorites')->middleware('auth:sanctum');
+    Route::post('/addToFavoriteBooks/{bookId}', 'addToFavorites')->middleware('auth:sanctum');
+    Route::delete('/removeFromFavoritesBooks/{bookId}', 'removeFromFavorites')->middleware('auth:sanctum');
+
+ });
 
 
 

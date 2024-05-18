@@ -8,21 +8,21 @@ use Illuminate\Support\Facades\Auth;
 
 class FavoritePostController extends Controller
 {
-    public function addToFavorites(){
+    public function addToFavorites($postId){
 
-        $this->favorite_posts()->where('user_id', auth()->id())->exists() ;
-        $this->favorite_posts()->attach(auth()->id());
+        $user = Auth::user();
+        $user->favorite_posts->attach($postId);
 
         return $this->sendResponse(null, 'Post added to favorites');
 
         $this->increment('likes_num');
 
 }
-    public function removeFromFavorites(){
+    public function removeFromFavorites($postId){
 
-        $this->favorite_posts()->where('user_id', auth()->id())->exists() ;
-        $this->favorite_posts()->detach(auth()->id());
-
+        $user = Auth::user();
+        $user->favorite_posts->detach($postId);
+        
         return $this->sendResponse(null, 'Post removed from favorites');
 
         $this->decrement('likes_num');

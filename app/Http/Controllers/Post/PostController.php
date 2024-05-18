@@ -32,7 +32,7 @@ class PostController extends Controller
         ]);
 
 
-    return $this->sendResponse($post[], 'Post created successfully.');
+    return $this->sendResponse($post, 'Post created successfully.');
 }
 public function update(PostRequest $request, Post $id ){
 
