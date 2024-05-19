@@ -47,7 +47,6 @@ class UserController extends BaseController
             $success = [
                 'id' => $user->id,
                 'user_name' => $user->user_name,
-                'password' => $user->password,
                 'token' => $user->createToken("API TOKEN")->plainTextToken,
             ];
             return $this->sendResponse($success,'User logged in successfully');

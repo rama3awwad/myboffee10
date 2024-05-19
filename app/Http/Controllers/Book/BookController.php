@@ -8,6 +8,7 @@ use App\Models\Book;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Models\Shelve;
 use App\Models\Type;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,12 +27,12 @@ class BookController extends BaseController
     public function store(BookRequest $request): JsonResponse
     {
 
-      /*  $pdfName = $request->file->getClientOriginalName();
-        $pdfpath = $request->file->storeAs('books/files', $pdfName,'public');
-        $pdfUrl = Storage::url($pdfpath);*/
+        /*  $pdfName = $request->file->getClientOriginalName();
+          $pdfpath = $request->file->storeAs('books/files', $pdfName,'public');
+          $pdfUrl = Storage::url($pdfpath);*/
 
 
-       $image = time() . '-' . $request->title . '.' . $request->file('cover')->extension();
+        $image = time() . '-' . $request->title . '.' . $request->file('cover')->extension();
         $request->cover->move(public_path('books/cover_images'),$image);
         $image='books/cover_images/'.$image;
 
@@ -54,7 +55,20 @@ class BookController extends BaseController
         return $this->sendResponse($book, 'Book created successfully.');
     }
 
-    //show book by user (enable it then open)
+    //show details without bookk file.
+    public function showInfo($id): JsonResponse
+    {
+        $book = Book::findOrFail($id);
+        if (is_null($book)) {
+            return $this->sendError('Book not found');
+        }
+
+        $bookData = $book->makeVisible(['title', 'cover', 'author_name', 'points', 'description', 'total_pages', 'type_id']);
+
+        return $this->sendResponse($bookData, 'Book information retrieved successfully.');
+    }
+
+    //show book file by user (enable it then open)
     public function show($id)
     {
         $user = Auth::user();
@@ -64,7 +78,7 @@ class BookController extends BaseController
             return $this->sendError('Book not found.');
         }
 
-        // Check if the user has the book in their shelf
+        // Check if the user has the book in his shelf
         $shelve = Shelve::where('book_id', $book->id)
             ->where('user_id', $user->id)
             ->first();
@@ -115,7 +129,8 @@ class BookController extends BaseController
         return $this->sendResponse($book, 'Book retrieved successfully');
     }
 
-    //search book by name
+
+    //search book by its name
     public function findByName(Request $request): \Illuminate\Http\JsonResponse
     {
         $bookName = $request->input('name');
@@ -164,6 +179,21 @@ class BookController extends BaseController
 
         return $this->sendResponse($book, 'Book updated successfully.');
     }
+
+    public function delete($id): \Illuminate\Http\JsonResponse
+    {
+        $book = Book::find($id);
+        if (is_null($book)) {
+            return $this->sendError('Book not found');
+        }
+
+        Storage::delete($book->cover);
+        Storage::delete($book->file);
+
+        $book->delete();
+        return $this->sendResponse(null, 'Book deleted successfully');
+    }
+
 
     // Show all books of a specific type
     public function showBooksByType($typeId): JsonResponse
