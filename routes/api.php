@@ -1,7 +1,11 @@
 <?php
 
 use App\Http\Controllers\Book\BookController;
+use App\Http\Controllers\Book\FavoriteBookController;
+use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
+use App\Http\Controllers\Post\FavoritePostController;
+use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -55,10 +59,37 @@ Route::controller(GendreController::class)->group(function () {
         Route::get('/books/type/{typeId}', 'showBooksByType');
     });
 
+//post routes
+Route::controller(PostController::class)->group(function () {
+    Route::get('/showAllPosts', 'index')->middleware('auth:sanctum');
+    Route::post('/createPost', 'create')->middleware('auth:sanctum');
+    Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
+    Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');
 
+  });
 
+//favorite post routes
+Route::controller(FavoritePostController::class)->group(function () {
+     Route::get('/showAllFavoritePosts', 'showFavorites')->middleware('auth:sanctum');
+     Route::post('/addToFavoritePosts/{postId}', 'addToFavorites')->middleware('auth:sanctum');
+     Route::delete('/removeFromFavoritesPosts/{postId}', 'removeFromFavorites')->middleware('auth:sanctum');
 
+  });
 
+//review routes
+Route::controller(ReviweController::class)->group(function () {
+    Route::get('/showAllReviwes', 'index')->middleware('auth:sanctum');
+    Route::post('/addReviwe', 'create')->middleware('auth:sanctum');
+    Route::delete('/deleteReviwe/{id}', 'delete')->middleware('auth:sanctum');
+
+  });
+
+  Route::controller(FavoriteBookController::class)->group(function () {
+    Route::get('/showAllFavoriteBooks', 'showFavorites')->middleware('auth:sanctum');
+    Route::post('/addToFavoriteBooks/{bookId}', 'addToFavorites')->middleware('auth:sanctum');
+    Route::delete('/removeFromFavoritesBooks/{bookId}', 'removeFromFavorites')->middleware('auth:sanctum');
+
+ });
 
 
 

@@ -31,7 +31,14 @@ class Book extends Model
             ->withTimestamps();
     }
 
+    public function reviews()
+    {
+        return $this->belongsToMany(Reviwe::class, 'book_id');
+    }
 
-
+    public function favorite_books()
+    {
+        return $this->belongsToMany(FavoriteBook::class, 'book_id');
+    }
     use HasFactory;
 }

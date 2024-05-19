@@ -39,7 +39,25 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'user_id');
+    }
 
+    public function favorite_posts()
+    {
+        return $this->belongsToMany(FavoritePost::class, 'post_id');
+    }
+
+    public function reviews()
+    {
+        return $this->belongsToMany(Reviwe::class, 'user_id');
+    }
+
+    public function favorite_books()
+    {
+        return $this->belongsToMany(FavoriteBook::class, 'book_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
