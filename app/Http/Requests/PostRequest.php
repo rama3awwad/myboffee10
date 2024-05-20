@@ -24,11 +24,6 @@ class PostRequest extends FormRequest
     {
         return [
 
-            'user_id' => Auth::id(),
-            'body'=> 'required',
-            'book_name'=> 'required',
-
-
         ];
     }
 }

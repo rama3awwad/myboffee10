@@ -5,7 +5,7 @@ use App\Http\Controllers\Book\FavoriteBookController;
 use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
 use App\Http\Controllers\Post\FavoritePostController;
-use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
