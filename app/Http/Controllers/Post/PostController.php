@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Post;
 
+use App\Http\Controllers\BaseController;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,64 +15,50 @@ class PostController extends BaseController
         $post = Post::all();
         return $this->sendResponse($post, 'Posts retrieved successfully');
     }
-    public function showMyPosts(){
+    public function showMyPosts($userId){
 
-        $user = Auth::user();
+       // $user = Auth::user();
+        $user = User::where('id', $userId)->first();
         $posts = $user->posts;
+        return $this->sendResponse($posts, 'My Posts retrieved successfully');
     }
     public function create(Request $request){
 
         $request->validate([
-            //'id' => ['required', 'integer' , 'exists:users,id'],
             'body'=> 'required',
         ]);
         $input=$request->all();
 
-        //$user = Auth::user();
         $user_id = Auth::user()->id;
         $post = Post::create([
             'user_id' => $user_id,
-            'body' => $request['body'],
+            'body' => $request->body,
         ]);
 
         return $this->sendResponse($post, 'Post created successfully.');
     }
-//    public function create(PostRequest $request){
-//        $input = $request->all();
-//
-//        // Correctly pass additional attributes as separate parameters
-//        $post = Post::create([
-//            'body' => $input['body'], // Assuming 'title' is one of the fields in your input
-//            'book_name' => $input['book_name'],
-//            // Add other fields here...
-//        ], [
-//            'user_id' => Auth::id(),
-//            'body' => $request->body,
-//            'book_name' => $request->book_name,
-//        ]);
-//
-//        return $this->sendResponse($post, 'Post created successfully.');
-//    }
 
-    public function update(PostRequest $request, Post $id ){
+
+    public function update(Request $request, Post $id ){
 
         $post = Post::find($id);
         if (is_null($post)) {
-            return $this->sendError('Post not found');
+            return $this->sendError('Post not found');}
+        else{
 
-            $post = Post::make($request->all(),[
-                'body' => $request->body,
-                'book_name'=>$request->book_name
+            $request->validate([
+                'body'=> 'required',
             ]);
-            $success = [
-                'id' => $post->id,
-                'user_id'=>$post -> user_id,
-                'body' => $post->body,
-                'book_name' => $post->book_name,
-                'likes_num' => $post->likes_num,
-            ];
+            $input=$request->all();
 
-            return $this->sendResponse($success, 'Post updated successfully');
+            $user_id = Auth::user()->id;
+            $post = Post::make([
+
+                'user_id' => $user_id,
+                'body' => $request->body,
+            ]);
+
+            return $this->sendResponse($post, 'Post updated successfully');
 
         }
     }
@@ -80,7 +68,9 @@ class PostController extends BaseController
         if (is_null($post)) {
             return $this->sendError('Post not found');
         }
-        $post->delete();
+
+        $post->each->delete();
+
         return $this->sendResponse(null, 'Post deleted successfully');
     }
 

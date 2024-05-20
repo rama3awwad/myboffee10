@@ -5,7 +5,7 @@ use App\Http\Controllers\Book\FavoriteBookController;
 use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
 use App\Http\Controllers\Post\FavoritePostController;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -61,7 +61,8 @@ Route::controller(GendreController::class)->group(function () {
 
 //post routes
 Route::controller(PostController::class)->group(function () {
-    Route::get('/showAllPosts', 'index')->middleware('auth:sanctum');
+    Route::get('/showAllPosts', 'index');
+    Route::get('/showMyPosts/{id}', 'showMyPosts');
     Route::post('/createPost', 'create')->middleware('auth:sanctum');
     Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
     Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');
