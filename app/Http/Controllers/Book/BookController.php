@@ -6,8 +6,9 @@ namespace App\Http\Controllers\Book;
 use App\Http\Requests\BookRequest;
 use App\Models\Book;
 use App\Http\Controllers\BaseController as BaseController;
-use App\Models\Shelve;
+use App\Models\Shelf;
 use App\Models\Type;
+use Cassandra\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,23 @@ class BookController extends BaseController
         return $this->sendResponse($book, 'Book created successfully.');
     }
 
+    //show book details without 'file'
+    public function showDetails($id): JsonResponse
+    {
+        $book = Book::where('id', $id)->first();
+
+        if (!$book) {
+            return $this->sendError('Book not found');
+        }
+
+        $bookData = new Collection($book->attributes);
+        $bookData = $bookData->except('file');
+
+        return $this->sendResponse($bookData, 'Book details retrieved successfully');
+    }
+
+
+
     //show book by user (enable it then open)
     public function show($id)
     {
@@ -65,7 +83,7 @@ class BookController extends BaseController
         }
 
         // Check if the user has the book in their shelf
-        $shelve = Shelve::where('book_id', $book->id)
+        $shelve = Shelf::where('book_id', $book->id)
             ->where('user_id', $user->id)
             ->first();
 
@@ -78,7 +96,7 @@ class BookController extends BaseController
                 } else {
                     // If the user has enough points, decrement the user's points and update the shelve status to 'reading'
                     $user->decrement('my_points', $book->points);
-                    $shelve = new Shelve([
+                    $shelve = new Shelf([
                         'book_id' => $book->id,
                         'user_id' => $user->id,
                         'status' => 'reading',

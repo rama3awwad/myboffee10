@@ -19,7 +19,7 @@ class BookFactory extends Factory
 
 
         $fileName = 'أذكار الصباح';
-        $coverName = 'وجهة';
+        $coverName = 'booky';
 
         $file = 'storage/books/files/'. $fileName . '.pdf';
         $cover = 'books/cover_images/'. $coverName . '.jpg';
@@ -40,7 +40,7 @@ class BookFactory extends Factory
 
             return $this->faker->unique($reset)->word();
         };
-        $uniqueTitle = $title(['title' => '']); // Pass an empty array to avoid passing actual attributes
+        $uniqueTitle = $title(['title' => '']);
 
 
         return [

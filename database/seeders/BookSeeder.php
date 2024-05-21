@@ -114,7 +114,7 @@ class BookSeeder extends Seeder
                 'type_id' => $book['type_id'],
             ]);
         }
-        Book::factory()->count(50)->create();
+        Book::factory()->count(5)->create();
     }
 }
 

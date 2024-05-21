@@ -59,6 +59,9 @@ Route::controller(GendreController::class)->group(function () {
         Route::get('/books/type/{typeId}', 'showBooksByType');
     });
 
+//Shelf controller
+
+
 //post routes
 Route::controller(PostController::class)->group(function () {
     Route::get('/showAllPosts', 'index');
