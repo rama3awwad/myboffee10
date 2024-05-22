@@ -19,7 +19,7 @@ class BookFactory extends Factory
 
 
         $fileName = 'أذكار الصباح';
-        $coverName = 'booky';
+        $coverName = 'book112';
 
         $file = 'storage/books/files/'. $fileName . '.pdf';
         $cover = 'books/cover_images/'. $coverName . '.jpg';
@@ -34,17 +34,22 @@ class BookFactory extends Factory
         Storage::disk('local')->put($coverPath, $imageContent);*/
 
         // Ensure the title is unique
-        $title = function ($attributes) {
+      /*  $title = function ($attributes) {
             $count = Book::where('title', $attributes['title'])->count();
             $reset = $count == 0;
 
             return $this->faker->unique($reset)->word();
         };
-        $uniqueTitle = $title(['title' => '']);
+        $uniqueTitle = $title(['title' => '123']);*/
+
+       // $title = '';
+        do {
+            $title = $this->faker->word();
+        } while (Book::where('title', $title)->exists());
 
 
         return [
-            'title'=>$uniqueTitle,
+            'title'=>$title,
             'file' => $file,
            // 'cover'=>fake()->imageUrl($width = 400, $height = 600),
             'cover' => $cover,

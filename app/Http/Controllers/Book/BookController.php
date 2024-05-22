@@ -72,7 +72,7 @@ class BookController extends BaseController
 
 
 
-    //show book by user (enable it then open)
+    //show book by user
     public function show($id)
     {
         $user = Auth::user();

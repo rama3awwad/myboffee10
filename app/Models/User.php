@@ -54,9 +54,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Reviwe::class, 'user_id');
     }
 
-    public function favorite_books()
+    public function favoriteBooks()
     {
-        return $this->belongsToMany(FavoriteBook::class, 'book_id');
+        return $this->belongsToMany(Book::class, 'favorite_books')->withTimestamps();
     }
 
     /**

@@ -36,9 +36,9 @@ class Book extends Model
         return $this->belongsToMany(Reviwe::class, 'book_id');
     }
 
-    public function favorite_books()
+    public function favoriteBooks()
     {
-        return $this->belongsToMany(FavoriteBook::class, 'book_id');
+        return $this->belongsToMany(FavoriteBook::class, 'favorite_books');
     }
     use HasFactory;
 }

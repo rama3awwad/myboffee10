@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Book;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ShelveController extends Controller
+class SuggestionController extends Controller
 {
     //
 }

@@ -100,6 +100,12 @@ class BookSeeder extends Seeder
         ];
 
         foreach ($books as $book) {
+
+            $existingBook = Book::where('title', $book['title'])->first();
+
+            if ($existingBook) {
+                continue;
+            }
             $filePath = 'storage/books/files/' . $book['file'] . '.pdf';
             $coverPath = 'books/cover_images/' . $book['cover'] . '.jpg';
 
@@ -114,7 +120,7 @@ class BookSeeder extends Seeder
                 'type_id' => $book['type_id'],
             ]);
         }
-        Book::factory()->count(5)->create();
+        Book::factory()->count(25)->create();
     }
 }
 
