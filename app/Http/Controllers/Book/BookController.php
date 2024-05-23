@@ -129,7 +129,6 @@ class BookController extends BaseController
             return $this->sendError('Book not found');
         }
 
-        // Assuming you have a method to send a response, similar to your sendResponse method
         return $this->sendResponse($book, 'Book retrieved successfully');
     }
 

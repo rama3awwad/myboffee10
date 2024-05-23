@@ -60,20 +60,21 @@ Route::controller(GendreController::class)->group(function () {
         Route::get('/books/type/{typeId}', 'showBooksByType');
     });
 
-//Shelf controller
 
 
-//post routes
+    //post routes
     Route::controller(PostController::class)->group(function () {
         Route::get('/showAllPosts', 'index');
-        Route::get('/showMyPosts/{id}', 'showMyPosts');
+        Route::get('/showMyPosts', 'showMyPosts')->middleware('auth:sanctum');
+        Route::get('/show/{user_id}','show');
+        Route::get('/showP/{post_id}','ShowP');
         Route::post('/createPost', 'create')->middleware('auth:sanctum');
         Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
         Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');
 
       });
 
-//favorite post routes
+    //favorite post routes
     Route::controller(FavoritePostController::class)->group(function () {
          Route::get('/showAllFavoritePosts', 'showFavorites')->middleware('auth:sanctum');
          Route::post('/addToFavoritePosts/{postId}', 'addToFavorites')->middleware('auth:sanctum');
@@ -81,7 +82,7 @@ Route::controller(GendreController::class)->group(function () {
 
       });
 
-//review routes
+    //review routes
     Route::controller(ReviweController::class)->group(function () {
         Route::get('/showAllReviwes', 'index')->middleware('auth:sanctum');
         Route::post('/addReviwe', 'create')->middleware('auth:sanctum');
