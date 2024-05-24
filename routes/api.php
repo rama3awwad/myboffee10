@@ -71,7 +71,7 @@ Route::controller(GendreController::class)->group(function () {
     Route::controller(ShelfController::class)->group(function (){
         Route::post('/shelf/later','storeLaterStatus')->middleware('auth:sanctum');
         Route::put('/shelf/{shelfId}','updateProgress')->middleware('auth:sanctum');
-        Route::get('/shelf/count/{bookId}','count');
+        Route::get('/count/{bookId}','count');
     });
 
 
