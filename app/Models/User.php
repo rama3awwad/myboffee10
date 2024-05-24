@@ -32,11 +32,24 @@ class User extends Authenticatable
         return $this->belongsTo(Gendre::class, 'gendre_id');
     }
 
-    public function books()
+    public function Suggestions()
     {
-        return $this->belongsToMany(Book::class, 'shelves')
-            ->withPivot('status', 'progress')
-            ->withTimestamps();
+        return $this->hasMany(Suggestion::class, 'user_id');
+    }
+
+    public function shelves()
+    {
+        return $this->belongsToMany(Book::class, 'shelves')->withTimestamps();
+    }
+
+    public function notes()
+    {
+        return $this->belongsToMany(Book::class, 'notes')->withTimeStamps();
+    }
+
+    public function reports()
+    {
+        return $this->belongsToMany(Book::class,'reports')->withTimeStamps();
     }
 
     public function posts()
