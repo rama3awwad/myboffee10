@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->refernces('id')->on('users')->onDelete('cascade');
+            $table->string('body');
+            $table->string('color')->nullable();
             $table->timestamps();
         });
     }
