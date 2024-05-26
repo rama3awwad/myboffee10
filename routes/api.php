@@ -59,7 +59,8 @@ Route::controller(GendreController::class)->group(function () {
         Route::get('/file/{id}','getFile');
         Route::get('/book/{id}', 'show')->middleware('auth:sanctum');
         Route::post('/search', 'findByName');
-        Route::put('/books/{id}', 'update');
+        Route::post('/books/{id}', 'update');
+        Route::post('upBooks/{id}', 'updateImage');
         Route::delete('/books/{id}','delete');
         Route::get('/books/type/{typeId}', 'showBooksByType');
         Route::get('/details/{id}','showDetails');
@@ -70,8 +71,10 @@ Route::controller(GendreController::class)->group(function () {
 //shelf routes
     Route::controller(ShelfController::class)->group(function (){
         Route::post('/shelf/later','storeLaterStatus')->middleware('auth:sanctum');
-        Route::put('/shelf/{shelfId}','updateProgress')->middleware('auth:sanctum');
+        Route::post('/shelf/{shelfId}','updateProgress')->middleware('auth:sanctum');
         Route::get('/count/{bookId}','count');
+        Route::post('/myShelf', 'myShelf')->middleware('auth:sanctum');
+        Route::post('/countMine','countMine')->middleware('auth:sanctum');
     });
 
 

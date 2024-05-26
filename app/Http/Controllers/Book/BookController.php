@@ -10,6 +10,7 @@ use App\Http\Controllers\BaseController as BaseController;
 use App\Models\Shelf;
 use App\Models\Type;
 use Cassandra\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,18 +30,18 @@ class BookController extends BaseController
     public function store(BookRequest $request): JsonResponse
     {
 
-      /*  $pdfName = $request->file->getClientOriginalName();
-        $pdfpath = $request->file->storeAs('books/files', $pdfName,'public');
-        $pdfUrl = Storage::url($pdfpath);*/
+        /*  $pdfName = $request->file->getClientOriginalName();
+          $pdfpath = $request->file->storeAs('books/files', $pdfName,'public');
+          $pdfUrl = Storage::url($pdfpath);*/
 
 
-       $image = time() . '-' . $request->title . '.' . $request->file('cover')->extension();
-        $request->cover->move(public_path('books/cover_images'),$image);
-        $image='books/cover_images/'.$image;
+        $image = time() . '-' . $request->title . '.' . $request->file('cover')->extension();
+        $request->cover->move(public_path('books/cover_images'), $image);
+        $image = 'books/cover_images/' . $image;
 
         $file = time() . '-' . $request->title . '.' . $request->file('file')->extension();
-        $request->file->move(public_path('books/files'),$file);
-        $file='books/files/'.$file;
+        $request->file->move(public_path('books/files'), $file);
+        $file = 'books/files/' . $file;
 
         $book = Book::create([
             'title' => $request->title,
@@ -64,7 +65,7 @@ class BookController extends BaseController
         if (is_null($book)) {
             return $this->sendError('Book not found');
         }
-        $details = Book::select('id','title', 'cover', 'total_pages', 'author_name', 'points', 'description', 'type_id',)
+        $details = Book::select('id', 'title', 'cover', 'total_pages', 'author_name', 'points', 'description', 'type_id',)
             ->where('id', $id)
             ->first();
 
@@ -124,43 +125,6 @@ class BookController extends BaseController
         return $this->sendResponse($books, 'Books retrieved successfully');
     }
 
-//update book
-    public function update(UpdateBookRequest $request, $id): JsonResponse
-    {
-        $book = Book::find($id);
-        if (is_null($book)) {
-            return $this->sendError('Book not found');
-        }
-
-        // Handle file upload
-        if ($request->hasFile('file')) {
-            $file = time() . '-' . $request->title . '.' . $request->file('file')->extension();
-            $request->file->move(public_path('books/files'), $file);
-            $file = 'books/files/' . $file;
-            $book->file = $file;
-        }
-
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $image = time() . '-' . $request->image . '.' . $request->file('image')->extension();
-            $request->image->move(public_path('books/images'), $image);
-            $image = 'books/images/' . $image;
-            $book->image = $image;
-        }
-
-        // Update other fields
-        $book->title = $request->title;
-        $book->author_name = $request->author_name;
-        $book->points = $request->points;
-        $book->description = $request->description;
-        $book->total_pages = $request->total_pages;
-        $book->type_id = $request->type_id;
-
-        $book->save();
-
-        return $this->sendResponse($book, 'Book updated successfully.');
-    }
-
 //delete book
     public function delete($id): \Illuminate\Http\JsonResponse
     {
@@ -201,15 +165,14 @@ class BookController extends BaseController
 
             if ($request->user()->my_points < $book->points) {
                 return $this->sendError('Oops! Your points aren\'t enough to open this book.');
-            }
-            else {
+            } else {
 
                 $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
                 $newShelf = Shelf::create([
                     'user_id' => $userId,
                     'book_id' => $id,
                     'status' => 'reading',
-                    'progress' => 0,
+                    'progress' => 1,
                 ]);
 
                 $bookData = $this->getFile($id);
@@ -224,13 +187,12 @@ class BookController extends BaseController
 
             if ($request->user()->my_points < $book->points) {
                 return $this->sendError('Oops! Your points aren\'t enough to open this book.');
-            }
-            else {
+            } else {
 
                 $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
                 $shelf->update([
                     'status' => 'reading',
-                    'progress' => 0,
+                    'progress' => 1,
                 ]);
 
                 $bookData = $this->getFile($id);
@@ -252,16 +214,78 @@ class BookController extends BaseController
         }
     }
 
- // Find books by author name
+    // Find books by author name
     public function findByAuthorName(Request $request): JsonResponse
     {
         $authorName = $request->input('name');
-        $books = Book::where('author_name', 'like', '%'. $authorName. '%')->get();
+        $books = Book::where('author_name', 'like', '%' . $authorName . '%')->get();
 
         if ($books->isEmpty()) {
             return $this->sendError('No books found for this author.');
         }
 
         return $this->sendResponse($books, 'Books retrieved successfully.');
+    }
+
+    //update book
+    public function update(BookRequest $request, $id): JsonResponse
+    {
+        $book = Book::find($id);
+        if (is_null($book)) {
+            return $this->sendError('Book not found');
+        }
+        if ($request->image != null) {
+            if (File::exists($book->cover)) {
+                File::delete(public_path($book->cover));
+            }
+            $image = time() . '-' . $book->title . '.' . $request->file('cover')->extension();
+            $request->cover->move(public_path('books/cover_images'), $image);
+            $book->update([
+                'cover' => 'books/cover_images/' . $image,
+            ]);
+        }
+        if ($request->file != null) {
+
+            if (File::exists($book->file)) {
+                File::delete(public_path($book->file));
+            }
+            $file = time() . '-' . $book->title . '.' . $request->file('file')->extension();
+            $request->file->move(public_path('books/files'), $file);
+            $book->update([
+                'file' => 'books/files/' . $file,
+            ]);
+
+            $book->update($request->all());
+            return $this->sendResponse($book, 'Book updated successfully.');
+        }
+    }
+
+    public function updateImage(Request $request, $id)
+    {
+        $book = Book::find($id);
+        if (is_null($book)) {
+            return $this->sendError('Book not found');
+        }
+        $request->validate(['cover'=>'file|image','file'=>'file']);
+        if (File::exists($book->cover)){
+            File::delete(public_path($book->cover));
+        }
+        $image = time() . '-' . $book->title . '.' . $request->file('cover')->extension();
+        $request->cover->move(public_path('books/cover_images'),$image);
+        $book->update([
+            'cover'=>'books/cover_images/'.$image,
+        ]);
+        if (File::exists($book->file)){
+            File::delete(public_path($book->file));
+        }
+        $file = time() . '-' . $book->title . '.' . $request->file('file')->extension();
+        $request->file->move(public_path('books/files'),$file);
+        $book->update([
+            'file'=>'books/files/'.$file,
+        ]);
+        return $this->sendResponse($book, 'Book updated successfully.');
+
+
+
     }
 }

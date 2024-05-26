@@ -8,17 +8,19 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Shelf extends Model
 {
-    protected $fillable = ['user_id', 'book_id', 'status', 'progress'];
+    protected $fillable = [
+        'user_id',
+        'book_id',
+        'status',
+        'progress'
+    ];
+
+    public function books()
+    {
+        return $this->hasMany(Book::class);
+    }
+
 
     use HasFactory;
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function book()
-    {
-        return $this->belongsTo(Book::class, 'book_id');
-    }
 }
