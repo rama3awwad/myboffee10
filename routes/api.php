@@ -6,6 +6,7 @@ use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
 use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\Suggestion\suggestionController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -65,7 +66,7 @@ Route::controller(PostController::class)->group(function () {
     Route::get('/showMyPosts/{id}', 'showMyPosts');
     Route::post('/createPost', 'create')->middleware('auth:sanctum');
     Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
-    Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');
+    Route::delete('/deletePost/{id}', 'delete');
 
   });
 
@@ -82,6 +83,16 @@ Route::controller(ReviweController::class)->group(function () {
     Route::get('/showAllReviwes', 'index');
     Route::post('/addReviwe', 'create')->middleware('auth:sanctum');
     Route::delete('/deleteReviwe/{id}', 'delete');
+
+  });
+
+  //suggestion routes
+  Route::controller(suggestionController::class)->group(function () {
+    Route::get('/showAllSuggestions', 'index');
+    Route::get('/showsuggestion/{id}', 'showSuggestion');
+    Route::post('/createsuggestion', 'create')->middleware('auth:sanctum');
+    Route::post('/updatesuggestion/{id}', 'update')->middleware('auth:sanctum');
+    Route::delete('/deletesuggestion/{id}', 'delete');
 
   });
 

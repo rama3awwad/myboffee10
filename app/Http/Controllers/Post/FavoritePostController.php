@@ -27,13 +27,16 @@ class FavoritePostController extends BaseController
         $this->increment('likes_count');
 
 }*/
-public function addToFavorites($postId)
+    public function addToFavorites($postId)
 {
 
-    $user = Auth::user();
-    $user->favorites->attach($postId);
+        $user = Auth::user();
+        $post = Post::find($postId);
+        $user->favorites->attach($postId);
 
-    return $this->sendResponse(null, 'Post added to favorites');
+        return $this->sendResponse(null, 'Post added to favorites');
+
+        $this->increment('likes_count');
 }
     public function removeFromFavorites($postId){
 
@@ -51,4 +54,5 @@ public function addToFavorites($postId)
         $favorite_posts = $user->favorite_posts;
 
     }
+
 }
