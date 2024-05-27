@@ -57,7 +57,7 @@ class User extends Authenticatable
         return $this->hasMany(Post::class, 'user_id');
     }
 
-    public function favorite_posts()
+    public function favoritePosts()
     {
         return $this->belongsToMany(FavoritePost::class, 'post_id');
     }

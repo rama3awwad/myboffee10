@@ -23,7 +23,7 @@ class Post extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function favorite_posts()
+    public function favoritePosts()
     {
         return $this->belongsToMany(FavoritePost::class, 'post_id');
     }
