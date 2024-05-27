@@ -10,7 +10,8 @@
         "guzzlehttp/guzzle": "*",
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.14",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+      "ext-cassandra": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -24,11 +24,9 @@ class Book extends Model
         return $this->belongsTo(Type::class, 'type_id');
     }
 
-    public function users()
+    public function shelves()
     {
-        return $this->belongsToMany(User::class, 'shelves')
-            ->withPivot('status', 'progress')
-            ->withTimestamps();
+        return $this->belongsToMany(User::class, 'shelves')->withTimestamps();
     }
 
     public function reviews()
@@ -36,9 +34,20 @@ class Book extends Model
         return $this->belongsToMany(Reviwe::class, 'book_id');
     }
 
-    public function favorite_books()
+    public function notes()
     {
-        return $this->belongsToMany(FavoriteBook::class, 'book_id');
+        return $this->belongsToMany(User::class, 'notes')->withTimeStamps();
     }
+
+    public function reports()
+    {
+        return $this->belongsToMany(User::class,'reports')->withTimeStamps();
+    }
+
+    public function favoriteBooks()
+    {
+        return $this->belongsToMany(FavoriteBook::class, 'favorite_books');
+    }
+
     use HasFactory;
 }

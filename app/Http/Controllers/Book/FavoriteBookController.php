@@ -31,3 +31,4 @@ class FavoriteBookController extends Controller
 
     }
 }
+

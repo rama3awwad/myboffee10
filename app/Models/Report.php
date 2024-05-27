@@ -4,11 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Shelve extends Model
+class Report extends Model
 {
-    protected $fillable = ['user_id', 'book_id', 'status', 'progress'];
-
     use HasFactory;
+
+    protected $fillable =[
+        'user_id',
+        'book_id',
+        'body',
+    ];
+
 }

@@ -15,13 +15,25 @@ class PostController extends BaseController
         $post = Post::all();
         return $this->sendResponse($post, 'Posts retrieved successfully');
     }
-    public function showMyPosts($userId){
+
+    //show user's posts
+    public function show($userId){
 
        // $user = Auth::user();
         $user = User::where('id', $userId)->first();
         $posts = $user->posts;
-        return $this->sendResponse($posts, 'My Posts retrieved successfully');
+        return $this->sendResponse($posts, 'user\'s posts retrieved successfully');
     }
+
+    //show my posts
+    public function showMyPosts(){
+
+        $user_id = Auth::user()->id;
+        $user = User::where('id', $user_id)->first();
+        $posts = $user->posts;
+        return $this->sendResponse($posts, 'Your posts retrieved successfully');
+    }
+
     public function create(Request $request){
 
         $request->validate([
@@ -63,6 +75,19 @@ class PostController extends BaseController
             return $this->sendResponse($post, 'Post updated successfully');
 
         }
+    }
+
+    //show post
+    public function showP($post_id){
+
+        $post = Post::find($post_id);
+
+        if (is_null($post)) {
+            return $this->sendError('Post not found');
+        }
+
+        return $this->sendResponse($post, 'Post retrieved successfully');
+
     }
     public function delete(Post $id)
     {
