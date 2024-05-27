@@ -4,7 +4,6 @@ use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\FavoriteController;
 use App\Http\Controllers\Book\ReportController;
 use App\Http\Controllers\Book\ReviweController;
-use App\Http\Controllers\Book\SuggestionController;
 use App\Http\Controllers\Gendre\GendreController;
 use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
@@ -104,12 +103,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::post('/createPost', 'create')->middleware('auth:sanctum');
         Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
         Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');
-Route::controller(PostController::class)->group(function () {
-    Route::get('/showAllPosts', 'index');
-    Route::get('/showMyPosts/{id}', 'showMyPosts');
-    Route::post('/createPost', 'create')->middleware('auth:sanctum');
-    Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
-    Route::delete('/deletePost/{id}', 'delete');
+
 
       });
 
@@ -167,3 +161,4 @@ Route::controller(ReviweController::class)->group(function () {
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
