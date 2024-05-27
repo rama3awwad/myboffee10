@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Book;
 
 use App\Http\Controllers\Controller;
+use App\Models\Book;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,8 @@ class FavoriteController extends Controller
     {
 
         $user = Auth::user();
-        $user->favoriteBooks()->attach($bookId);
+        $book = Book::findOrFail($bookId);
+        $book->favoriteBooks()->attach($bookId);
 
         return $this->sendResponse([], 'Book added to favorites');
     }
@@ -24,7 +26,7 @@ class FavoriteController extends Controller
     public function showMine()
     {
         $user = Auth::user();
-        $favorites = $user->favoriteBooks();
+        $favorites = $user->favoriteBooks;
 
         return $this->sendResponse($favorites, 'User\'s favorites');
     }
@@ -34,7 +36,7 @@ class FavoriteController extends Controller
     {
 
         $user = User::findOrFail($userId);
-        $favorites = $user->favoriteBooks;
+        $favorites = $user->favoriteBooks();
 
         return $this->sendResponse($favorites, 'Favorites fetched successfully');
     }
@@ -43,7 +45,8 @@ class FavoriteController extends Controller
     public function remove($bookId)
     {
         $user = Auth::user();
-        $user->favoriteBooks()->detach($bookId);
+        $book = Book::findOrFail($bookId);
+        $book->favoriteBooks()->detach($bookId);
 
         return $this->sendResponse([], 'PDF removed successfully');
     }
