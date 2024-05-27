@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Book;
 
 use App\Http\Controllers\Controller;
+use App\Models\Book;
+use App\Models\FavoriteBook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class FavoriteBookController extends Controller
 {
-    public function addToFavorites($bookId){
+    public function addToFavorites(Request $request , $bookId){
 
         $user = Auth::user();
         $user->favorite_books->attach($bookId);

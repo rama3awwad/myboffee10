@@ -11,7 +11,7 @@ class Post extends Model
     protected $fillable = [
         'user_id',
         'body',
-        'likes_num'
+        'likes_count'
     ];
 
    /* public static function create($input, array $array)
@@ -27,4 +27,9 @@ class Post extends Model
     {
         return $this->belongsToMany(FavoritePost::class, 'post_id');
     }
+
+   /* public function favorite_post()
+    {
+        return $this->belongsToMany(FavoritePost::class, 'likes_count');
+    }*/
 }

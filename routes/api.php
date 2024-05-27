@@ -79,9 +79,9 @@ Route::controller(FavoritePostController::class)->group(function () {
 
 //review routes
 Route::controller(ReviweController::class)->group(function () {
-    Route::get('/showAllReviwes', 'index')->middleware('auth:sanctum');
+    Route::get('/showAllReviwes', 'index');
     Route::post('/addReviwe', 'create')->middleware('auth:sanctum');
-    Route::delete('/deleteReviwe/{id}', 'delete')->middleware('auth:sanctum');
+    Route::delete('/deleteReviwe/{id}', 'delete');
 
   });
 

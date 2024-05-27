@@ -26,6 +26,7 @@ class PostController extends BaseController
 
         $request->validate([
             'body'=> 'required',
+
         ]);
         $input=$request->all();
 
@@ -33,6 +34,7 @@ class PostController extends BaseController
         $post = Post::create([
             'user_id' => $user_id,
             'body' => $request->body,
+            'likes_count'=>$request->likes_count ?? 0
         ]);
 
         return $this->sendResponse($post, 'Post created successfully.');

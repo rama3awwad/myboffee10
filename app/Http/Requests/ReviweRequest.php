@@ -26,7 +26,7 @@ class ReviweRequest extends FormRequest
         return [
 
             'body'=>'required',
-            'book_id'=>0
+            'book_id' => 'required|exists:books,id',
         ];
     }
 }

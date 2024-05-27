@@ -15,9 +15,7 @@ return new class extends Migration
     {
         Schema::create('favorite_books', function (Blueprint $table) {
             $table->id();
-        //    $table->BigInteger('user_id');
             $table->foreignId('user_id') ->references('id')->on('users')->onDelete('cascade');
-       //     $table->BigInteger('book_id');
             $table->foreignId('book_id') ->references('id')->on('books')->onDelete('cascade');
             $table->timestamps();
         });
