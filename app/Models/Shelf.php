@@ -15,9 +15,31 @@ class Shelf extends Model
         'progress'
     ];
 
+
+   /* public function books()
+    {
+        return $this->hasMany(Book::class, 'book_id');
+    }
+
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }*/
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function book()
+    {
+        return $this->belongsTo(Book::class);
+    }
+
     public function books()
     {
-        return $this->hasMany(Book::class);
+        return $this->belongsToMany(Book::class);
     }
 
 

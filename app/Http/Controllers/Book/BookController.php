@@ -214,18 +214,6 @@ class BookController extends BaseController
         }
     }
 
-    // Find books by author name
-    public function findByAuthorName(Request $request): JsonResponse
-    {
-        $authorName = $request->input('name');
-        $books = Book::where('author_name', 'like', '%' . $authorName . '%')->get();
-
-        if ($books->isEmpty()) {
-            return $this->sendError('No books found for this author.');
-        }
-
-        return $this->sendResponse($books, 'Books retrieved successfully.');
-    }
 
     //update book
     public function update(BookRequest $request, $id): JsonResponse

@@ -16,8 +16,10 @@ return new class extends Migration
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->refernces('id')->on('users')->onDelete('cascade');
+            $table->foreignId('book_id')->references('id')->on('books')->onDelete('cascade');
+            $table->integer('page_num');
             $table->string('body');
-            $table->string('color')->nullable();
+            $table->integer('color')->nullable();
             $table->timestamps();
         });
     }

@@ -126,7 +126,10 @@ Route::controller(GendreController::class)->group(function () {
     });
 
 //note routes
-    Route::controller(ReportController::class)->group(function(){
+    Route::controller(NoteController::class)->group(function(){
+        Route::get('/notes', 'index');
+        Route::post('/note','store')->middleware('auth:sanctum');
+        Route::get('');
     });
 
 

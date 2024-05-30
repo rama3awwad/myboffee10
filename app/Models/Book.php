@@ -26,8 +26,10 @@ class Book extends Model
 
     public function shelves()
     {
-        return $this->belongsToMany(User::class, 'shelves')->withTimestamps();
+        return $this->belongsToMany(User::class, 'shelves', 'book_id', 'user_id');
     }
+
+
 
     public function reviews()
     {

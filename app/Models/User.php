@@ -39,7 +39,7 @@ class User extends Authenticatable
 
     public function shelves()
     {
-        return $this->belongsToMany(Book::class, 'shelves')->withTimestamps();
+        return $this->belongsToMany(Book::class, 'shelves', 'user_id', 'book_id');
     }
 
     public function notes()
