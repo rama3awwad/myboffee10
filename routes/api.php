@@ -4,11 +4,11 @@ use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\FavoriteController;
 use App\Http\Controllers\Book\ReportController;
 use App\Http\Controllers\Book\ReviweController;
-use App\Http\Controllers\Book\SuggestionController;
 use App\Http\Controllers\Gendre\GendreController;
 use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Shelf\ShelfController;
+use App\Http\Controllers\Suggestion\suggestionController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -104,6 +104,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
         Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');
 
+
       });
 
 //favorite post routes
@@ -124,6 +125,23 @@ Route::controller(GendreController::class)->group(function () {
         Route::delete('/delete/{id}','removeReport');
         Route::delete('/delete', 'deleteAllUserReports');
     });
+//review routes
+Route::controller(ReviweController::class)->group(function () {
+    Route::get('/showAllReviwes', 'index');
+    Route::post('/addReviwe', 'create')->middleware('auth:sanctum');
+    Route::delete('/deleteReviwe/{id}', 'delete');
+
+  });
+
+  //suggestion routes
+  Route::controller(suggestionController::class)->group(function () {
+    Route::get('/showAllSuggestions', 'index');
+    Route::get('/showsuggestion/{id}', 'showSuggestion');
+    Route::post('/createsuggestion', 'create')->middleware('auth:sanctum');
+    Route::post('/updatesuggestion/{id}', 'update')->middleware('auth:sanctum');
+    Route::delete('/deletesuggestion/{id}', 'delete');
+
+  });
 
 //note routes
     Route::controller(NoteController::class)->group(function(){
@@ -146,3 +164,4 @@ Route::controller(GendreController::class)->group(function () {
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+

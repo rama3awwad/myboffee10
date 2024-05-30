@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('favorite_posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->integer('likes_count')->foreign()->references('likes_count')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }
