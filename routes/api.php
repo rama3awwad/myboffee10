@@ -103,8 +103,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::post('/createPost', 'create')->middleware('auth:sanctum');
         Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
         Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');
-
-
+        
       });
 
 //favorite post routes
