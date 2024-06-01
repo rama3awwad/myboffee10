@@ -51,8 +51,19 @@ class PostController extends BaseController
 
         return $this->sendResponse($post, 'Post created successfully.');
     }
-
-
+  /* public static function updateLikesCount($postId)
+    {
+       // $posts = Post::all();
+       $user = Auth::user();
+       $posts = $user->favoritePosts()->where('post_id' , $postId)->exists();
+        foreach ($posts as $post) {
+            $post = Post::find($postId);
+            if($post){
+            $totalLikes = $post->favoritesPosts()->count();
+            $post->update(['likes_count' => $totalLikes]);
+        }}
+    }
+*/
     public function update(Request $request, Post $id ){
 
         $post = Post::find($id);

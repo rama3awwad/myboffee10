@@ -23,9 +23,5 @@ class FavoritePost extends Model
         return $this->belongsTo(Post::class, 'post_id');
     }
 
-   /* public function post1()
-    {
-        return $this->belongsToMany(Post::class, 'likes_count');
-    }*/
     use HasFactory;
 }
