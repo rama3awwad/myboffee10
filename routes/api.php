@@ -8,7 +8,7 @@ use App\Http\Controllers\Gendre\GendreController;
 use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Shelf\ShelfController;
-use App\Http\Controllers\Suggestion\suggestionController;
+use App\Http\Controllers\Book\suggestionController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -103,14 +103,15 @@ Route::controller(GendreController::class)->group(function () {
         Route::post('/createPost', 'create')->middleware('auth:sanctum');
         Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
         Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');
-        
+
       });
 
 //favorite post routes
     Route::controller(FavoritePostController::class)->group(function () {
-         Route::get('/showAllFavoritePosts', 'showFavorites')->middleware('auth:sanctum');
-         Route::post('/addToFavoritePosts/{postId}', 'addToFavorites')->middleware('auth:sanctum');
-         Route::delete('/removeFromFavoritesPosts/{postId}', 'removeFromFavorites')->middleware('auth:sanctum');
+         Route::get('/showMyFavorite', 'showMyFavorite')->middleware('auth:sanctum');
+         Route::get('/showUserFavorite/{userId}', 'showUserFav');
+         Route::post('/addToFavorite/{postId}', 'addToFavorites')->middleware('auth:sanctum');
+         Route::delete('/removeFromFavorites/{postId}', 'removeFromFavorites')->middleware('auth:sanctum');
 
       });
 
@@ -128,17 +129,18 @@ Route::controller(GendreController::class)->group(function () {
 Route::controller(ReviweController::class)->group(function () {
     Route::get('/showAllReviwes', 'index');
     Route::post('/addReviwe', 'create')->middleware('auth:sanctum');
-    Route::delete('/deleteReviwe/{id}', 'delete');
+    Route::post('/updateReview/{review_id}', 'update')->middleware('auth:sanctum');
+    Route::delete('/deleteReviwe/{review_id}', 'delete');
 
   });
 
   //suggestion routes
   Route::controller(suggestionController::class)->group(function () {
     Route::get('/showAllSuggestions', 'index');
-    Route::get('/showsuggestion/{id}', 'showSuggestion');
+    Route::get('/showsuggestion/{suggestion_id}', 'showSuggestion');
     Route::post('/createsuggestion', 'create')->middleware('auth:sanctum');
-    Route::post('/updatesuggestion/{id}', 'update')->middleware('auth:sanctum');
-    Route::delete('/deletesuggestion/{id}', 'delete');
+    Route::post('/updatesuggestion/{suggestion_id}', 'update')->middleware('auth:sanctum');
+    Route::delete('/deletesuggestion/{suggestion_id}', 'delete');
 
   });
 

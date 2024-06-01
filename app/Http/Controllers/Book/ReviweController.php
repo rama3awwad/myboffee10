@@ -18,6 +18,17 @@ class ReviweController extends BaseController
         return $this->sendResponse($review, 'Reviews retrieved successfully');
     }
 
+    public function showReview($id)
+    {
+        $reviwe = Reviwe::find($id);
+        if (is_null($reviwe)) {
+            return $this->sendError('Reviwe not found');
+        }
+        else{
+            return $this->sendResponse($reviwe, 'Suggestion retrieved successfully.');
+        }
+    }
+
 
     public function create(ReviweRequest $request)
     {
@@ -36,6 +47,32 @@ class ReviweController extends BaseController
        return $this->sendResponse($review, 'Review created successfully.');
     }
 
+    public function update(Request $request, Reviwe $id ){
+
+        $reviwe = Reviwe::find($id);
+        if (is_null($reviwe)) {
+            return $this->sendError('Reviwe not found');}
+        else{
+
+            $request->validate([
+                'body'=> 'required',
+            ]);
+            $input=$request->all();
+
+            $user_id = Auth::user()->id;
+            $book_id = Book::all();
+            $bookId = Book::where('book_id' ,$book_id);
+            $reviwe = Reviwe::make([
+                'id'=>$request->id,
+                'user_id' => $user_id,
+                'book_id'=> $bookId,
+                'body' => $request->body,
+            ]);
+
+            return $this->sendResponse($reviwe, 'Reviwe updated successfully');
+
+        }
+    }
 
     public function delete($id)
     {
