@@ -26,9 +26,13 @@ class FavoritePostController extends BaseController
 
         return $this->sendResponse(null, 'Post added to favorites');
 
-     //   $this->increment('likes_count');
-}
 
+}
+    public function countLikes($postId){
+
+        $count = FavoritePost::where('post_id' , $postId)->count();
+        return $this->sendResponse($count, 'update likes number');
+    }
 
     public function removeFromFavorites($postId){
 

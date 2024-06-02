@@ -112,7 +112,7 @@ Route::controller(GendreController::class)->group(function () {
          Route::get('/showUserFavorite/{userId}', 'showUserFav');
          Route::post('/addToFavorite/{postId}', 'addToFavorites')->middleware('auth:sanctum');
          Route::delete('/removeFromFavorites/{postId}', 'removeFromFavorites')->middleware('auth:sanctum');
-
+         Route::get('/likesCount/{postId}', 'countLikes');
       });
 
 //report routes
