@@ -42,9 +42,12 @@ class PostController extends BaseController
         ]);
         $input=$request->all();
 
+        $user = auth()->user()->user_name;
         $user_id = Auth::user()->id;
         $post = Post::create([
+
             'user_id' => $user_id,
+            'user_name' => $user,
             'body' => $request->body,
             'likes_count'=>$request->likes_count ?? 0
         ]);

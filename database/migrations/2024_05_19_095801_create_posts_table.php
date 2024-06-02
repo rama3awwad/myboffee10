@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->text('body');
+            $table->string('user_name');
           //  $table->integer('likes_count')->default(0)->nullable();
             $table->timestamps();
         });

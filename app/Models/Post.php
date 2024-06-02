@@ -11,6 +11,7 @@ class Post extends Model
     protected $fillable = [
         'user_id',
         'body',
+        'user_name'
        // 'likes_count'
     ];
 
