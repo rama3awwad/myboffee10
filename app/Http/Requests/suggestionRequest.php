@@ -25,7 +25,7 @@ class SuggestionRequest extends FormRequest
     {
         return [
             'body'=>'required',
-            
+
         ];
     }
 }
