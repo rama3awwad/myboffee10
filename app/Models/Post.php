@@ -27,6 +27,7 @@ class Post extends Model
     public function favoritePosts()
     {
         return $this->belongsToMany(FavoritePost::class, 'favorite_posts');
+        return $this->belongsToMany(FavoritePost::class, 'favorite_posts');
     }
 
 }
