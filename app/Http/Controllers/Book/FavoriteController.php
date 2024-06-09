@@ -26,7 +26,7 @@ class FavoriteController extends Controller
     public function showMine()
     {
         $user = Auth::user();
-        $favorites = $user->favoriteBooks;
+        $favorites = $user->favoriteBooks();
 
         return $this->sendResponse($favorites, 'User\'s favorites');
     }
