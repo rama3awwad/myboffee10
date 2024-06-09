@@ -59,7 +59,7 @@ class User extends Authenticatable
 
     public function favoritePosts()
     {
-        return $this->belongsToMany(FavoritePost::class, 'post_id');
+        return $this->belongsToMany(Post::class, 'favorite_posts');
     }
 
     public function reviews()
