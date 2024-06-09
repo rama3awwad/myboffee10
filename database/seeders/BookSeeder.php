@@ -96,7 +96,6 @@ class BookSeeder extends Seeder
                 'type_id' => 6,
             ],
 
-
         ];
 
         foreach ($books as $book) {
@@ -106,7 +105,7 @@ class BookSeeder extends Seeder
             if ($existingBook) {
                 continue;
             }
-            $filePath = 'storage/books/files/' . $book['file'] . '.pdf';
+            $filePath = '/storage/books/files/' . $book['file'] . '.pdf';
             $coverPath = 'books/cover_images/' . $book['cover'] . '.jpg';
 
             Book::create([

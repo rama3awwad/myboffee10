@@ -75,6 +75,17 @@ class ShelfController extends BaseController
 
         return $this->sendResponse($books, 'Books retrieved successfully.');
     }*/
+//count books on user's shelf
+    public function countMine(Request $request): JsonResponse
+    {
+        $userId = Auth::user()->id;
+        $status = $request->input('status');
+        $count = Shelf::where('user_id', $userId)->where('status', $status)->count();
+
+        return $this->sendResponse([
+            'count' => $count,
+        ], 'Count of books in this shelf retrieved successfully.');
+    }
 
 //show books in my shelf
     public function myShelf(Request $request): JsonResponse
@@ -91,14 +102,18 @@ class ShelfController extends BaseController
         if ($shelves->isEmpty()) {
             return response()->json(['error' => 'No shelves found with the specified status.'], 404);
         }
+    //    $count = $this->countMine($request);
+     //   $count = $this->countMine($status);
 
         $newShelve = $shelves->map(function ($shelf) {
+
             return [
                 'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status', 'progress', 'created_at', 'updated_at']),
                 'book' => [
                     'title' => $shelf->book->title,
                     'cover' => $shelf->book->cover,
                 ],
+              //  'count' => $count,
             ];
         });
 
@@ -106,19 +121,6 @@ class ShelfController extends BaseController
     }
 
 
-
-//count books on user's shelf
-    public function countMine(Request $request): JsonResponse
-    {
-        $userId = Auth::user()->id;
-        $status = $request->input('status');
-
-        $count = Shelf::where('user_id', $userId)->where('status', $status)->count();
-
-        return $this->sendResponse([
-            'count' => $count,
-        ], 'Count of books in this shelf retrieved successfully.');
-    }
 
 
     //update progress

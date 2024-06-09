@@ -77,6 +77,32 @@ Route::controller(GendreController::class)->group(function () {
         Route::post('/countMine','countMine')->middleware('auth:sanctum');
     });
 
+//favorite routes
+    Route::controller(FavoriteController::class)->group(function () {
+        Route::post('/add/{bookId}', 'add')->middleware('auth:sanctum');
+        Route::get('/favorites', 'showMine')->middleware('auth:sanctum');
+    //    Route::get('/showUserFav','showUserFav');
+        Route::delete('/remove/{bookId}','remove')->middleware('auth:sanctum');
+    });
+
+//report routes
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('/reports',  'index');
+        Route::post('/report', 'store')->middleware('auth:sanctum');
+        Route::get('/report{id}', 'show');
+        Route::get('/user-reports',  'showUserReports')->middleware('auth:sanctum');
+        Route::get('/bookReports', 'showReportsByBookId');
+        Route::delete('/delete/{id}','removeReport');
+        Route::delete('/delete', 'deleteAllUserReports');
+    });
+
+//note routes
+    Route::controller(NoteController::class)->group(function(){
+        Route::get('/notes', 'index');
+        Route::post('/note','store')->middleware('auth:sanctum');
+        Route::get('');
+    });
+
 
 //review routes
     Route::controller(ReviweController::class)->group(function () {
@@ -86,13 +112,7 @@ Route::controller(GendreController::class)->group(function () {
 
     });
 
-//favorite routes
-    Route::controller(FavoriteController::class)->group(function () {
-        Route::post('/add/{bookId}', 'addToFavorites')->middleware('auth:sanctum');
-        Route::get('/showMine', 'showMine')->middleware('auth:sanctum');
-        Route::get('/showUserFav','showUserFav')->middleware('auth:sanctum');
-        Route::delete('/remove','remove')->middleware('auth:sanctum');
-    });
+
 
 //post routes
     Route::controller(PostController::class)->group(function () {
@@ -115,16 +135,7 @@ Route::controller(GendreController::class)->group(function () {
 
       });
 
-//report routes
-    Route::controller(ReportController::class)->group(function () {
-        Route::get('/reports',  'index');
-        Route::post('/report', 'store')->middleware('auth:sanctum');
-        Route::get('/report{id}', 'show');
-        Route::get('/user-reports',  'showUserReports')->middleware('auth:sanctum');
-        Route::get('/bookReports', 'showReportsByBookId');
-        Route::delete('/delete/{id}','removeReport');
-        Route::delete('/delete', 'deleteAllUserReports');
-    });
+
 //review routes
 Route::controller(ReviweController::class)->group(function () {
     Route::get('/showAllReviwes', 'index');
@@ -143,18 +154,8 @@ Route::controller(ReviweController::class)->group(function () {
 
   });
 
-//note routes
-    Route::controller(NoteController::class)->group(function(){
-        Route::get('/notes', 'index');
-        Route::post('/note','store')->middleware('auth:sanctum');
-        Route::get('');
-    });
 
 
-//suggestion routes
-    Route::controller(SuggestionController::class)->group(function(){
-
-    });
 
 
 

@@ -100,7 +100,7 @@ class BookController extends BaseController
 
 
 //search book by its name
-    public function findByName(Request $request): \Illuminate\Http\JsonResponse
+ /**   public function findByName(Request $request): \Illuminate\Http\JsonResponse
     {
         $bookName = $request->input('name');
         $books = Book::where('title', 'like', '%' . $bookName . '%')->get();
@@ -110,13 +110,18 @@ class BookController extends BaseController
         }
 
         return $this->sendResponse($books, 'Books retrieved successfully');
-    }
+    }*/
 
 //search books by author name
     public function author(Request $request): \Illuminate\Http\JsonResponse
     {
-        $authorName = $request->input('name');
-        $books = Book::where('author_name', 'like', '%' . $authorName . '%')->get();
+        $find = $request->input('name');
+
+        // Search in both book title and author name
+        $books = Book::where(function ($query) use ($find) {
+            $query->where('title', 'like', '%'. $find. '%')
+                ->orWhere('author_name', 'like', '%'. $find. '%');
+        })->get();
 
         if ($books->isEmpty()) {
             return $this->sendError('Book not found');
@@ -167,7 +172,9 @@ class BookController extends BaseController
                 return $this->sendError('Oops! Your points aren\'t enough to open this book.');
             } else {
 
-                $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
+                $request->user()->update([
+
+                    'my_points' => $request->user()->my_points - $book->points]);
                 $newShelf = Shelf::create([
                     'user_id' => $userId,
                     'book_id' => $id,
@@ -211,9 +218,22 @@ class BookController extends BaseController
                 'shelf' => $shelf,
                 'book_data' => $bookData,
             ], 'Shelf Updated and Book opened successfully.');
+
+            // Filter out unwanted fields
+            /*  $filteredBookData = [
+                  'success' => isset($bookData['success'])? $bookData['success'] : false,
+                  'data' => isset($bookData['data'])? $bookData['data'] : '',
+                  'message' => isset($bookData['message'])? $bookData['message'] : ''
+              ];
+
+              return $this->sendResponse([
+                  'shelf' => $shelf,
+                  'book_data' => $filteredBookData,
+              ], 'Shelf Updated and Book opened successfully.');
+          }*/
+
         }
     }
-
 
     //update book
     public function update(BookRequest $request, $id): JsonResponse
