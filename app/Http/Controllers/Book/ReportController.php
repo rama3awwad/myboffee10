@@ -35,7 +35,7 @@ class ReportController extends Controller
         return $this->sendResponse($report, 'Report created successfully.');
     }
 
-    //show book by its id for admin
+    //show report by its id for admin
     public function show($id): JsonResponse
     {
         $report = Report::find($id);
@@ -51,7 +51,7 @@ class ReportController extends Controller
     public function showUserReports(): JsonResponse
     {
         $user = Auth::user();
-        $reports = $user->reports;
+        $reports = $user->reports();
 
         return $this->sendResponse($reports, 'User\'s reports');
     }
@@ -68,7 +68,7 @@ class ReportController extends Controller
     public function removeReport($reportId): JsonResponse
     {
         $report = Report::findOrFail($reportId);
-        $report->delete(); // Delete the report
+        $report->delete();
 
         return $this->sendResponse(null, 'Report removed successfully');
     }
