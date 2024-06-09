@@ -100,7 +100,7 @@ class BookController extends BaseController
 
 
 //search book by its name
- /**   public function findByName(Request $request): \Illuminate\Http\JsonResponse
+/*    public function findByName(Request $request): \Illuminate\Http\JsonResponse
     {
         $bookName = $request->input('name');
         $books = Book::where('title', 'like', '%' . $bookName . '%')->get();
@@ -113,7 +113,8 @@ class BookController extends BaseController
     }*/
 
 //search books by author name
-    public function author(Request $request): \Illuminate\Http\JsonResponse
+
+            public function author(Request $request): \Illuminate\Http\JsonResponse
     {
         $find = $request->input('name');
 
