@@ -15,6 +15,16 @@ class Shelf extends Model
         'progress'
     ];
 
+   public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function book()
+    {
+        return $this->belongsTo(Book::class);
+    }
+
     public function books()
     {
         return $this->hasMany(Book::class);
