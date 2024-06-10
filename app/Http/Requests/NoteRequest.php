@@ -25,8 +25,12 @@ class NoteRequest extends FormRequest
     {
         return [
 
+              return [
             'user_id' => ['required', 'exists:users,id'],
-            'body' => ['required',]
+            'book_id' => ['required', 'exists:books,id'],
+            'page_num' => ['required'],
+            'body' => 'required'
+        ];
         ];
     }
 }
