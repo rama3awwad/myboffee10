@@ -92,6 +92,7 @@ class BookController extends BaseController
         $book = Book::find($id);
 
         if (is_null($book)) {
+
             return $this->sendError('Book not found');
         }
 
