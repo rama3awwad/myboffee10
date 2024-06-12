@@ -16,22 +16,21 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        foreach ($users as $user) {
+        $email = 'rama.3awwad11@gmail.com';
 
-            $existingUser = User::where('email', $user['email'])->first();
 
-            if ($existingUser) {
-                continue;
-            }
-       User::Create([
-           'user_name' => 'admin',
-            'email' => 'rama.3awwad11@gmail.com',
-            'password' => bcrypt('admin11'),
-            'my_points' => '999999999',
-            'age' => '40',
-            'gendre_id' => '1'
-        ]);
+         $existingUser = User::where('email', $email)->first();
 
-         }}
+         if (!$existingUser) {
 
+         User::Create([
+             'user_name' => 'admin',
+             'email' => 'rama.3awwad11@gmail.com',
+             'password' => bcrypt('admin11'),
+             'my_points' => '999999999',
+             'age' => '40',
+             'gendre_id' => '1'
+         ]);
+
+     }}
 }
