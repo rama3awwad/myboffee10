@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('notes', function (Blueprint $table) {
-            $table->id();
+              $table->id();
             $table->foreignId('user_id')->refernces('id')->on('users')->onDelete('cascade');
             $table->foreignId('book_id')->references('id')->on('books')->onDelete('cascade');
             $table->integer('page_num');
