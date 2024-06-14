@@ -13,8 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('levels_migration', function (Blueprint $table) {
+        Schema::create('levels', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('books');
+            $table->string('level')->default('first');
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('levels_migration');
+        Schema::dropIfExists('levels');
     }
 };

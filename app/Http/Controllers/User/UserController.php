@@ -21,6 +21,7 @@ class UserController extends BaseController
         'my_points' => $request->my_points ?? 40,
         'image' => $request->image,
         'gendre_id' => $request->gendre_id,
+         'role_id' => $request->role_id,
     ]);
 
     $token = $user->createToken("API TOKEN")->plainTextToken;
@@ -34,6 +35,7 @@ class UserController extends BaseController
         'token' => $token,
         'my_points' => $user->my_points,
         'gendre_id' => $user->gendre_id,
+        'user_id' => $user->role_id,
 
     ];
 

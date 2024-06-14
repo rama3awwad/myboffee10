@@ -13,17 +13,17 @@ class LevelController extends Controller
     public function create(Request $request)
     {
         $userId = Auth::user()->id;
-
         $existing = Level::where('user_id', $userId)->first();
 
         if (!$existing) {
+            $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
             $newLevel = Level::create([
                 'user_id' => $userId,
-                'books' => 0,
+                'books' => $count,
                 'level' => 'first',
             ]);
 
-            return response()->json(['message' => 'Level created successfully'], 200);
+            return response()->json($newLevel,['message' => 'Level created successfully'], 200);
         } else {
 
             $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
@@ -46,8 +46,7 @@ class LevelController extends Controller
                     'level' => 'third',
                 ]);
             }
-
-            return response()->json(['message' => 'Level updated successfully'], 200);
+            return response()->json($existing,['message' => 'Level updated successfully'], 200);
         }
     }
 }

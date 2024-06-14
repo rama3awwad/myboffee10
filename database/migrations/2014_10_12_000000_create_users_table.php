@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('my_points')->default(40)->nullable();
             $table->string('age');
             $table->string('image')->nullable();
+            $table->integer('role_id')->foreign()->references('id')->on('roles')->nullable();
             $table->integer('gendre_id')->foreign()->references('id')->on('gendres')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();

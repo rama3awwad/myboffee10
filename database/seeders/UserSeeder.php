@@ -16,8 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $email = 'rama.3awwad11@gmail.com';
-
+         $email = 'rama.3awwad11@gmail.com';
 
          $existingUser = User::where('email', $email)->first();
 
@@ -29,8 +28,8 @@ class UserSeeder extends Seeder
              'password' => bcrypt('admin11'),
              'my_points' => '999999999',
              'age' => '40',
-             'gendre_id' => '1'
+             'gendre_id' => '1',
+             'role_id' => '1',
          ]);
-
      }}
 }
