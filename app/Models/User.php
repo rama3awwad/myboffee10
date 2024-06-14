@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Book::class,'reports')->withTimeStamps();
     }
 
+    public function levels()
+    {
+        return $this->belongsToMany(User::class,'reports')->withTimeStamps();
+    }
+
     public function posts()
     {
         return $this->hasMany(Post::class, 'user_id');

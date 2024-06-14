@@ -113,7 +113,7 @@ class BookController extends BaseController
         return $this->sendResponse($books, 'Books retrieved successfully');
     }*/
 
-//search books by author name
+//search books book name or author name
 
             public function author(Request $request): \Illuminate\Http\JsonResponse
     {

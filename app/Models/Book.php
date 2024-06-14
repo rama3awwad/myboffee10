@@ -30,7 +30,6 @@ class Book extends Model
     }
 
 
-
     public function reviews()
     {
         return $this->belongsToMany(Reviwe::class, 'book_id');
@@ -42,6 +41,11 @@ class Book extends Model
     }
 
     public function reports()
+    {
+        return $this->belongsToMany(User::class,'reports')->withTimeStamps();
+    }
+
+    public function levels()
     {
         return $this->belongsToMany(User::class,'reports')->withTimeStamps();
     }
