@@ -2,26 +2,29 @@
 
 namespace App\Http\Controllers\Book;
 
+use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NoteRequest;
 use App\Models\Note;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class NoteController extends Controller
+class NoteController extends BaseController
 {
 
     // Add a note
-    public function store(NoteRequest $request, $bookId): JsonResponse
+    public function store(NoteRequest $request,$bookId): JsonResponse
     {
         $request->validated();
         $user = Auth::user();
         $note = Note::create ([
             'user_id'=>$request->user()->id,
-            'book_id'=>$request->$bookId,
+            'book_id'=>$bookId,
             'page_num' => $request->page_num,
             'body'=>$request->body,
+            'color'=>$request->color,
         ]);
 
         return $this->sendResponse($note,  'Note created successfully.');
@@ -43,17 +46,23 @@ class NoteController extends Controller
     public function index(): JsonResponse
     {
         $user = Auth::user();
-        $notes = $user->notes();
+        $notes = DB::table('notes')
+            ->join('users', 'users.id', '=', 'notes.user_id')
+            ->join('books', 'books.id', '=', 'notes.book_id')
+            ->select('notes.*', 'books.title as book_title')
+            ->select('notes.*', 'books.cover as book_cover')
+            ->where('users.id', $user->id)
+            ->get();
 
         return $this->sendResponse($notes, 'User\'s notes');
     }
 
-    public function update(Request $request, $bookId): JsonResponse
+    public function update(NoteRequest $request, $noteId): JsonResponse
     {
         $request->validated();
-        $user = Auth::user();
+        $user_id = Auth::user()->id;
 
-        $note = Note::find($bookId);
+        $note = Note::find($noteId);
 
         if (is_null($note)) {
             return $this->sendError('Note not found');
@@ -61,7 +70,7 @@ class NoteController extends Controller
 
         $note->update($request->all());
 
-        return $this->sendResponse($note,  'Note created successfully.');
+        return $this->sendResponse($note,  'Note updated successfully.');
     }
 
     // Show my notes on specific book
@@ -83,11 +92,11 @@ class NoteController extends Controller
     }
 
     // Delete my reports
-    public function deleteAllUserReports(): JsonResponse
+    public function deleteAll(): JsonResponse
     {
         $user = Auth::user();
-        $user->reports()->detach();
+        $user->notes()->detach();
 
-        return $this->sendResponse(null, 'All reports removed successfully');
+        return $this->sendResponse(null, 'All notes removed successfully');
     }
 }

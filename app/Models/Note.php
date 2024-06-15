@@ -9,7 +9,9 @@ class Note extends Model
 {
     protected $fillable =[
         'user_id',
+        'book_id',
         'body',
+        'page_num',
         'color'
     ];
 

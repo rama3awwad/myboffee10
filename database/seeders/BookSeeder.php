@@ -106,7 +106,7 @@ class BookSeeder extends Seeder
                 continue;
             }
             $filePath = '/books/files/' . $book['file'] . '.pdf';
-            $coverPath = 'books/cover_images/' . $book['cover'] . '.jpg';
+            $coverPath = '/books/cover_images/' . $book['cover'] . '.jpg';
 
             Book::create([
                 'title' => $book['title'],

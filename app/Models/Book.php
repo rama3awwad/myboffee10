@@ -37,7 +37,7 @@ class Book extends Model
 
     public function notes()
     {
-        return $this->belongsToMany(User::class, 'notes')->withTimeStamps();
+        return $this->belongsToMany(User::class, 'notes');
     }
 
     public function reports()

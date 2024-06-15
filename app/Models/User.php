@@ -44,7 +44,7 @@ class User extends Authenticatable
 
     public function notes()
     {
-        return $this->belongsToMany(Book::class, 'notes')->withTimeStamps();
+        return $this->belongsToMany(Book::class, 'notes');
     }
 
     public function reports()

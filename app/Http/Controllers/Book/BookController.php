@@ -36,12 +36,12 @@ class BookController extends BaseController
 
 
         $image = time() . '-' . $request->title . '.' . $request->file('cover')->extension();
-        $request->cover->move(public_path('books/cover_images'), $image);
-        $image = 'books/cover_images/' . $image;
+        $request->cover->move(public_path('/books/cover_images'), $image);
+        $image = '/books/cover_images/' . $image;
 
         $file = time() . '-' . $request->title . '.' . $request->file('file')->extension();
-        $request->file->move(public_path('books/files'), $file);
-        $file = 'books/files/' . $file;
+        $request->file->move(public_path('/books/files'), $file);
+        $file = '/books/files/' . $file;
 
         $book = Book::create([
             'title' => $request->title,

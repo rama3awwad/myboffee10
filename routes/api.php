@@ -100,9 +100,13 @@ Route::controller(GendreController::class)->group(function () {
 
 //note routes
     Route::controller(NoteController::class)->group(function(){
-        Route::get('/notes', 'index');
-        Route::post('/note','store')->middleware('auth:sanctum');
-        Route::get('');
+        Route::post('/note/{bookId}','store')->middleware('auth:sanctum');
+        Route::get('/note/{noteId}', 'show');
+        Route::get('/notes','index')->middleware('auth:sanctum');
+        Route::post('/update/{noteId}','update')->middleware('auth:sanctum');
+        Route::get('/notes/{bookId}','showMine')->middleware('auth:sanctum');
+        Route::delete('note/{noteId}','delete')->middleware('auth:sanctum');
+        Route::delete('/notes','deleteAll')->middleware('auth:sanctum');
     });
 
 //rate routes
