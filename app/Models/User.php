@@ -52,9 +52,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Book::class,'reports')->withTimeStamps();
     }
 
-    public function levels()
+    public function level()
     {
-        return $this->belongsToMany(User::class,'reports')->withTimeStamps();
+        return $this->belongsTo(Level::class);
     }
 
     public function posts()
@@ -75,6 +75,11 @@ class User extends Authenticatable
     public function favoriteBooks()
     {
         return $this->belongsToMany(Book::class, 'favorite_books')->withTimestamps();
+    }
+
+    public function ratings()
+    {
+        return $this->belongsToMany(Rating::class, 'user_id');
     }
 
     /**

@@ -45,14 +45,19 @@ class Book extends Model
         return $this->belongsToMany(User::class,'reports')->withTimeStamps();
     }
 
-    public function levels()
+  /*  public function levels()
     {
-        return $this->belongsToMany(User::class,'reports')->withTimeStamps();
-    }
+        return $this->belongsToMany(User::class,'levels')->withTimeStamps();
+    }*/
 
     public function favoriteBooks()
     {
         return $this->belongsToMany(FavoriteBook::class, 'favorite_books');
+    }
+
+    public function ratings()
+    {
+        return $this->belongsToMany(Rating::class, 'user_id');
     }
 
     use HasFactory;

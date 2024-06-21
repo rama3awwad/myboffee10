@@ -3,12 +3,13 @@
 use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\FavoriteController;
 use App\Http\Controllers\Book\NoteController;
+use App\Http\Controllers\Book\RatingController;
 use App\Http\Controllers\Book\ReportController;
 use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
+use App\Http\Controllers\Level\LevelController;
 use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
-use App\Http\Controllers\Shelf\RatingController;
 use App\Http\Controllers\Shelf\ShelfController;
 use App\Http\Controllers\Book\suggestionController;
 use App\Http\Controllers\Types\TypeController;
@@ -111,13 +112,14 @@ Route::controller(GendreController::class)->group(function () {
 
 //rate routes
     Route::controller(RatingController::class)->group(function(){
-        Route::post('/rate','add');
+        Route::post('/rate','add')->middleware('auth:sanctum');
         Route::get('/avg/{bookId}','avgRate');
     });
 
+
 //level routes
-    Route::controller('LevelController::class')->group(function(){
-        Route::post('/level','create');
+    Route::controller(LevelController::class)->group(function(){
+        Route::post('/level','create')->middleware('auth:sanctum');
     });
 
 

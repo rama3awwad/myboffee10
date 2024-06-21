@@ -80,13 +80,25 @@ class ShelfController extends BaseController
         $userId = Auth::user()->id;
         $status = $request->input('status');
 
-        $shelves = Shelf::where('user_id', $userId)->where('status', $status)->get();
+        $shelves = Shelf::with(['book'])
+            ->where('user_id', $userId)
+            ->where('status',$status)
+            ->get();
 
-        if ($shelves->isEmpty()) {
-            return response()->json(['error' => 'No shelves found with the specified status.'], 404);
+        if($shelves->isEmpty()){
+            return response()->json(['error' => 'No shelves found with the specified status.'],404);
         }
 
-        return response()->json($shelves, 200);
+        $newShelve = $shelves->map(function ($shelf) {
+            return [
+                'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status', 'progress']),
+                'book' => [
+                'title' => $shelf->book->title,
+                'cover' => $shelf->book->cover,
+                ],
+            ];
+        });
+        return response()->json($newShelve, 200);
     }
 
 //count books on user's shelf
