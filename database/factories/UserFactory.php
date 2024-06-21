@@ -23,9 +23,9 @@ class UserFactory extends Factory
             'password' => bcrypt('your_password_here'),
             'my_points' => 40,
             'age' => rand(10, 25),
-            'gendre_id' => $this->faker->randomElement([1, 2]), // Assuming 'gender_id' is a valid column name and you have defined the possible values elsewhere
+            'gendre_id' => $this->faker->randomElement([1, 2]),
             'role_id' => 1,
-            'email_verified_at' => null, // Unverified emails might not have this field set
+            'email_verified_at' => null,
             'remember_token' => Str::random(10),
         ];
     }

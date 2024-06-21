@@ -57,8 +57,9 @@ class Book extends Model
 
     public function ratings()
     {
-        return $this->belongsToMany(Rating::class, 'user_id');
+        return $this->hasMany(Rating::class);
     }
+
 
     use HasFactory;
 }

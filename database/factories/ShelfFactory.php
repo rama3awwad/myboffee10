@@ -25,12 +25,13 @@ class ShelfFactory extends Factory
             $book = Book::inRandomOrder()->first();
         }
         $status = fake()->randomElement(['reading','finished','watch_later']);
+
         $progress = 0;
         if ($status == 'finished'){
             $progress = $book->total_pages;
         }
         if ($status == 'reading'){
-            $progress = fake()->numberBetween(0,$book->total_pages);
+            $progress = fake()->numberBetween(1,$book->total_pages);
         }
         if($status == 'watch_later'){
             $progress = 0;

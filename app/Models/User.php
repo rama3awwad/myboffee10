@@ -79,8 +79,9 @@ class User extends Authenticatable
 
     public function ratings()
     {
-        return $this->belongsToMany(Rating::class, 'user_id');
+        return $this->hasMany(Rating::class);
     }
+
 
     /**
      * The attributes that should be hidden for serialization.
