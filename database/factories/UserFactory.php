@@ -18,10 +18,14 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
+            'user_name' => $this->faker->unique()->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => bcrypt('your_password_here'),
+            'my_points' => 40,
+            'age' => rand(10, 25),
+            'gendre_id' => $this->faker->randomElement([1, 2]), // Assuming 'gender_id' is a valid column name and you have defined the possible values elsewhere
+            'role_id' => 1,
+            'email_verified_at' => null, // Unverified emails might not have this field set
             'remember_token' => Str::random(10),
         ];
     }

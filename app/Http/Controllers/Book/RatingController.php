@@ -148,10 +148,9 @@ class RatingController extends BaseController
 
         if ($countOfRatings >= 0) {
             $averageRating = $sumOfRatings / $countOfRatings;
-
-            return float ($averageRating);
+            $scaledRating = round($averageRating , 1);
+            return $scaledRating;
         }
-
 
         return null;
 

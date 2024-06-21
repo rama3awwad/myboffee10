@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Book;
+use App\Models\Rating;
+use App\Models\Shelf;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
@@ -18,8 +21,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-      //  \App\Models\User::factory(10)->create();
+        \App\Models\User::factory(20)->create();
        // Book::factory(100)->create();
+        Book::factory(20)->create();
+        Shelf::factory(20)->create();
+        Rating::factory()->count(5)->create();
 
 
 
@@ -29,8 +35,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TypeSeeder::class,
             BookSeeder::class,
-           
+            ShelfSeeder::class,
 
         ]);
+
     }
 }

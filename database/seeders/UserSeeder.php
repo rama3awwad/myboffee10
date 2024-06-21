@@ -31,5 +31,8 @@ class UserSeeder extends Seeder
              'gendre_id' => '1',
              'role_id' => '1',
          ]);
-     }}
+
+         //    User::factory(20)->create();
+
+         }}
 }

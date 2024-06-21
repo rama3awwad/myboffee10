@@ -7,6 +7,7 @@ use App\Http\Requests\BookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Http\Controllers\BaseController as BaseController;
+use App\Models\Rating;
 use App\Models\Shelf;
 use App\Models\Type;
 use Cassandra\Collection;
@@ -57,6 +58,23 @@ class BookController extends BaseController
         return $this->sendResponse($book, 'Book created successfully.');
     }
 
+//show avg rating of book
+    public function avgRating($id)
+    {
+
+        $sumOfRatings = Rating::where('book_id', $id)->sum('rate');
+        $countOfRatings = Rating::where('book_id', $id)->count();
+
+        if ($countOfRatings >= 0) {
+            $averageRating = $sumOfRatings / $countOfRatings;
+
+            return $averageRating;
+        }
+
+        return null;
+
+    }
+
 //show book details without 'file'
     public function showDetails($id): JsonResponse
     {
@@ -65,11 +83,18 @@ class BookController extends BaseController
         if (is_null($book)) {
             return $this->sendError('Book not found');
         }
+
+        $rating = $this->avgRating($id);
+
         $details = Book::select('id', 'title', 'cover', 'total_pages', 'author_name', 'points', 'description', 'type_id',)
             ->where('id', $id)
             ->first();
 
-        return $this->sendResponse($details, 'Book retrieved successfully');
+        return $this->sendResponse([
+            'Rating' => $rating,
+            'Details' => $details,
+        ], 'Book details retrieved successfully.');
+
     }
 
 //show file only

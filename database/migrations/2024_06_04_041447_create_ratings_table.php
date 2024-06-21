@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('book_id')->references('id')->on('books')->onDelete('cascade');
-            $table->enum('rate',range(1,5));
+            $table->integer('rate');
             $table->timestamps();
         });
     }
