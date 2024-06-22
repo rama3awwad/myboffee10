@@ -74,32 +74,6 @@ class ShelfController extends BaseController
         return $this->sendResponse($books, 'Books retrieved successfully.');
     }*/
 
-//show books in my shelf
-    public function myShelf(Request $request): JsonResponse
-    {
-        $userId = Auth::user()->id;
-        $status = $request->input('status');
-
-        $shelves = Shelf::with(['book'])
-            ->where('user_id', $userId)
-            ->where('status',$status)
-            ->get();
-
-        if($shelves->isEmpty()){
-            return response()->json(['error' => 'No shelves found with the specified status.'],404);
-        }
-
-        $newShelve = $shelves->map(function ($shelf) {
-            return [
-                'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status', 'progress']),
-                'book' => [
-                'title' => $shelf->book->title,
-                'cover' => $shelf->book->cover,
-                ],
-            ];
-        });
-        return response()->json($newShelve, 200);
-    }
 
 //count books on user's shelf
     public function countMine(Request $request): JsonResponse
@@ -114,6 +88,38 @@ class ShelfController extends BaseController
         ], 'Count of books in this shelf retrieved successfully.');
     }
 
+//show books in my shelf
+    public function myShelf(Request $request): JsonResponse
+    {
+        $userId = Auth::user()->id;
+        $status = $request->input('status');
+
+        $shelves = Shelf::with(['book'])
+            ->where('user_id', $userId)
+            ->where('status', $status)
+            ->get();
+
+        if($shelves->isEmpty()){
+            return response()->json(['error' => 'No shelves found with the specified status.'],404);
+        }
+
+        $newShelve = $shelves->map(function ($shelf) use ($userId, $status) {
+            $bookCount = Shelf::where('user_id', $userId)->where('status', $status)->count();
+
+            return [
+                'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status', 'progress']),
+                'book' => [
+                    'title' => $shelf->book->title,
+                    'cover' => $shelf->book->cover,
+                ],
+                'total_books_count' => $bookCount,
+            ];
+        });
+
+        return response()->json([
+            'shelves' => $newShelve,
+        ], 200);
+    }
 
     //update progress
     public function updateProgress(Request $request, $shelfId)
