@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory(20)->create();
+        User::factory(20)->create();
        // Book::factory(100)->create();
         Book::factory(20)->create();
         Shelf::factory(20)->create();

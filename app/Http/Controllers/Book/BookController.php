@@ -193,73 +193,50 @@ class BookController extends BaseController
         $userId = Auth::user()->id;
         $shelf = Shelf::where('user_id', $userId)->where('book_id', $id)->first();
 
-        if (!$shelf) {
-
-            if ($request->user()->my_points < $book->points) {
+        $show = function($user, $book, $shelf) {
+            if ($user->my_points < $book->points) {
                 return $this->sendError('Oops! Your points aren\'t enough to open this book.');
             } else {
+                $user->update(['my_points' => $user->my_points - $book->points]);
 
-                $request->user()->update([
-
-                    'my_points' => $request->user()->my_points - $book->points]);
-                $newShelf = Shelf::create([
-                    'user_id' => $userId,
-                    'book_id' => $id,
-                    'status' => 'reading',
-                    'progress' => 1,
-                ]);
-
-                $bookData = $this->getFile($id);
+                $file = $this->getFile($book->id);
+                $bookDataArray = $file->getData(true);
 
                 return $this->sendResponse([
-                    'Shelf' => $newShelf,
-                    'book_data' => $bookData,
+                    'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status', 'progress']),
+                    'book_data' => ['data' => $file['data']]
                 ], 'Shelf Created and Book opened successfully.');
             }
+        };
 
+        if (!$shelf) {
+            $newShelf = Shelf::create([
+                'user_id' => $userId,
+                'book_id' => $id,
+                'status' => 'reading',
+                'progress' => 1,
+            ]);
+
+            return $show($request->user(), $book, $newShelf);
         } elseif ($shelf->status == 'watch_later') {
+            $shelf->update([
+                'status' => 'reading',
+                'progress' => 1,
+            ]);
 
-            if ($request->user()->my_points < $book->points) {
-                return $this->sendError('Oops! Your points aren\'t enough to open this book.');
-            } else {
-
-                $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
-                $shelf->update([
-                    'status' => 'reading',
-                    'progress' => 1,
-                ]);
-
-                $bookData = $this->getFile($id);
-
-                return $this->sendResponse([
-                    'Shelf' => $shelf,
-                    'book_data' => $bookData,
-                ], 'Shelf Updated and Book opened successfully.');
-            }
-
+            return $show($request->user(), $book, $shelf);
         } elseif ($shelf->status == 'reading' || $shelf->status == 'finished') {
 
-            $bookData = $this->getFile($id);
+            $file = $this->getFile($id);
+            $bookDataArray = $file->getData(true);
 
             return $this->sendResponse([
-                'shelf' => $shelf,
-                'book_data' => $bookData,
+                'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status', 'progress']),
+                'book_data' => ['data' => $bookDataArray['data']]
             ], 'Shelf Updated and Book opened successfully.');
-
-            // Filter out unwanted fields
-            /*  $filteredBookData = [
-                  'success' => isset($bookData['success'])? $bookData['success'] : false,
-                  'data' => isset($bookData['data'])? $bookData['data'] : '',
-                  'message' => isset($bookData['message'])? $bookData['message'] : ''
-              ];
-
-              return $this->sendResponse([
-                  'shelf' => $shelf,
-                  'book_data' => $filteredBookData,
-              ], 'Shelf Updated and Book opened successfully.');
-          }*/
-
         }
+
+        return $this->sendError('Unexpected error occurred.');
     }
 
     //update book
