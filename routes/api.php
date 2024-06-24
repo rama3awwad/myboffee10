@@ -91,10 +91,10 @@ Route::controller(GendreController::class)->group(function () {
 //report routes
     Route::controller(ReportController::class)->group(function () {
         Route::get('/reports',  'index');
-        Route::post('/report', 'store')->middleware('auth:sanctum');
-        Route::get('/report{id}', 'show');
-        Route::get('/user-reports',  'showUserReports')->middleware('auth:sanctum');
-        Route::get('/bookReports', 'showReportsByBookId');
+        Route::post('/report/{bookId}', 'store')->middleware('auth:sanctum');
+        Route::get('/report/{id}', 'show');
+        Route::get('/user/reports',  'showMyReports')->middleware('auth:sanctum');
+        Route::get('/book/reports/{bookId}', 'showBookReports');
         Route::delete('/delete/{id}','removeReport');
         Route::delete('/delete', 'deleteAllUserReports');
     });

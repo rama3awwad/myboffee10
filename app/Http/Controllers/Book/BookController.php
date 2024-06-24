@@ -218,7 +218,7 @@ class BookController extends BaseController
         } elseif ($shelf->status == 'watch_later') {
 
             if ($request->user()->my_points < $book->points) {
-                return $this->sendError('Oops! Your points aren\'t enough to open this book.');
+                return $this->sendError('Oops! Your pophpints aren\'t enough to open this book.');
             } else {
 
                 $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);

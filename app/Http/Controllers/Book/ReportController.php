@@ -2,21 +2,34 @@
 
 namespace App\Http\Controllers\Book;
 
+use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReportRequest;
 use App\Models\Report;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\BaseController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
-class ReportController extends Controller
+class ReportController extends BaseController
 {
     //show all reports
     public function index(): JsonResponse
     {
-        $reports = Report::all();
+       // $reports = Report::with(['user', 'book'])->get();
+        $reports = Report::with(['user:id,user_name', 'book:id,title,file,cover'])->get();
+
+        $response = [];
+        foreach ($reports as $report) {
+            $response[] = [
+                'id' => $report->id,
+                'body' => $report->body,
+                'user_name' => $report->user->user_name,
+                'book_title' => $report->book->title ,
+            ];
+        }
+
         return $this->sendResponse($reports, 'Reports retrieved successfully.');
     }
 
@@ -28,7 +41,7 @@ class ReportController extends Controller
         $user = Auth::user();
         $report = Report::create ([
             'user_id'=>$request->user()->id,
-            'book_id'=>$request->$bookId,
+            'book_id'=>$bookId,
             'body'=>$request->body,
         ]);
 
@@ -38,28 +51,64 @@ class ReportController extends Controller
     //show report by its id for admin
     public function show($id): JsonResponse
     {
-        $report = Report::find($id);
+
+    //    $report = Report::with(['user', 'book'])->find($id);
+        $report = Report::with(['user:id,user_name', 'book:id,title,cover,file'])->find($id);
 
         if (is_null($report)) {
             return $this->sendError('Report not found');
         }
 
+        $response = [
+            'id' => $report->id,
+            'body' => $report->body,
+            'user_name' => $report->user->user_name ,
+            'book_title' => $report->book->title ,
+        ];
+
+
         return $this->sendResponse($report, 'Report retrieved successfully');
     }
 
     //show my reports
-    public function showUserReports(): JsonResponse
+    public function showMyReports(): JsonResponse
     {
         $user = Auth::user();
-        $reports = $user->reports();
+        $reports = Report::with(['user:id,user_name', 'book:id,title'])->get();
+
+        $response = [];
+        foreach ($reports as $report) {
+            $response[] = [
+                'id' => $report->id,
+                'body' => $report->body,
+                'user_name' => $report->user->user_name ,
+                'book_title' => $report->book->title,
+            ];
+        }
 
         return $this->sendResponse($reports, 'User\'s reports');
     }
 
     // Show book reports
-    public function showReportsByBookId($bookId): JsonResponse
+    public function showBookReports($bookId): JsonResponse
     {
-        $reports = Report::where('book_id', $bookId)->get();
+        $reports = DB::table('reports')
+            ->join('users', 'reports.user_id', '=', 'users.id')
+            ->join('books', 'reports.book_id', '=', 'books.id')
+            ->where('reports.book_id', $bookId)
+            ->select('reports.id', 'reports.body', 'users.user_name', 'books.title as book_title')
+            ->get();
+
+        $response = [];
+        foreach ($reports as $report) {
+            $response[] = [
+                'id' => $report->id,
+                'body' => $report->body,
+                'user_name' => $report->user_name,
+                'book_title' => $report->book_title,
+            ];
+
+        }
 
         return $this->sendResponse($reports, 'Reports fetched successfully');
     }

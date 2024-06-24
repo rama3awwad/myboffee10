@@ -99,25 +99,26 @@ class ShelfController extends BaseController
             ->where('status', $status)
             ->get();
 
-        if($shelves->isEmpty()){
-            return response()->json(['error' => 'No shelves found with the specified status.'],404);
+        if ($shelves->isEmpty()) {
+            return response()->json(['error' => 'No shelves found with the specified status.'], 404);
         }
 
-        $newShelve = $shelves->map(function ($shelf) use ($userId, $status) {
-            $bookCount = Shelf::where('user_id', $userId)->where('status', $status)->count();
+        $bookCount = Shelf::where('user_id', $userId)->where('status', $status)->count();
 
-            return [
+        $newShelves = [];
+        foreach ($shelves as $shelf) {
+            $newShelves[] = [
                 'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status', 'progress']),
                 'book' => [
                     'title' => $shelf->book->title,
                     'cover' => $shelf->book->cover,
+                    'file' => $shelf->book->file,
                 ],
                 'total_books_count' => $bookCount,
             ];
-        });
-
+        }
         return response()->json([
-            'shelves' => $newShelve,
+            'shelves' => $newShelves,
         ], 200);
     }
 
