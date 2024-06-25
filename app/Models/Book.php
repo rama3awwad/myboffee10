@@ -9,12 +9,15 @@ class Book extends Model
 {
 
     protected $fillable = [
-        'title',
+        'title_en',
+        'title_ar',
         'file',
         'cover',
-        'author_name',
+        'author_name_en',
+        'author_name_ar',
         'points',
-        'description',
+        'description_en',
+        'description_ar',
         'total_pages',
         'type_id'
     ];

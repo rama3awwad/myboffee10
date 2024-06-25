@@ -45,17 +45,20 @@ class BookFactory extends Factory
        // $title = '';
         do {
             $title = $this->faker->word();
-        } while (Book::where('title', $title)->exists());
+        } while (Book::where('title_en', $title)->exists());
 
 
         return [
-            'title'=>$title,
+            'title_en'=>$title,
+            'title_ar'=>$title,
             'file' => $file,
            // 'cover'=>fake()->imageUrl($width = 400, $height = 600),
             'cover' => $cover,
-            'author_name' => fake()->name(),
+            'author_name_en' => fake()->name(),
+            'author_name_ar' => fake()->name(),
             'points' => fake()->numberBetween(0, 10),
-            'description' => 'It is useful',
+            'description_en' => 'It is useful',
+            'description_ar' => 'It is useful',
             'total_pages' => 4,
             'type_id' => fake()->numberBetween(1, 6),
         ];

@@ -17,16 +17,108 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
+
 class BookController extends BaseController
 {
+   /* public function index(Request $request): JsonResponse
+    {
+        $languageCode = $request->header('Language_Code', 'en');
+
+        $columns = [
+            'title_en' => 'title_en',
+            'title_ar' => 'title_ar',
+            'author_name_en' => 'author_name_en',
+            'author_name_ar' => 'author_name_ar',
+            'description_en' => 'description_en',
+            'description_ar' => 'description_ar'
+        ];
+        $selectedColumns = [];
+
+        foreach ($columns as $key => $column) {
+            if (($languageCode == 'en' && strpos($key, 'en_')!== 0) || strpos($key, $languageCode. '_') === 0) {
+                $selectedColumns[] = $column;
+            } elseif ($languageCode == 'ar' && strpos($key, 'ar_') === 0) {
+                $selectedColumns[] = $column;
+            }
+        }
+
+        $books = Book::select($selectedColumns)->get();
+        //$books = $query->get();
+
+        $transformedBooks = [];
+        foreach ($books as $book) {
+            $transformedBook = [
+                'id' => $book->id,
+                'title' => $book->title_en?? $book->title_ar,
+                'file' => $book->file,
+                'cover' =>$book->cover,
+                'author_name' => $book->author_name_en?? $book->author_name_ar,
+                'points' => $book->points,
+                'description' => $book->description_en?? $book->description_ar,
+                'total_pages' => $book->total_pages,
+                'type_id' => $book->type_id,
+            ];
+            $transformedBooks[] = $transformedBook;
+        }
+
+        // Prepare the response
+        $response = [
+            'books' => $transformedBooks,
+            'message' => 'Books retrieved successfully.'
+        ];
+
+        // Send the response
+        return $this->sendResponse($response, 'Books retrieved successfully.');
+
+
+}*/
+   public function index(Request $request): JsonResponse
+    {
+        $languageCode = $request->header('Language_Code', 'en');
+        $selectedColumns = [
+            'id', 'file', 'cover','title_en','title_ar', 'author_name_en', 'author_name_ar', 'points', 'description_en', 'description_ar', 'total_pages', 'type_id'
+        ];
+
+        $filteredColumns = array_filter($selectedColumns, function ($column) use ($languageCode) {
+            return (strpos($column, $languageCode. '_') === 0) || (strpos($column, 'en_')!== 0 && $languageCode === 'en')
+                || (strpos($column, 'ar_') === 0 && $languageCode === 'ar');
+        });
+
+        $books = Book::select($filteredColumns)->get();
+
+        $transformedBooks = [];
+        foreach ($books as $book) {
+            $transformedBook = [
+                'id' => $book->id,
+                'title' => $book->title_en?? $book->title_ar,
+                'file' => $book->file,
+                'cover' => $book->cover,
+                'author_name' => $book->author_name_en?? $book->author_name_ar,
+                'points' => $book->points,
+                'description' => $book->description_en?? $book->description_ar,
+                'total_pages' => $book->total_pages,
+                'type_id' => $book->type_id,
+            ];
+            $transformedBooks[] = $transformedBook;
+        }
+
+        $response = [
+            'books' => $transformedBooks,
+            'message' => 'Books retrieved successfully.'
+        ];
+
+        return $this->sendResponse($response, 'Books retrieved successfully.');
+    }
+
+
 
 //show all books
-    public function index(): JsonResponse
+  /*  public function index(Request $request): JsonResponse
     {
         $books = Book::all();
         return $this->sendResponse($books, 'Books retrieved successfully.');
     }
-
+*/
 //store book
     public function store(BookRequest $request): JsonResponse
     {

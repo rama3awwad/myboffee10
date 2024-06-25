@@ -24,12 +24,15 @@ class BookSeeder extends Seeder
         $books = [
             //novels
             [
-                'title' => 'أماريتا',
+                'title_en' => 'Amerata',
+                'title_ar' => 'أماريتا',
                 'file' => 'أماريتا',
                 'cover' => 'amarita',
-                'author_name' => 'عمرو عبد الحميد',
+                'author_name_en' =>'Amro abd alhamied',
+                'author_name_ar' => 'عمرو عبد الحميد',
                 'points' => 0,
-                'description' => '
+                'description_en'=> '',
+                'description_ar' => '
         لم أرَ من قبل خوف وجوه أهل زيكولا مثلما كنت أراه في تلك اللحظات أسفل أنوار المشاعل، زيكولا القوية التي تباهي أهلها دومًا بقوتها، باتوا عند أول اختبار حقيقي وجوهًا ذابلة مصدومة تخشى لحظاتها القادمة، أرض الرقص والاحتفالات لم تعد إلا أرض الخوف، أعلم أنهم يلعنون أسيل في داخلهم منذ تسربت إليهم الأخبار أنها سبب مايحدث لهم ، لكنهم قد تجاهلوا عمدًا أنهم من اقتنصوا ذكاءها كاملًا دون أن تضر واحدًا منهم يومًا ..',
                 'total_pages' => 324,
                 'type_id' => 1,
@@ -37,16 +40,20 @@ class BookSeeder extends Seeder
 
             //Islamic
             [
-                'title' => 'هذه رسالات القرآن فمن يتلقاها',
+                'title_en' => 'these are the quran messages who will received it ',
+                'title_ar' => 'هذه رسالات القرآن فمن يتلقاها',
                 'file' => 'هذه رسالات القرآن فمن يتلقاها',
                 'cover' => 'رسالته',
-                'author_name' => 'فريد الأنصاري',
+                'author_name_en' => 'Faried al-ansary ',
+                'author_name_ar' => 'فريد الأنصاري',
                 'points' => 5,
-                'description' => 'هذه رسالات قرآنية، قد بعث بها الشيخ فريد الأنصاري -رحمه الله- قبيل رحيله بقليل إلى دار البقاء إلى أتباعه ومحبيه عبر موقعه الفطرية، إذ كان يتواصل من خلالها معهم،حاثا اياهم على التمسك بحبل القرآن الممدود من السماء، الذي طرفه بيد الله وطرفه الآخر بيد من أخذ به من عباد الله الصالحين.',
+                'description_en'=> '',
+                'description_ar' => 'هذه رسالات قرآنية، قد بعث بها الشيخ فريد الأنصاري -رحمه الله- قبيل رحيله بقليل إلى دار البقاء إلى أتباعه ومحبيه عبر موقعه الفطرية، إذ كان يتواصل من خلالها معهم،حاثا اياهم على التمسك بحبل القرآن الممدود من السماء، الذي طرفه بيد الله وطرفه الآخر بيد من أخذ به من عباد الله الصالحين.',
                 'total_pages' => 107,
                 'type_id' => 2,
             ],
-            //Children
+    ];
+          /*  //Children
             [
                 'title' => 'العجوز والعصفور',
                 'file' => 'العجوز والعصفور',
@@ -96,11 +103,12 @@ class BookSeeder extends Seeder
                 'type_id' => 6,
             ],
 
-        ];
+        ];*/
 
         foreach ($books as $book) {
 
-            $existingBook = Book::where('title', $book['title'])->first();
+            $existingBook = Book::where('title_en', $book['title_en'])->first();
+
 
             if ($existingBook) {
                 continue;
@@ -109,12 +117,15 @@ class BookSeeder extends Seeder
             $coverPath = '/books/cover_images/' . $book['cover'] . '.jpg';
 
             Book::create([
-                'title' => $book['title'],
+                'title_en' => $book['title_en'],
+                'title_ar' => $book['title_ar'],
                 'file' => $filePath,
                 'cover' => $coverPath,
-                'author_name' => $book['author_name'],
+                'author_name_en' => $book['author_name_en'],
+                'author_name_ar' => $book['author_name_ar'],
                 'points' => $book['points'],
-                'description' => $book['description'],
+                'description_en' => $book['description_en'],
+                'description_ar' => $book['description_ar'],
                 'total_pages' => $book['total_pages'],
                 'type_id' => $book['type_id'],
             ]);
