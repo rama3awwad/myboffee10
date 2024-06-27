@@ -80,8 +80,8 @@ class PostController extends BaseController
             $input=$request->all();
 
             $user_id = Auth::user()->id;
-            $post = Post::make([
-
+            $post -> update([
+                'id' => $request->id,
                 'user_id' => $user_id,
                 'body' => $request->body,
             ]);
