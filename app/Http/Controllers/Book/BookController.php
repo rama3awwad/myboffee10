@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -188,7 +189,16 @@ class BookController extends BaseController
         ], 'Book details retrieved successfully.');
 
     }
+//show most reading books
+public function mostReading (){
 
+    $bookId = Book::all()->pluck('id');
+    $mostReadBooks = Shelf::where('book_id',$bookId)->where('status','reading');
+    Shelf::with('Book')->select('book_id', DB::raw('COUNT(book_id) as most_reading'))
+    ->groupBy('book_id')->orderBy('most_reading', 'desc')->take(10)->get();
+
+    return $this->sendResponse($mostReadBooks, 'Most reading books retrieved successfully');
+}
 //show file only
     public function getFile($bookId)
     {

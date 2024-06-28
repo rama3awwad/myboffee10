@@ -3,13 +3,13 @@
 use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\FavoriteController;
 use App\Http\Controllers\Book\NoteController;
-use App\Http\Controllers\Book\RatingController;
 use App\Http\Controllers\Book\ReportController;
 use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
 use App\Http\Controllers\Level\LevelController;
 use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\Book\RatingController;
 use App\Http\Controllers\Shelf\ShelfController;
 use App\Http\Controllers\Book\suggestionController;
 use App\Http\Controllers\Types\TypeController;
@@ -68,6 +68,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::get('/books/type/{typeId}', 'showBooksByType');
         Route::get('/details/{id}','showDetails');
         Route::post('/author', 'author');
+        Route::get('/mostReading','mostReading');
     });
 
 
