@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Level;
 
+use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LevelResource;
 use App\Models\Level;
 use App\Models\Shelf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LevelController extends Controller
+class LevelController extends BaseController
 {
     public function create(Request $request)
     {
@@ -23,7 +25,9 @@ class LevelController extends Controller
                 'level' => 'first',
             ]);
 
-            return response()->json($newLevel,['message' => 'Level created successfully'], 200);
+           // return response()->json($newLevel, 200, ['message' => 'Level created successfully']);
+            return $this->sendResponse(new LevelResource($newLevel), 'Level created successfully');
+
         } else {
 
             $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
@@ -46,7 +50,11 @@ class LevelController extends Controller
                     'level' => 'third',
                 ]);
             }
-            return response()->json($existing,['message' => 'Level updated successfully'], 200);
-        }
-    }
-}
+
+            return $this->sendResponse(new LevelResource($existing), 'Level updated successfully');
+
+
+            //  return response()->json($existing, 200, ['message' => 'Level updated successfully']);
+
+        }}}
+

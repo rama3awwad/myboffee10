@@ -9,12 +9,15 @@ class Book extends Model
 {
 
     protected $fillable = [
-        'title',
+        'title_en',
+        'title_ar',
         'file',
         'cover',
-        'author_name',
+        'author_name_en',
+        'author_name_ar',
         'points',
-        'description',
+        'description_en',
+        'description_ar',
         'total_pages',
         'type_id'
     ];
@@ -45,15 +48,21 @@ class Book extends Model
         return $this->belongsToMany(User::class,'reports')->withTimeStamps();
     }
 
-    public function levels()
+  /*  public function levels()
     {
-        return $this->belongsToMany(User::class,'reports')->withTimeStamps();
-    }
+        return $this->belongsToMany(User::class,'levels')->withTimeStamps();
+    }*/
 
     public function favoriteBooks()
     {
         return $this->belongsToMany(FavoriteBook::class, 'favorite_books');
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
 
     use HasFactory;
 }

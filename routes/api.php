@@ -3,9 +3,11 @@
 use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\FavoriteController;
 use App\Http\Controllers\Book\NoteController;
+use App\Http\Controllers\Book\RatingController;
 use App\Http\Controllers\Book\ReportController;
 use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
+use App\Http\Controllers\Level\LevelController;
 use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Book\RatingController;
@@ -91,10 +93,10 @@ Route::controller(GendreController::class)->group(function () {
 //report routes
     Route::controller(ReportController::class)->group(function () {
         Route::get('/reports',  'index');
-        Route::post('/report', 'store')->middleware('auth:sanctum');
-        Route::get('/report{id}', 'show');
-        Route::get('/user-reports',  'showUserReports')->middleware('auth:sanctum');
-        Route::get('/bookReports', 'showReportsByBookId');
+        Route::post('/report/{bookId}', 'store')->middleware('auth:sanctum');
+        Route::get('/report/{id}', 'show');
+        Route::get('/user/reports',  'showMyReports')->middleware('auth:sanctum');
+        Route::get('/book/reports/{bookId}', 'showBookReports');
         Route::delete('/delete/{id}','removeReport');
         Route::delete('/delete', 'deleteAllUserReports');
     });
@@ -112,13 +114,14 @@ Route::controller(GendreController::class)->group(function () {
 
 //rate routes
     Route::controller(RatingController::class)->group(function(){
-        Route::post('/rate','add');
+        Route::post('/rate','add')->middleware('auth:sanctum');
         Route::get('/avg/{bookId}','avgRate');
     });
 
+
 //level routes
-    Route::controller('LevelController::class')->group(function(){
-        Route::post('/level','create');
+    Route::controller(LevelController::class)->group(function(){
+        Route::post('/level','create')->middleware('auth:sanctum');
     });
 
 

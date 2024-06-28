@@ -52,9 +52,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Book::class,'reports')->withTimeStamps();
     }
 
-    public function levels()
+    public function level()
     {
-        return $this->belongsToMany(User::class,'reports')->withTimeStamps();
+        return $this->belongsTo(Level::class);
     }
 
     public function posts()
@@ -76,6 +76,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Book::class, 'favorite_books')->withTimestamps();
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.

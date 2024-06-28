@@ -24,8 +24,7 @@ class ReportRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' =>['required','exists:users,id'],
-            'book_id' => ['required', 'exists:books,id'],
+    //        'book_id' => ['required', 'exists:books,id'],
             'body' => ['required'],
         ];
     }

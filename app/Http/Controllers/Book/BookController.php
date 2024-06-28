@@ -7,6 +7,7 @@ use App\Http\Requests\BookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Http\Controllers\BaseController as BaseController;
+use App\Models\Rating;
 use App\Models\Shelf;
 use App\Models\Type;
 use Cassandra\Collection;
@@ -17,16 +18,108 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+
 class BookController extends BaseController
 {
+   /* public function index(Request $request): JsonResponse
+    {
+        $languageCode = $request->header('Language_Code', 'en');
+
+        $columns = [
+            'title_en' => 'title_en',
+            'title_ar' => 'title_ar',
+            'author_name_en' => 'author_name_en',
+            'author_name_ar' => 'author_name_ar',
+            'description_en' => 'description_en',
+            'description_ar' => 'description_ar'
+        ];
+        $selectedColumns = [];
+
+        foreach ($columns as $key => $column) {
+            if (($languageCode == 'en' && strpos($key, 'en_')!== 0) || strpos($key, $languageCode. '_') === 0) {
+                $selectedColumns[] = $column;
+            } elseif ($languageCode == 'ar' && strpos($key, 'ar_') === 0) {
+                $selectedColumns[] = $column;
+            }
+        }
+
+        $books = Book::select($selectedColumns)->get();
+        //$books = $query->get();
+
+        $transformedBooks = [];
+        foreach ($books as $book) {
+            $transformedBook = [
+                'id' => $book->id,
+                'title' => $book->title_en?? $book->title_ar,
+                'file' => $book->file,
+                'cover' =>$book->cover,
+                'author_name' => $book->author_name_en?? $book->author_name_ar,
+                'points' => $book->points,
+                'description' => $book->description_en?? $book->description_ar,
+                'total_pages' => $book->total_pages,
+                'type_id' => $book->type_id,
+            ];
+            $transformedBooks[] = $transformedBook;
+        }
+
+        // Prepare the response
+        $response = [
+            'books' => $transformedBooks,
+            'message' => 'Books retrieved successfully.'
+        ];
+
+        // Send the response
+        return $this->sendResponse($response, 'Books retrieved successfully.');
+
+
+}*/
+   public function index(Request $request): JsonResponse
+    {
+        $languageCode = $request->header('Language_Code', 'en');
+        $selectedColumns = [
+            'id', 'file', 'cover','title_en','title_ar', 'author_name_en', 'author_name_ar', 'points', 'description_en', 'description_ar', 'total_pages', 'type_id'
+        ];
+
+        $filteredColumns = array_filter($selectedColumns, function ($column) use ($languageCode) {
+            return (strpos($column, $languageCode. '_') === 0) || (strpos($column, 'en_')!== 0 && $languageCode === 'en')
+                || (strpos($column, 'ar_') === 0 && $languageCode === 'ar');
+        });
+
+        $books = Book::select($filteredColumns)->get();
+
+        $transformedBooks = [];
+        foreach ($books as $book) {
+            $transformedBook = [
+                'id' => $book->id,
+                'title' => $book->title_en?? $book->title_ar,
+                'file' => $book->file,
+                'cover' => $book->cover,
+                'author_name' => $book->author_name_en?? $book->author_name_ar,
+                'points' => $book->points,
+                'description' => $book->description_en?? $book->description_ar,
+                'total_pages' => $book->total_pages,
+                'type_id' => $book->type_id,
+            ];
+            $transformedBooks[] = $transformedBook;
+        }
+
+        $response = [
+            'books' => $transformedBooks,
+            'message' => 'Books retrieved successfully.'
+        ];
+
+        return $this->sendResponse($response, 'Books retrieved successfully.');
+    }
+
+
 
 //show all books
-    public function index(): JsonResponse
+  /*  public function index(Request $request): JsonResponse
     {
         $books = Book::all();
         return $this->sendResponse($books, 'Books retrieved successfully.');
     }
-
+*/
 //store book
     public function store(BookRequest $request): JsonResponse
     {
@@ -58,6 +151,23 @@ class BookController extends BaseController
         return $this->sendResponse($book, 'Book created successfully.');
     }
 
+//show avg rating of book
+    public function avgRating($id)
+    {
+
+        $sumOfRatings = Rating::where('book_id', $id)->sum('rate');
+        $countOfRatings = Rating::where('book_id', $id)->count();
+
+        if ($countOfRatings >= 0) {
+            $averageRating = $sumOfRatings / $countOfRatings;
+
+            return $averageRating;
+        }
+
+        return null;
+
+    }
+
 //show book details without 'file'
     public function showDetails($id): JsonResponse
     {
@@ -66,11 +176,18 @@ class BookController extends BaseController
         if (is_null($book)) {
             return $this->sendError('Book not found');
         }
+
+        $rating = $this->avgRating($id);
+
         $details = Book::select('id', 'title', 'cover', 'total_pages', 'author_name', 'points', 'description', 'type_id',)
             ->where('id', $id)
             ->first();
 
-        return $this->sendResponse($details, 'Book retrieved successfully');
+        return $this->sendResponse([
+            'Rating' => $rating,
+            'Details' => $details,
+        ], 'Book details retrieved successfully.');
+
     }
 //show most reading books
 public function mostReading (){
@@ -170,7 +287,6 @@ public function mostReading (){
         return $this->sendResponse($books, 'Books retrieved successfully.');
     }
 
-
 //enable book and createShelf
     public function show($id, Request $request)
     {
@@ -185,8 +301,8 @@ public function mostReading (){
             } else {
 
                 $request->user()->update([
-
                     'my_points' => $request->user()->my_points - $book->points]);
+
                 $newShelf = Shelf::create([
                     'user_id' => $userId,
                     'book_id' => $id,
@@ -194,18 +310,17 @@ public function mostReading (){
                     'progress' => 1,
                 ]);
 
-                $bookData = $this->getFile($id);
+                $file = $book->file;
 
                 return $this->sendResponse([
-                    'Shelf' => $newShelf,
-                    'book_data' => $bookData,
-                ], 'Shelf Created and Book opened successfully.');
+                    'file' => $file,
+                ], 'Book opened successfully.');
             }
 
         } elseif ($shelf->status == 'watch_later') {
 
             if ($request->user()->my_points < $book->points) {
-                return $this->sendError('Oops! Your points aren\'t enough to open this book.');
+                return $this->sendError('Oops! Your pophpints aren\'t enough to open this book.');
             } else {
 
                 $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
@@ -214,38 +329,21 @@ public function mostReading (){
                     'progress' => 1,
                 ]);
 
-                $bookData = $this->getFile($id);
+                $file = $book->file;
 
                 return $this->sendResponse([
-                    'Shelf' => $shelf,
-                    'book_data' => $bookData,
-                ], 'Shelf Updated and Book opened successfully.');
+                    'book_data' => $file,
+                ], 'Book opened successfully.');
             }
 
         } elseif ($shelf->status == 'reading' || $shelf->status == 'finished') {
 
-            $bookData = $this->getFile($id);
+            $file = $book->file;
 
             return $this->sendResponse([
-                'shelf' => $shelf,
-                'book_data' => $bookData,
-            ], 'Shelf Updated and Book opened successfully.');
-
-            // Filter out unwanted fields
-            /*  $filteredBookData = [
-                  'success' => isset($bookData['success'])? $bookData['success'] : false,
-                  'data' => isset($bookData['data'])? $bookData['data'] : '',
-                  'message' => isset($bookData['message'])? $bookData['message'] : ''
-              ];
-
-              return $this->sendResponse([
-                  'shelf' => $shelf,
-                  'book_data' => $filteredBookData,
-              ], 'Shelf Updated and Book opened successfully.');
-          }*/
-
-        }
-    }
+                'file' => $file,
+            ], 'Book opened successfully.');
+        }}
 
     //update book
     public function update(BookRequest $request, $id): JsonResponse

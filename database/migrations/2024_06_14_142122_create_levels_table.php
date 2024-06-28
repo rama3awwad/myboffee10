@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('levels', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->refernces('id')->on('users')->onDelete('cascade');
             $table->integer('books');
             $table->string('level')->default('first');
             $table->timestamps();
