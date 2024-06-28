@@ -3,7 +3,6 @@
 use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\FavoriteController;
 use App\Http\Controllers\Book\NoteController;
-use App\Http\Controllers\Book\RatingController;
 use App\Http\Controllers\Book\ReportController;
 use App\Http\Controllers\Book\ReviweController;
 use App\Http\Controllers\Gendre\GendreController;
