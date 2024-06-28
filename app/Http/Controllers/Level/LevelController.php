@@ -16,45 +16,50 @@ class LevelController extends BaseController
     {
         $userId = Auth::user()->id;
         $existing = Level::where('user_id', $userId)->first();
+        $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
+        $ratio = 0;
+        $ratio =  $count / 30;
+        $ratio = round($ratio, 2);
+
+        /*if ($count < 10) {
+            $ratio = (100 * $count) / 10;
+        } elseif ($count >= 10 && $count < 20) {
+            $ratio = (100 * ($count - 10)) / 10;
+        } elseif ($count >= 20 && $count <=30) {
+            $ratio = (100 * ($count - 20)) / 10;
+        } elseif ($count > 30) {
+            $ratio = 100;
+        }*/
 
         if (!$existing) {
-            $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
             $newLevel = Level::create([
                 'user_id' => $userId,
                 'books' => $count,
                 'level' => 'first',
             ]);
 
-           // return response()->json($newLevel, 200, ['message' => 'Level created successfully']);
-            return $this->sendResponse(new LevelResource($newLevel), 'Level created successfully');
-
-        } else {
-
-            $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
-
-            if ($count < 10) {
-                $existing->update([
-                    'books' => $count,
-                    'level' => 'first',
-                ]);
-
-            } elseif ($count >= 10 && $count < 20) {
-                $existing->update([
-                    'books' => $count,
-                    'level' => 'second',
-                ]);
-
+            return $this->sendResponse([
+                'level' => new LevelResource($newLevel),
+                'ratio' => $ratio,
+            ], 'Level created successfully');
+        }
+        else {
+            $level = 'first';
+            if ($count >= 10 && $count < 20) {
+                $level = 'second';
             } elseif ($count >= 20) {
-                $existing->update([
-                    'books' => $count,
-                    'level' => 'third',
-                ]);
+                $level = 'third';
             }
 
-            return $this->sendResponse(new LevelResource($existing), 'Level updated successfully');
+            $existing->update([
+                'books' => $count,
+                'level' => $level,
+            ]);
 
-
-            //  return response()->json($existing, 200, ['message' => 'Level updated successfully']);
-
-        }}}
+            return $this->sendResponse([
+                'level' => new LevelResource($existing),
+                'ratio' => $ratio,
+            ], 'Level updated successfully');
+        }
+    }}
 
