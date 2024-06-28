@@ -21,9 +21,9 @@ class LevelController extends BaseController
         $ratio =  $count / 30;
         $ratio = round($ratio, 2);
 
-        /*if ($count < 10) {
-            $ratio = (100 * $count) / 10;
-        } elseif ($count >= 10 && $count < 20) {
+        if ($count > 30 ) {
+            $ratio = 1;
+        } /*elseif ($count >= 10 && $count < 20) {
             $ratio = (100 * ($count - 10)) / 10;
         } elseif ($count >= 20 && $count <=30) {
             $ratio = (100 * ($count - 20)) / 10;
