@@ -18,7 +18,7 @@ class LevelController extends BaseController
         $existing = Level::where('user_id', $userId)->first();
         $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
         $ratio = 0;
-        $ratio = round(($count / 30) * 100, 2);
+        $ratio = round(($count / 30),2); //* 100, 2);
         if ($count > 30 ) {
             $ratio = 1;
         } /*elseif ($count >= 10 && $count < 20) {
@@ -56,7 +56,7 @@ class LevelController extends BaseController
 
             return $this->sendResponse([
                 'level' => new LevelResource($existing),
-                'ratio' => $ratio. '%',
+                'ratio' => $ratio,//. '%',
             ], 'Level updated successfully');
         }
     }}
