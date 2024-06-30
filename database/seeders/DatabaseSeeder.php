@@ -24,9 +24,9 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(22)->create();
         Book::factory(30)->create();
-        Shelf::factory(50)->create();
+        Shelf::factory(1000)->create();
         Rating::factory(50)->create();
-        Level::factory(22)->create();
+        Level::factory(20)->create();
 
 
 

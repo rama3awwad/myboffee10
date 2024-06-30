@@ -18,17 +18,24 @@ class LevelFactory extends Factory
      */
     public function definition()
     {
-        $user = User::inRandomOrder()->first();
+        $user = User::doesntHave('level')->inRandomOrder()->first();
+
+        if (!$user) {
+            return [];
+        }
+
+        // Count the finished shelves for the user
         $countFinish = DB::table('shelves')
             ->where('user_id', $user->id)
             ->where('status', 'finished')
             ->count();
 
-        if ($countFinish < 10) {
-            $level = 'first';
-        } elseif ($countFinish < 20) {
+        echo "User ID: {$user->id}, Finished Shelves Count: {$countFinish}\n";
+
+        $level = 'first';
+        if ($countFinish >= 10 && $countFinish < 20) {
             $level = 'second';
-        } else {
+        } elseif ($countFinish >= 20) {
             $level = 'third';
         }
 
