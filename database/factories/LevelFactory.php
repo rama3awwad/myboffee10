@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Level>
@@ -18,19 +19,23 @@ class LevelFactory extends Factory
     public function definition()
     {
         $user = User::inRandomOrder()->first();
-        $countfinish = $user->shelves()->where('status', 'finished')->count();
+        $countFinish = DB::table('shelves')
+            ->where('user_id', $user->id)
+            ->where('status', 'finished')
+            ->count();
 
-        $level = match(true) {
-            $countfinish < 10 => 'first',
-            $countfinish >= 10 && $countfinish < 20 => 'second',
-            $countfinish >= 20 => 'third',
-        };
+        if ($countFinish < 10) {
+            $level = 'first';
+        } elseif ($countFinish < 20) {
+            $level = 'second';
+        } else {
+            $level = 'third';
+        }
 
         return [
             'user_id' => $user->id,
-            'books' => rand(1, 32),
+            'books' => $countFinish,
             'level' => $level,
         ];
     }
-    }
-
+}
