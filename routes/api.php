@@ -115,6 +115,7 @@ Route::controller(GendreController::class)->group(function () {
     Route::controller(RatingController::class)->group(function(){
         Route::post('/rate','add')->middleware('auth:sanctum');
         Route::get('/avg/{bookId}','avgRate');
+        Route::get('/rater/details/{bookId}','showRatersDetails');
     });
 
 

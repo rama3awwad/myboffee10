@@ -17,67 +17,67 @@ class ShelfSeeder extends Seeder
     {
         $shelves = [
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 1,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 2,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 3,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 4,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 5,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 6,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 7,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 8,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 9,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 10,
                 'status' => 'finished',
                 'progress' => 4
             ],
             [
-                'user_id' => '122',
+                'user_id' => '9',
                 'book_id'=> 11,
                 'status' => 'finished',
                 'progress' => 4

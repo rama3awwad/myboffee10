@@ -25,7 +25,7 @@ class ShelfController extends BaseController
 
         if ($shelf) {
             $shelf->update([
-                'status' => 'watch_later',
+                'status' => 'read_later',
                 'progress' => 1,
             ]);
             return $this->sendResponse($shelf, 'Shelf updated successfully.');
@@ -34,7 +34,7 @@ class ShelfController extends BaseController
             $shelf = Shelf::create([
                 'user_id' => $userId,
                 'book_id' => $bookId,
-                'status' => 'watch_later',
+                'status' => 'read_later',
                 'progress' => 1,
             ]);
 

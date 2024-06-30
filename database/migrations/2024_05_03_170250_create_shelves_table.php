@@ -18,7 +18,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('book_id')->constrained('books')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->enum('status', ['0', 'reading', 'watch_later', 'finished'])->default('0');
+
+            $table->enum('status', ['0', 'reading', 'read_later', 'finished'])->default('0');
             $table->integer('progress')->default('0')->nullable();
             $table->timestamps();
 

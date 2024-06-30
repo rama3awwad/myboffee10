@@ -18,12 +18,12 @@ class LevelFactory extends Factory
     public function definition()
     {
         $user = User::inRandomOrder()->first();
-        $countfinish = $user->shelves()->where('status', 'reading')->count();
+        $countfinish = $user->shelves()->where('status', 'finished')->count();
 
         $level = match(true) {
             $countfinish < 10 => 'first',
             $countfinish >= 10 && $countfinish < 20 => 'second',
-            default => 'third',
+            $countfinish >= 20 => 'third',
         };
 
         return [

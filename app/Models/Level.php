@@ -15,8 +15,14 @@ class Level extends Model
     ];
     use HasFactory;
 
-    public function users()
+    /*public function users()
     {
         return $this->hasMany(User::class);
+    }*/
+    public function users()
+    {
+        return $this->belongsTo(User::class);
     }
+
+
 }
