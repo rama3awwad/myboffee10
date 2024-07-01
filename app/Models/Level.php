@@ -11,7 +11,7 @@ class Level extends Model
     protected $fillable =[
         'user_id',
         'books',
-        'levels',
+        'level',
     ];
     use HasFactory;
 
