@@ -11,7 +11,7 @@ use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Book\RatingController;
 use App\Http\Controllers\Shelf\ShelfController;
-use App\Http\Controllers\Book\suggestionController;
+use App\Http\Controllers\Book\SuggestionController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -121,7 +121,7 @@ Route::controller(GendreController::class)->group(function () {
 
 //level routes
     Route::controller(LevelController::class)->group(function(){
-        Route::post('/level','create')->middleware('auth:sanctum');
+        Route::get('/level','create')->middleware('auth:sanctum');
     });
 
 
@@ -167,7 +167,7 @@ Route::controller(ReviweController::class)->group(function () {
   });
 
   //suggestion routes
-  Route::controller(suggestionController::class)->group(function () {
+  Route::controller(SuggestionController::class)->group(function () {
     Route::get('/showAllSuggestions', 'index');
     Route::get('/showsuggestion/{suggestion_id}', 'showSuggestion');
     Route::post('/createsuggestion', 'create')->middleware('auth:sanctum');

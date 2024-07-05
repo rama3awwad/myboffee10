@@ -8,12 +8,12 @@ use App\Models\Suggestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class suggestionController extends BaseController
+class SuggestionController extends BaseController
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -24,15 +24,18 @@ class suggestionController extends BaseController
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create(suggestionRequest $request)
     {
         $user_id = Auth::user()->id;
+        $user = auth()->user()->user_name;
         $suggestion = Suggestion::create([
             'id'=> $request->id,
             'user_id' => $user_id,
+            'user_name' => $user,
             'body' => $request->body,
+            'author_name'=> $request->author_name,
 
         ]);
 
@@ -62,12 +65,13 @@ class suggestionController extends BaseController
           'body'=> 'required',
         ]);
             $input=$request->all();
-            
+
             $user_id = Auth::user()->id;
             $suggestion -> update([
             'id'=> $request->id,
             'user_id' => $user_id,
             'body' => $request->body,
+            'author_name'=> $request->author_name,
 
         ]);
 

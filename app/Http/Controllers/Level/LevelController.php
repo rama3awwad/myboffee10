@@ -53,7 +53,7 @@ class LevelController extends BaseController
                 'books' => $count,
                 'level' => $level,
             ]);
-4
+
             return $this->sendResponse([
                 'level' => new LevelResource($existing),
                 'ratio' => $ratio,//. '%',
@@ -68,6 +68,13 @@ class LevelController extends BaseController
         $numberOfUsers = Level::where('level', $levelName)->count();
 
         return response()->json(['number_of_users' => $numberOfUsers]);
+    }
+    public function index(Request $request){
+        // $levels =Level::with(['user']
+        $levels =DB::table('levels')
+            ->join('users','levels.user_id','=','users.id')
+            ->select('users.id as user_id', 'users.user_name', 'levels.id','levels.books','levels.level')
+            ->get();
     }
 
     public function getUsersByLevel(Request $request)
@@ -87,7 +94,6 @@ class LevelController extends BaseController
                 'user_id' => $user->user_id,
                 'user_name' => $user->user_name,
                 'book_value' => $user->book_value,
-
             ];
         }
         return response()->json([

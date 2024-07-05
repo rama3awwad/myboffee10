@@ -16,7 +16,9 @@ return new class extends Migration
         Schema::create('suggestions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('user_name');
             $table->text('body');
+            $table->string('author_name');
             $table->timestamps();
         });
     }

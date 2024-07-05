@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Book;
 
+use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class FavoriteController extends Controller
+class FavoriteController extends BaseController
 {
 
     //add to favorite
@@ -21,13 +23,32 @@ class FavoriteController extends Controller
     }
 
     //show me my favorites
-    public function showMine()
+
+        public function showMine()
     {
-        $user = Auth::user();
-        $favorites = $user->favoriteBooks();
+        $userId = Auth::id();
+
+        $favorites = DB::table('favorite_books')
+            ->join('books', 'favorite_books.book_id', '=', 'books.id')
+            ->join('types', 'books.type_id', '=', 'types.id')
+            ->where('favorite_books.user_id', $userId)
+            ->select(
+                'favorite_books.id as favorite_id',
+                'favorite_books.user_id',
+                'favorite_books.book_id',
+                'books.title_en as title',
+                'books.cover',
+                'books.file',
+                'books.author_name_en as author_name',
+                'books.total_pages',
+                'books.points',
+                'types.name as type_name'
+            )
+            ->get();
 
         return $this->sendResponse($favorites, 'User\'s favorites');
     }
+
 
     //show favorite by user id
     public function showUserFav($userId)
