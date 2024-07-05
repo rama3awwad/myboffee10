@@ -212,7 +212,6 @@ public function mostReading (){
 
     }
 
-
 //show book by its id for admin
     public function Ashow($id): JsonResponse
     {

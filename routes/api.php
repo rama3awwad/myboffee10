@@ -69,6 +69,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::get('/details/{id}','showDetails');
         Route::post('/author', 'author');
         Route::get('/mostReading','mostReading');
+
     });
 
 
@@ -121,7 +122,7 @@ Route::controller(GendreController::class)->group(function () {
 
 //level routes
     Route::controller(LevelController::class)->group(function(){
-        Route::get('/level','create')->middleware('auth:sanctum');
+        Route::get('/level','show')->middleware('auth:sanctum');
     });
 
 

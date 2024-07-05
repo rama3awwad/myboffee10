@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLaterStatusRequest;
 use App\Models\Book;
+use App\Models\Level;
 use App\Models\Shelf;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -38,9 +39,9 @@ class ShelfController extends BaseController
                 'progress' => 1,
             ]);
 
-        return $this->sendResponse($shelf, 'Shelf created successfully.');
-    }}
-
+            return $this->sendResponse($shelf, 'Shelf created successfully.');
+        }
+    }
 
 
 // Count shelves with status 'reading'  for a given book
@@ -56,23 +57,23 @@ class ShelfController extends BaseController
     }
 
 //show books of user's shelf
- /*   public function myShelf(Request $request): JsonResponse
-    {
-        $userId = Auth::user()->id;
-        $status = $request->input('status');
+    /*   public function myShelf(Request $request): JsonResponse
+       {
+           $userId = Auth::user()->id;
+           $status = $request->input('status');
 
-        $shelves = Shelf::where('user_id', $userId)->where('status', $status)->get();
+           $shelves = Shelf::where('user_id', $userId)->where('status', $status)->get();
 
-        $bookIds = $shelves->pluck(' book_id')->toArray();
+           $bookIds = $shelves->pluck(' book_id')->toArray();
 
-        $books = Book::whereIn('id', $bookIds)->get();
+           $books = Book::whereIn('id', $bookIds)->get();
 
-        if ($books->isEmpty()) {
-            return $this->sendError('No books found with the specified status.');
-        }
+           if ($books->isEmpty()) {
+               return $this->sendError('No books found with the specified status.');
+           }
 
-        return $this->sendResponse($books, 'Books retrieved successfully.');
-    }*/
+           return $this->sendResponse($books, 'Books retrieved successfully.');
+       }*/
 
 
 //count books on user's shelf
@@ -131,19 +132,35 @@ class ShelfController extends BaseController
         $validated = $request->validate([
             'progress' => ['required', 'integer'],
         ]);
-        $shelf->update(['progress' => $validated['progress'],'status' => 'reading']);
+        $shelf->update(['progress' => $validated['progress'], 'status' => 'reading']);
 
         $book = Book::where('id', $shelf->book_id)->first();
 
-           if (($validated['progress']) >=( $book->total_pages)) {
-                $shelf->update(['status' => 'finished']);
-                $userId = Auth::user()->id;
-                User::find($userId)->increment('my_points', 5);
+        if (($validated['progress']) >= ($book->total_pages)) {
+            $shelf->update(['status' => 'finished']);
+            $userId = Auth::user()->id;
+            User::find($userId)->increment('my_points', 5);
+            $level = Level::find($userId);
+            Level::find($userId)->increment('books', 1);
+            $count = Level::find($userId)->books;
+
+            if ($count > 0 && $count < 10) {
+                $level->update([
+                    'level' => 'first',
+                ]);
             }
-            return $this->sendResponse([
-                'updated Shelf' => $shelf,
-            ], 'Progress updated.');
+            if ($count >= 10 && $count < 20) {
+                $level->update([
+                    'level' => 'second',
+                ]);
+            } elseif ($count >= 20) {
+                $level->update([
+                    'level' => 'third',
+                ]);
+            }
         }
-
-
+        return $this->sendResponse([
+            'updated Shelf' => $shelf,
+        ], 'Progress updated.');
     }
+}

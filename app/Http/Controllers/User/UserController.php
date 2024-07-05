@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 use App\Http\Requests\AuthRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Level;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -27,9 +28,14 @@ class UserController extends BaseController
          'role_id' => $request->role_id,
     ]);
 
+        $newLevel = Level::create([
+            'user_id' => $this->id,
+            'books' => 0,
+            'level' => 'first',
+        ]);
+
     $token = $user->createToken("API TOKEN")->plainTextToken;
 
-    // Prepare the response data
     $success = [
         'id' => $user->id,
         'user_name' => $user->user_name,

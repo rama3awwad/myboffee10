@@ -13,11 +13,12 @@ use Illuminate\Support\Facades\DB;
 
 class LevelController extends BaseController
 {
-    public function create(Request $request)
+    public function show(Request $request)
     {
         $userId = Auth::user()->id;
-        $existing = Level::where('user_id', $userId)->first();
-        $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
+        $level = Level::where('user_id', $userId)->first();
+
+        $count = $level->books;
         $ratio = 0;
         $ratio = round(($count / 20), 2); //* 100, 2);
         if ($count > 20) {
@@ -30,36 +31,12 @@ class LevelController extends BaseController
             $ratio = 100;
         }*/
 
-        if (!$existing) {
-            $newLevel = Level::create([
-                'user_id' => $userId,
-                'books' => $count,
-                'level' => 'first',
-            ]);
-
             return $this->sendResponse([
-                'level' => new LevelResource($newLevel),
-                'ratio' => $ratio,
-            ], 'Level created successfully');
-        } else {
-            $level = 'first';
-            if ($count >= 10 && $count < 20) {
-                $level = 'second';
-            } elseif ($count >= 20) {
-                $level = 'third';
-            }
-
-            $existing->update([
-                'books' => $count,
-                'level' => $level,
-            ]);
-
-            return $this->sendResponse([
-                'level' => new LevelResource($existing),
+                'level' => new LevelResource($level),
                 'ratio' => $ratio,//. '%',
             ], 'Level updated successfully');
         }
-    }
+
 
     public function countLevelUsers(Request $request)
     {
