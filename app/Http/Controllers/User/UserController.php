@@ -29,7 +29,7 @@ class UserController extends BaseController
     ]);
 
         $newLevel = Level::create([
-            'user_id' => $this->id,
+            'user_id' => $user->id,
             'books' => 0,
             'level' => 'first',
         ]);
