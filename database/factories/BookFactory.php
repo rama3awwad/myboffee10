@@ -21,8 +21,8 @@ class BookFactory extends Factory
         $fileName = 'أذكار الصباح';
         $coverName = 'book112';
 
-        $file = 'storage/books/files/'. $fileName . '.pdf';
-        $cover = 'books/cover_images/'. $coverName . '.jpg';
+        $file = '/books/files/'. $fileName . '.pdf';
+        $cover = '/books/cover_images/'. $coverName . '.jpg';
        /* $coverImageUrl = $this->faker->imageUrl($width = 400, $height = 600);
         // Download the image
         $client = new Client();
@@ -58,7 +58,7 @@ class BookFactory extends Factory
             'author_name_ar' => fake()->name(),
             'points' => fake()->numberBetween(0, 10),
             'description_en' => 'It is useful',
-            'description_ar' => 'It is useful',
+            'description_ar' => 'هذا الكتاب مفيد.',
             'total_pages' => 4,
             'type_id' => fake()->numberBetween(1, 6),
         ];

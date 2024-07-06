@@ -30,31 +30,19 @@ class NoteController extends BaseController
         return $this->sendResponse($note,  'Note created successfully.');
     }
 
-    //show note by its id for admin
-    public function show($id): JsonResponse
-    {
-        $note = Note::find($id);
-
-        if (is_null($note)) {
-            return $this->sendError('Note not found');
-        }
-
-        return $this->sendResponse($note, 'Note retrieved successfully');
-    }
 
     //show all of my notes
-    public function index(): JsonResponse
+    public function showMyNotes(): JsonResponse
     {
-        $user = Auth::user();
+        $userId = Auth::user()->id;
+
         $notes = DB::table('notes')
-            ->join('users', 'users.id', '=', 'notes.user_id')
-            ->join('books', 'books.id', '=', 'notes.book_id')
-            ->select('notes.*', 'books.title as book_title')
-            ->select('notes.*', 'books.cover as book_cover')
-            ->where('users.id', $user->id)
+            ->join('books', 'notes.book_id', '=', 'books.id')
+            ->select('notes.*', 'books.title', 'books.cover', 'books.file')
+            ->where('notes.user_id', $userId)
             ->get();
 
-        return $this->sendResponse($notes, 'User\'s notes');
+        return $this->sendResponse($notes, 'Your notes retrieved successfully');
     }
 
     public function update(NoteRequest $request, $noteId): JsonResponse
@@ -91,7 +79,7 @@ class NoteController extends BaseController
         return $this->sendResponse(null, 'Note removed successfully');
     }
 
-    // Delete my reports
+    // Delete my notes
     public function deleteAll(): JsonResponse
     {
         $user = Auth::user();

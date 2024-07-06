@@ -94,15 +94,15 @@ class ShelfController extends BaseController
     public function myShelf(Request $request): JsonResponse
     {
         $userId = Auth::user()->id;
-        $status = $request->input('status');
+       // $status = $request->input('status');
 
         $shelves = Shelf::with(['book'])
             ->where('user_id', $userId)
-            ->where('status', $status)
+           // ->where('status', $status)
             ->get();
 
         if ($shelves->isEmpty()) {
-            return response()->json(['error' => 'No shelves found with the specified status.'], 404);
+            return response()->json(['error' => 'No shelves found '], 404);
         }
 
         $bookCount = Shelf::where('user_id', $userId)->where('status', $status)->count();
@@ -138,8 +138,10 @@ class ShelfController extends BaseController
 
         if (($validated['progress']) >= ($book->total_pages)) {
             $shelf->update(['status' => 'finished']);
+
             $userId = Auth::user()->id;
             User::find($userId)->increment('my_points', 5);
+
             $level = Level::find($userId);
             Level::find($userId)->increment('books', 1);
             $count = Level::find($userId)->books;
