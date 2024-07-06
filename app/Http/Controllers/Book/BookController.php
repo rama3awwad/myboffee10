@@ -309,10 +309,23 @@ public function mostReading (){
                     'progress' => 1,
                 ]);
 
-                $file = $book->file;
+                $book = DB::table('books')
+                    ->join('books', 'books.type_id', '=', 'types.id')
+                    ->select(
+                        'books.title_en as title',
+                        'books.cover',
+                        'books.file',
+                        'books.author_name_en as author_name',
+                        'books.total_pages',
+                        'books.points',
+                        'types.name as type_name'
+                    )
+                    ->get();
+
+                //$file = $book->file;
 
                 return $this->sendResponse([
-                    'file' => $file,
+                    'file' => $book,
                 ], 'Book opened successfully.');
             }
 
@@ -327,20 +340,46 @@ public function mostReading (){
                     'status' => 'reading',
                     'progress' => 1,
                 ]);
+                $book = DB::table('books')
+                    ->join('books', 'books.type_id', '=', 'types.id')
+                    ->select(
+                        'books.title_en as title',
+                        'books.cover',
+                        'books.file',
+                        'books.author_name_en as author_name',
+                        'books.total_pages',
+                        'books.points',
+                        'types.name as type_name'
+                    )
+                    ->get();
 
-                $file = $book->file;
+
+                // $file = $book->file;
 
                 return $this->sendResponse([
-                    'book_data' => $file,
+                    'book_data' => $book,
                 ], 'Book opened successfully.');
             }
 
         } elseif ($shelf->status == 'reading' || $shelf->status == 'finished') {
 
-            $file = $book->file;
+            $book = DB::table('books')
+                ->join('books', 'books.type_id', '=', 'types.id')
+                ->select(
+                    'books.title_en as title',
+                    'books.cover',
+                    'books.file',
+                    'books.author_name_en as author_name',
+                    'books.total_pages',
+                    'books.points',
+                    'types.name as type_name'
+                )
+                ->get();
+
+            //    $file = $book->file;
 
             return $this->sendResponse([
-                'file' => $file,
+                'file' => $book,
             ], 'Book opened successfully.');
         }}
 
