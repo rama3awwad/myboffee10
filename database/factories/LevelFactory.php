@@ -29,7 +29,7 @@ class LevelFactory extends Factory
             ->where('status', 'finished')
             ->count();
 
-        echo "User ID: {$user->id}, Finished Shelves Count: {$countFinish}\n";
+        //echo "User ID: {$user->id}, Finished Shelves Count: {$countFinish}\n";
 
         $level = 'first';
         if ($countFinish >= 10 && $countFinish < 20) {

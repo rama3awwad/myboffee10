@@ -310,7 +310,7 @@ public function mostReading (){
                 ]);
 
                 $book = DB::table('books')
-                    ->join('books', 'books.type_id', '=', 'types.id')
+                    ->join('types', 'books.type_id', '=', 'types.id')
                     ->select(
                         'books.title_en as title',
                         'books.cover',
@@ -341,7 +341,7 @@ public function mostReading (){
                     'progress' => 1,
                 ]);
                 $book = DB::table('books')
-                    ->join('books', 'books.type_id', '=', 'types.id')
+                    ->join('types', 'books.type_id', '=', 'types.id')
                     ->select(
                         'books.title_en as title',
                         'books.cover',
@@ -364,7 +364,7 @@ public function mostReading (){
         } elseif ($shelf->status == 'reading' || $shelf->status == 'finished') {
 
             $book = DB::table('books')
-                ->join('books', 'books.type_id', '=', 'types.id')
+                ->join('types', 'books.type_id', '=', 'types.id')
                 ->select(
                     'books.title_en as title',
                     'books.cover',

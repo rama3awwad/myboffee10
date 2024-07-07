@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Book;
 use App\Models\FavoriteBook;
 use App\Models\Level;
+use App\Models\Note;
 use App\Models\Rating;
 use App\Models\Shelf;
 use App\Models\User;
@@ -29,6 +30,7 @@ class DatabaseSeeder extends Seeder
         Rating::factory(50)->create();
         Level::factory(20)->create();
         FavoriteBook::factory(50)->create();
+        Note::factory(70)->create();
 
 
 
@@ -42,6 +44,7 @@ class DatabaseSeeder extends Seeder
             RatingSeeder::class,
             LevelSeeder::class,
             FavoriteSeeder::class,
+            NoteSeeder::class,
 
         ]);
 
