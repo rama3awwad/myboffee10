@@ -11,12 +11,18 @@ class Level extends Model
     protected $fillable =[
         'user_id',
         'books',
-        'levels',
+        'level',
     ];
     use HasFactory;
 
-    public function users()
+    /*public function users()
     {
         return $this->hasMany(User::class);
+    }*/
+    public function users()
+    {
+        return $this->belongsTo(User::class);
     }
+
+
 }

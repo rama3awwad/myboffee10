@@ -21,8 +21,8 @@ class BookFactory extends Factory
         $fileName = 'أذكار الصباح';
         $coverName = 'book112';
 
-        $file = 'storage/books/files/'. $fileName . '.pdf';
-        $cover = 'books/cover_images/'. $coverName . '.jpg';
+        $file = '/books/files/'. $fileName . '.pdf';
+        $cover = '/books/cover_images/'. $coverName . '.jpg';
        /* $coverImageUrl = $this->faker->imageUrl($width = 400, $height = 600);
         // Download the image
         $client = new Client();

@@ -24,16 +24,17 @@ class ShelfFactory extends Factory
             $user = User::inRandomOrder()->first();
             $book = Book::inRandomOrder()->first();
         }
-        $status = fake()->randomElement(['reading','finished','watch_later']);
+
+        $status = fake()->randomElement(['reading','finished','read_later']);
 
         $progress = 0;
         if ($status == 'finished'){
             $progress = $book->total_pages;
         }
         if ($status == 'reading'){
-            $progress = fake()->numberBetween(1,$book->total_pages);
+            $progress = fake()->numberBetween(1,$book->total_pages-1);
         }
-        if($status == 'watch_later'){
+        if($status == 'read_later'){
             $progress = 0;
         }
         return [

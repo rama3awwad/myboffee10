@@ -10,6 +10,7 @@ use App\Models\Book;
 use App\Models\Rating;
 use App\Models\Shelf;
 use App\Models\User;
+use App\Models\Level;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -147,12 +148,27 @@ class RatingController extends BaseController
         $countOfRatings = Rating::where('book_id', $id)->count();
 
         if ($countOfRatings >= 0) {
-            $averageRating = $sumOfRatings / $countOfRatings;
-            $scaledRating = round($averageRating , 1);
-            return $scaledRating;
+            $averageRating =round( $sumOfRatings / $countOfRatings,1);
+            //$scaledRating = round($averageRating , 1);
+            return $averageRating;
         }
 
         return null;
 
     }
+
+    public function showRatersDetails($bookId): JsonResponse
+    {
+        $ratings = Rating::where('book_id', $bookId)->with(['user.level'])->get();
+
+        $raterDetails = Rating::select('books.title_en','books.id as book_id', 'users.user_name', 'users.id as user_id', 'levels.level', 'levels.books')
+            ->join('books', 'ratings.book_id', '=', 'books.id')
+            ->join('users', 'ratings.user_id', '=', 'users.id')
+            ->join('levels', 'users.id', '=', 'levels.user_id')
+            ->where('ratings.book_id', $bookId)
+            ->get();
+
+        return $this->sendResponse($raterDetails, 'Users Details retrieved successfully.');
+    }
+
 }

@@ -9,52 +9,75 @@ use App\Models\Level;
 use App\Models\Shelf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LevelController extends BaseController
 {
-    public function create(Request $request)
+    public function show(Request $request)
     {
         $userId = Auth::user()->id;
-        $existing = Level::where('user_id', $userId)->first();
+        $level = Level::where('user_id', $userId)->first();
 
-        if (!$existing) {
-            $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
-            $newLevel = Level::create([
-                'user_id' => $userId,
-                'books' => $count,
-                'level' => 'first',
-            ]);
+        $count = $level->books;
+        $ratio = 0;
+        $ratio = round(($count / 20), 2); //* 100, 2);
+        if ($count > 20) {
+            $ratio = 1;
+        } /*elseif ($count >= 10 && $count < 20) {
+            $ratio = (100 * ($count - 10)) / 10;
+        } elseif ($count >= 20 && $count <=30) {
+            $ratio = (100 * ($count - 20)) / 10;
+        } elseif ($count > 30) {
+            $ratio = 100;
+        }*/
 
-           // return response()->json($newLevel, 200, ['message' => 'Level created successfully']);
-            return $this->sendResponse(new LevelResource($newLevel), 'Level created successfully');
-
-        } else {
-
-            $count = Shelf::where('user_id', $userId)->where('status', 'finished')->count();
-
-            if ($count < 10) {
-                $existing->update([
-                    'books' => $count,
-                    'level' => 'first',
-                ]);
-
-            } elseif ($count >= 10 && $count < 20) {
-                $existing->update([
-                    'books' => $count,
-                    'level' => 'second',
-                ]);
-
-            } elseif ($count >= 20) {
-                $existing->update([
-                    'books' => $count,
-                    'level' => 'third',
-                ]);
-            }
-
-            return $this->sendResponse(new LevelResource($existing), 'Level updated successfully');
+            return $this->sendResponse([
+                'level' => new LevelResource($level),
+                'ratio' => $ratio,//. '%',
+            ], 'Level updated successfully');
+        }
 
 
-            //  return response()->json($existing, 200, ['message' => 'Level updated successfully']);
+    public function countLevelUsers(Request $request)
+    {
+        $levelName = $request->input('level');
 
-        }}}
+        $numberOfUsers = Level::where('level', $levelName)->count();
+
+        return response()->json(['number_of_users' => $numberOfUsers]);
+    }
+    public function index(Request $request){
+        // $levels =Level::with(['user']
+        $levels =DB::table('levels')
+            ->join('users','levels.user_id','=','users.id')
+            ->select('users.id as user_id', 'users.user_name', 'levels.id','levels.books','levels.level')
+            ->get();
+    }
+
+    public function getUsersByLevel(Request $request)
+    {
+        $levelName = $request->input('level');
+        $numberOfUsers = Level::where('level', $levelName)->count();
+
+        $usersDetails = DB::table('levels')
+            ->join('users', 'levels.user_id', '=', 'users.id')
+            ->select('users.id as user_id', 'users.user_name', 'levels.books as book_value')
+            ->where('levels.level', $levelName)
+            ->get();
+
+        $response = [];
+        foreach ($usersDetails as $user) {
+            $response[] = [
+                'user_id' => $user->user_id,
+                'user_name' => $user->user_name,
+                'book_value' => $user->book_value,
+            ];
+        }
+        return response()->json([
+            'number_of_users' => $numberOfUsers,
+            'users' => $response
+        ]);
+    }
+
+}
 

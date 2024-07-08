@@ -19,6 +19,7 @@ class LevelResource extends JsonResource
             'user_id' => $this->user_id,
             'books' => $this->books,
             'level' => $this->level,
+           // 'ratio' => $this->ratio
         ];
 }
 }

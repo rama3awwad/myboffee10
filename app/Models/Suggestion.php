@@ -9,7 +9,9 @@ class Suggestion extends Model
 {
     protected $fillable = [
         'user_id',
-        'body'
+        'user_name',
+        'body',
+        'author_name',
     ];
 
     use HasFactory;

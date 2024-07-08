@@ -11,7 +11,7 @@ use App\Http\Controllers\Post\FavoritePostController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Book\RatingController;
 use App\Http\Controllers\Shelf\ShelfController;
-use App\Http\Controllers\Book\suggestionController;
+use App\Http\Controllers\Book\SuggestionController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -69,6 +69,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::get('/details/{id}','showDetails');
         Route::post('/author', 'author');
         Route::get('/mostReading','mostReading');
+
     });
 
 
@@ -77,7 +78,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::post('/shelf/later','storeLaterStatus')->middleware('auth:sanctum');
         Route::post('/shelf/{shelfId}','updateProgress')->middleware('auth:sanctum');
         Route::get('/count/{bookId}','count');
-        Route::post('/myShelf', 'myShelf')->middleware('auth:sanctum');
+        Route::get('/myShelf', 'myShelf')->middleware('auth:sanctum');
         Route::post('/countMine','countMine')->middleware('auth:sanctum');
     });
 
@@ -115,12 +116,13 @@ Route::controller(GendreController::class)->group(function () {
     Route::controller(RatingController::class)->group(function(){
         Route::post('/rate','add')->middleware('auth:sanctum');
         Route::get('/avg/{bookId}','avgRate');
+        Route::get('/rater/details/{bookId}','showRatersDetails');
     });
 
 
 //level routes
     Route::controller(LevelController::class)->group(function(){
-        Route::post('/level','create')->middleware('auth:sanctum');
+        Route::get('/level','show')->middleware('auth:sanctum');
     });
 
 
@@ -166,7 +168,7 @@ Route::controller(ReviweController::class)->group(function () {
   });
 
   //suggestion routes
-  Route::controller(suggestionController::class)->group(function () {
+  Route::controller(SuggestionController::class)->group(function () {
     Route::get('/showAllSuggestions', 'index');
     Route::get('/showsuggestion/{suggestion_id}', 'showSuggestion');
     Route::post('/createsuggestion', 'create')->middleware('auth:sanctum');
@@ -175,7 +177,8 @@ Route::controller(ReviweController::class)->group(function () {
 
   });
 
-
+  //filter
+    Route::post('/level/user', [LevelController::class, 'getUsersByLevel']);
 
 
 
