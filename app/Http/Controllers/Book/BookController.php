@@ -21,92 +21,63 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends BaseController
 {
-   /* public function index(Request $request): JsonResponse
-    {
-        $languageCode = $request->header('Language_Code', 'en');
 
-        $columns = [
-            'title_en' => 'title_en',
-            'title_ar' => 'title_ar',
-            'author_name_en' => 'author_name_en',
-            'author_name_ar' => 'author_name_ar',
-            'description_en' => 'description_en',
-            'description_ar' => 'description_ar'
-        ];
-        $selectedColumns = [];
-
-        foreach ($columns as $key => $column) {
-            if (($languageCode == 'en' && strpos($key, 'en_')!== 0) || strpos($key, $languageCode. '_') === 0) {
-                $selectedColumns[] = $column;
-            } elseif ($languageCode == 'ar' && strpos($key, 'ar_') === 0) {
-                $selectedColumns[] = $column;
-            }
-        }
-
-        $books = Book::select($selectedColumns)->get();
-        //$books = $query->get();
-
-        $transformedBooks = [];
-        foreach ($books as $book) {
-            $transformedBook = [
-                'id' => $book->id,
-                'title' => $book->title_en?? $book->title_ar,
-                'file' => $book->file,
-                'cover' =>$book->cover,
-                'author_name' => $book->author_name_en?? $book->author_name_ar,
-                'points' => $book->points,
-                'description' => $book->description_en?? $book->description_ar,
-                'total_pages' => $book->total_pages,
-                'type_id' => $book->type_id,
-            ];
-            $transformedBooks[] = $transformedBook;
-        }
-
-        // Prepare the response
-        $response = [
-            'books' => $transformedBooks,
-            'message' => 'Books retrieved successfully.'
-        ];
-
-        // Send the response
-        return $this->sendResponse($response, 'Books retrieved successfully.');
-
-
-}*/
-   public function index(Request $request): JsonResponse
+   public function index(Request $request)
     {
         $languageCode = $request->header('Language_Code', 'en');
         $selectedColumns = [
-            'id', 'file', 'cover','title_en','title_ar', 'author_name_en', 'author_name_ar', 'points', 'description_en', 'description_ar', 'total_pages', 'type_id'
+            'id', 'file', 'cover','title_en','title_ar', 'author_name_en', 'author_name_ar',
+            'points', 'description_en', 'description_ar', 'total_pages', 'type_id'
         ];
 
         $filteredColumns = array_filter($selectedColumns, function ($column) use ($languageCode) {
-            return (strpos($column, $languageCode. '_') === 0) || (strpos($column, 'en_')!== 0 && $languageCode === 'en')
-                || (strpos($column, 'ar_') === 0 && $languageCode === 'ar');
+     return  (strpos($column, $languageCode. '_') === 0) ||
+             (strpos($column, 'en_')!== 0 && $languageCode === 'en')||
+             (strpos($column, 'ar_') === 0 && $languageCode === 'ar');
         });
 
-        $books = Book::select($filteredColumns)->get();
+        $books = Book::get();
 
         $transformedBooks = [];
+      if($languageCode == 'en'){
         foreach ($books as $book) {
+
             $transformedBook = [
                 'id' => $book->id,
-                'title' => $book->title_en?? $book->title_ar,
+                'title' => $book->title_en,
                 'file' => $book->file,
                 'cover' => $book->cover,
-                'author_name' => $book->author_name_en?? $book->author_name_ar,
+                'author_name' => $book->author_name_en,
                 'points' => $book->points,
-                'description' => $book->description_en?? $book->description_ar,
+                'description' => $book->description_en,
                 'total_pages' => $book->total_pages,
                 'type_id' => $book->type_id,
+
+            ];
+            $transformedBooks[] = $transformedBook;
+        }}
+        elseif ($languageCode == 'ar') {
+             foreach ($books as $book) {
+            $transformedBook = [
+                'id' => $book->id,
+                'title' => $book->title_ar,
+                'file' => $book->file,
+                'cover' => $book->cover,
+                'author_name' => $book->author_name_ar,
+                'points' => $book->points,
+                'description' => $book->description_ar,
+                'total_pages' => $book->total_pages,
+                'type_id' => $book->type_id,
+
             ];
             $transformedBooks[] = $transformedBook;
         }
+        }
+
 
         $response = [
             'books' => $transformedBooks,
-            'message' => 'Books retrieved successfully.'
-        ];
+                   ];
 
         return $this->sendResponse($response, 'Books retrieved successfully.');
     }
@@ -189,15 +160,22 @@ class BookController extends BaseController
         ], 'Book details retrieved successfully.');
 
     }
+
 //show most reading books
-public function mostReading (){
+    public function mostReading (){
 
-    $bookId = Book::all()->pluck('id');
-    $mostReadBooks = Shelf::where('book_id',$bookId)->where('status','reading');
-    Shelf::with('Book')->select('book_id', DB::raw('COUNT(book_id) as most_reading'))
-    ->groupBy('book_id')->orderBy('most_reading', 'desc')->take(10)->get();
+     $mostReadBooks = DB::table('shelves')
+         ->leftJoin('books', 'books.id', '=', 'shelves.book_id')
+         ->select('books.*', 'shelves.status', DB::raw("COUNT(shelves.book_id) AS most_reading"))
+         ->where('shelves.status', 'reading')
+         ->groupBy('books.id', 'file', 'cover','title','author_name',
+                   'points','description', 'total_pages', 'type_id',
+                   'created_at','updated_at','shelves.status')
+         ->orderBy('most_reading', 'desc')
+         ->take(10)
+         ->get();
 
-    return $this->sendResponse($mostReadBooks, 'Most reading books retrieved successfully');
+         return $this->sendResponse($mostReadBooks, 'Most reading books retrieved successfully');
 }
 //show file only
     public function getFile($bookId)
@@ -320,7 +298,7 @@ public function mostReading (){
         } elseif ($shelf->status == 'watch_later') {
 
             if ($request->user()->my_points < $book->points) {
-                return $this->sendError('Oops! Your pophpints aren\'t enough to open this book.');
+                return $this->sendError('Oops! Your points aren\'t enough to open this book.');
             } else {
 
                 $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);

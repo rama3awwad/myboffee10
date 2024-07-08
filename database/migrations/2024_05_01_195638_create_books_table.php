@@ -15,18 +15,14 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('title_en');
-            $table->string('title_ar');
+            $table->string('title');
             $table->string('file');
             $table->string('cover');
-            $table->string('author_name_en');
-            $table->string('author_name_ar');
+            $table->string('author_name');
             $table->integer('points')->default(0)->nullable();
-            $table->text('description_en')->nullable();
-            $table->text('description_ar')->nullable();
+            $table->text('description')->nullable();
             $table->integer('total_pages');
             $table->integer('type_id')->foreign()->references('id')->on('types')->onDelete('cascade');
-
             $table->timestamps();
         });
     }
