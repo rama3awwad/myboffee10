@@ -21,9 +21,35 @@ class LevelController extends BaseController
         $count = $level->books;
         $ratio = 0;
         $ratio = round(($count / 20), 2); //* 100, 2);
-        if ($count > 20) {
+
+        if ($count == 0)
+            $image = '/levels/zero.png';
+        if ($count > 0 && $count < 3)
+            $image = '/levels/one.png';
+        if ($count == 3 && $count < 5)
+            $image = '/levels/two.png';
+        if ($count == 5 && $count < 7)
+            $image = '/levels/three.png';
+        if ($count == 5 && $count < 7)
+            $image = '/levels/four.png';
+        if ($count == 7 && $count < 9)
+            $image = '/levels/five.png';
+        if ($count == 9 && $count < 11)
+            $image = '/levels/six.png';
+        if ($count == 11 && $count < 13)
+            $image = '/levels/seven.png';
+        if ($count == 13 && $count < 15)
+            $image = '/levels/eight.png';
+        if ($count == 15 && $count < 17)
+            $image = '/levels/nine.png';
+        if ($count == 17 && $count < 19)
+            $image = '/levels/ten.png';
+        if ($count >= 20) {
+            $image = '/levels/final.png';
             $ratio = 1;
-        } /*elseif ($count >= 10 && $count < 20) {
+        }
+
+        /*elseif ($count >= 10 && $count < 20) {
             $ratio = (100 * ($count - 10)) / 10;
         } elseif ($count >= 20 && $count <=30) {
             $ratio = (100 * ($count - 20)) / 10;
@@ -34,6 +60,7 @@ class LevelController extends BaseController
             return $this->sendResponse([
                 'level' => new LevelResource($level),
                 'ratio' => $ratio,//. '%',
+                'image' => $image,
             ], 'Level updated successfully');
         }
 
