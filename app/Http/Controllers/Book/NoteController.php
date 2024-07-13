@@ -20,11 +20,11 @@ class NoteController extends BaseController
         $request->validated();
         $user = Auth::user();
         $note = Note::create ([
-            'user_id'=>$request->user()->id,
-            'book_id'=>$bookId,
-            'page_num' => $request->page_num,
+            'user_id'=> (int) $request->user()->id,
+            'book_id'=> (int) $bookId,
+            'page_num' =>  (int) $request->page_num,
             'body'=>$request->body,
-            'color'=>$request->color,
+            'color'=> (int) $request->color,
         ]);
 
         return $this->sendResponse($note,  'Note created successfully.');
