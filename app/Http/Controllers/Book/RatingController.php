@@ -105,8 +105,8 @@ class RatingController extends BaseController
     public function add(RatingRequest $request)
     {
         $userId = Auth::user()->id;
-        $bookId = $request->input('book_id');
-        $rate = $request->input('rate');
+        $bookId =  (int) $request->input('book_id');
+        $rate =  (int) $request->input('rate');
 
         $exist = Rating::where('user_id', $userId)->where('book_id', $bookId)->first();
 
