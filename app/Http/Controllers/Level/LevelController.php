@@ -19,7 +19,7 @@ class LevelController extends BaseController
         $level = Level::where('user_id', $userId)->first();
 
         $count = $level->books;
-        $ratio = 0;
+        $ratio = 0.0;
         $ratio = round(($count / 20), 2); //* 100, 2);
 
         if ($count == 0)
