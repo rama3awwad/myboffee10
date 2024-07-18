@@ -43,7 +43,7 @@ class FavoritePostController extends BaseController
 
         return $this->sendResponse(null, 'Post removed from favorites');
 
-      //  $this->decrement('likes_count');
+      
 
     }
 

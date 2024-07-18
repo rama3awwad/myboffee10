@@ -60,10 +60,8 @@ class ReviweController extends BaseController
             $input=$request->all();
 
             $user_id = Auth::user()->id;
-            //$book_id = Book::all();
-           // $bookId = Book::where('book_id' ,$book_id);
            $bookId = $request->input('book_id');
-            $reviwe ->update ([
+            $reviwe = Reviwe::where( 'id', $id ) ->make([
                 'id'=>$request->id,
                 'user_id' => $user_id,
                 'book_id'=> $bookId,
