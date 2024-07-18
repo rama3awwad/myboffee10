@@ -39,7 +39,7 @@ class UserController extends BaseController
     $success = [
         'id' => $user->id,
         'user_name' => $user->user_name,
-        'age' => $user->age,
+        'age' => (int) $user->age,
         'email' => $user->email,
         'token' => $token,
         'my_points' => $user->my_points,
@@ -74,4 +74,16 @@ class UserController extends BaseController
     }
 
 
+    public function countUsers() {
+
+        $countAll = User::count();
+        $count = $countAll-1;
+
+    }
+
+    public function showAges() {
+
+
+
+    }
 }

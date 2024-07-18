@@ -7,9 +7,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Note>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Report>
  */
-class NoteFactory extends Factory
+class ReportFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +18,6 @@ class NoteFactory extends Factory
      */
     public function definition()
     {
-
         $user = User::inRandomOrder()->first();
         $book = Book::inRandomOrder()->first();
 
@@ -28,13 +27,9 @@ class NoteFactory extends Factory
         }
 
         return [
-            'user_id'=>User::all()->random()->id,
+            'user_id'=>$user->id,
             'book_id'=>$book->id,
-            'page_num'=>fake()->numberBetween(1,$book->total_pages),
             'body'=>fake()->text(100),
-            'color'=>fake()->numberBetween(1,4),
-
         ];
     }
-
 }

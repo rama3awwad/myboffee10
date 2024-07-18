@@ -105,8 +105,8 @@ class RatingController extends BaseController
     public function add(RatingRequest $request)
     {
         $userId = Auth::user()->id;
-        $bookId = $request->input('book_id');
-        $rate = $request->input('rate');
+        $bookId =  (int) $request->input('book_id');
+        $rate =  (int) $request->input('rate');
 
         $exist = Rating::where('user_id', $userId)->where('book_id', $bookId)->first();
 
@@ -161,7 +161,7 @@ class RatingController extends BaseController
     {
         $ratings = Rating::where('book_id', $bookId)->with(['user.level'])->get();
 
-        $raterDetails = Rating::select('books.title_en','books.id as book_id', 'users.user_name', 'users.id as user_id', 'levels.level', 'levels.books')
+        $raterDetails = Rating::select('books.title_en as title','books.id as book_id', 'users.user_name', 'users.id as user_id', 'levels.level', 'levels.books')
             ->join('books', 'ratings.book_id', '=', 'books.id')
             ->join('users', 'ratings.user_id', '=', 'users.id')
             ->join('levels', 'users.id', '=', 'levels.user_id')

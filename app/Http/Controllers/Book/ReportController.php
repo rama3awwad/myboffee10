@@ -40,8 +40,8 @@ class ReportController extends BaseController
         $request->validated();
         $user = Auth::user();
         $report = Report::create ([
-            'user_id'=>$request->user()->id,
-            'book_id'=>$bookId,
+            'user_id'=> (int) $request->user()->id,
+            'book_id'=> (int) $bookId,
             'body'=>$request->body,
         ]);
 

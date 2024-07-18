@@ -7,6 +7,7 @@ use App\Models\FavoriteBook;
 use App\Models\Level;
 use App\Models\Note;
 use App\Models\Rating;
+use App\Models\Report;
 use App\Models\Shelf;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -31,6 +32,7 @@ class DatabaseSeeder extends Seeder
         Level::factory(20)->create();
         FavoriteBook::factory(50)->create();
         Note::factory(70)->create();
+        Report::factory(60)->create();
 
 
 
@@ -45,6 +47,7 @@ class DatabaseSeeder extends Seeder
             LevelSeeder::class,
             FavoriteSeeder::class,
             NoteSeeder::class,
+            ReportSeeder::class,
 
         ]);
 

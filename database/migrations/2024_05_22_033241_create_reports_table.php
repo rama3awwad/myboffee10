@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('book_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('book_id')->references('id')->on('books')->onDelete('cascade');
             $table->text('body');
             $table->timestamps();
         });
