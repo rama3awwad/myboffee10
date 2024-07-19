@@ -25,7 +25,6 @@ class NoteRequest extends FormRequest
     {
 
         return [
-            'book_id' => ['required', 'exists:books,id'],
             'page_num' => ['required'],
             'body' => 'required'
 
