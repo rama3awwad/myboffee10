@@ -17,7 +17,7 @@ class PostController extends BaseController
     }
 
     //show user's posts
-    public function show($userId){
+    public function showUserPosts($userId){
 
        // $user = Auth::user();
         $user = User::where('id', $userId)->first();
@@ -54,19 +54,7 @@ class PostController extends BaseController
 
         return $this->sendResponse($post, 'Post created successfully.');
     }
-  /* public static function updateLikesCount($postId)
-    {
-       // $posts = Post::all();
-       $user = Auth::user();
-       $posts = $user->favoritePosts()->where('post_id' , $postId)->exists();
-        foreach ($posts as $post) {
-            $post = Post::find($postId);
-            if($post){
-            $totalLikes = $post->favoritesPosts()->count();
-            $post->update(['likes_count' => $totalLikes]);
-        }}
-    }
-*/
+
     public function update(Request $request, Post $id ){
 
         $post = Post::find($id);
@@ -80,7 +68,7 @@ class PostController extends BaseController
             $input=$request->all();
 
             $user_id = Auth::user()->id;
-            $post -> update([
+           $post = Post::where('id', $id) -> make([
                 'id' => $request->id,
                 'user_id' => $user_id,
                 'body' => $request->body,
@@ -92,7 +80,7 @@ class PostController extends BaseController
     }
 
     //show post
-    public function showP($post_id){
+    public function showPost($post_id){
 
         $post = Post::find($post_id);
 

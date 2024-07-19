@@ -140,8 +140,8 @@ Route::controller(GendreController::class)->group(function () {
     Route::controller(PostController::class)->group(function () {
         Route::get('/showAllPosts', 'index');
         Route::get('/showMyPosts', 'showMyPosts')->middleware('auth:sanctum');
-        Route::get('/showUserPosts/{user_id}','show');
-        Route::get('/showPost/{post_id}','ShowP');
+        Route::get('/showUserPosts/{user_id}','showUserPosts');
+        Route::get('/showPost/{post_id}','ShowPost');
         Route::post('/createPost', 'create')->middleware('auth:sanctum');
         Route::post('/updatePost/{id}', 'update')->middleware('auth:sanctum');
         Route::delete('/deletePost/{id}', 'delete')->middleware('auth:sanctum');

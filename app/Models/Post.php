@@ -12,7 +12,7 @@ class Post extends Model
         'user_id',
         'body',
         'user_name',
-       // 'likes_count'
+        'likes_count'
     ];
 
    /* public static function create($input, array $array)
