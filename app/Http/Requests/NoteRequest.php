@@ -27,7 +27,6 @@ class NoteRequest extends FormRequest
         return [
             'page_num' => ['required'],
             'body' => 'required'
-
         ];
     }
 }
