@@ -12,10 +12,12 @@ use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Book\RatingController;
 use App\Http\Controllers\Shelf\ShelfController;
 use App\Http\Controllers\Book\SuggestionController;
+use App\Http\Controllers\langController;
 use App\Http\Controllers\Types\TypeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('/language', langController::class);
 
 //gendre routes
 Route::controller(GendreController::class)->group(function () {

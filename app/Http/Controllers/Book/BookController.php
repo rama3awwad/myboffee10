@@ -17,12 +17,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class BookController extends BaseController
 {
 
-   public function index(Request $request)
+ /*  public function index(Request $request)
     {
         $languageCode = $request->header('Language_Code', 'en');
         $selectedColumns = [
@@ -80,17 +80,17 @@ class BookController extends BaseController
                    ];
 
         return $this->sendResponse($response, 'Books retrieved successfully.');
-    }
+    }*/
 
 
 
 //show all books
-  /*  public function index(Request $request): JsonResponse
+     public function index(Request $request): JsonResponse
     {
         $books = Book::all();
         return $this->sendResponse($books, 'Books retrieved successfully.');
     }
-*/
+
 //store book
     public function store(BookRequest $request): JsonResponse
     {
@@ -107,6 +107,13 @@ class BookController extends BaseController
         $file = time() . '-' . $request->title . '.' . $request->file('file')->extension();
         $request->file->move(public_path('/books/files'), $file);
         $file = '/books/files/' . $file;
+
+        $data = $request->validated();
+        $lang = new GoogleTranslate();
+        $data['title'] = $lang->setTarget('en')->setSource('ar')->translate($data['title']);
+        $data['author_name'] = $lang->setTarget('en')->setSource('ar')->translate($data['author_name']);
+        $data['description'] = $lang->setTarget('en')->setSource('ar')->translate($data['description']);
+
 
         $book = Book::create([
             'title' => $request->title,
@@ -389,9 +396,23 @@ class BookController extends BaseController
                 'file' => 'books/files/' . $file,
             ]);
 
+            $lang = new GoogleTranslate();
+
+            if ($request->has('title')) {
+                $data['title'] = $lang->setTarget('en')->setSource('ar')->translate($book['title']);
+            }
+
+            if ($request->has('author_name')) {
+                $data['author_name'] = $lang->setTarget('en')->setSource('ar')->translate($data['author_name']);
+            }
+
+            if ($request->has('description')) {
+                $data['description'] = $lang->setTarget('en')->setSource('ar')->translate($data['description']);
+            }
             $book->update($request->all());
             return $this->sendResponse($book, 'Book updated successfully.');
         }
+
     }
 
     public function updateImage(Request $request, $id)

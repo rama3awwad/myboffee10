@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Facade;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 return [
 
@@ -82,16 +83,8 @@ return [
     |
     */
 
-    'supported_locales' => [
-        'en' => [
-            'name' => 'English',
-            'dir'  => 'ltr',
-        ],
-        'ar' => [
-            'name' => 'Arabic',
-            'dir'  => 'rtl'
-        ],
-    ],
+  'locale' => 'en',
+    'locales' => ['en', 'ar'],
 
     /*
     |--------------------------------------------------------------------------
@@ -201,7 +194,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // ...
+        'GoogleTranslate' => \Stichoza\GoogleTranslate\GoogleTranslate::class,
     ])->toArray(),
 
 ];
