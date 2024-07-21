@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'my_points',
         'age',
+        'lang',
         'image',
         'gendre_id'
     ];
