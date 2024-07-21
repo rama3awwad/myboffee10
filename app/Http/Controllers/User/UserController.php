@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 use App\Http\Requests\AuthRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\Level;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -21,10 +22,10 @@ class UserController extends BaseController
         'user_name' => $request->user_name,
         'email' => $request->email,
         'password' => bcrypt($request->password),
-        'age' => $request->age,
-        'my_points' => $request->my_points ?? 40,
+        'age' => (int) $request->age,
+        'my_points' => 40,
         'image' => $request->image,
-        'gendre_id' => $request->gendre_id,
+        'gendre_id' => (int) $request->gendre_id,
          'role_id' => $request->role_id,
     ]);
 
@@ -73,6 +74,24 @@ class UserController extends BaseController
         return $this->sendResponse(null,'User logged out successfully');
     }
 
+    public function show(){
+        $userId = Auth::user()->id;
+        $user = User::findOrFail($userId);
+
+        $gender = $user->gendre_id == 1 ? 'male' : ($user->gendre_id == 2 ? 'female' : 'unknown');
+
+        $response = [
+            'id' => $user->id,
+            'user_name' => $user->user_name,
+            'email' => $user->email,
+            'my_points' => (int) $user->my_points,
+            'age' => (int) $user->age,
+            'gender' => $gender,
+            'gendre_id' => $user->gendre_id,
+        ];
+
+        return $this->sendResponse($response, 'User details retrieved successfully');
+    }
 
     public function countUsers() {
 

@@ -43,6 +43,7 @@ Route::controller(GendreController::class)->group(function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
+    Route::get('/user/show', 'show')->middleware('auth:sanctum');
 
     });
 
