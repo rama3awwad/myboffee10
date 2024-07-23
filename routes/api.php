@@ -182,8 +182,9 @@ Route::controller(ReviweController::class)->group(function () {
   });
 
   //filter
-    Route::post('/level/user', [LevelController::class, 'getUsersByLevel']);
-
+    Route::get('/level/{level}', [LevelController::class, 'getUsersByLevel']);
+    Route::get('/ages', [UserController::class, 'showAges']);
+    Route::get('/users/show', [UserController::class,'showUsers']);
 
 
 

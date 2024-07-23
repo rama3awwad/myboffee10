@@ -93,16 +93,45 @@ class UserController extends BaseController
         return $this->sendResponse($response, 'User details retrieved successfully');
     }
 
-    public function countUsers() {
+    public function showUsers() {
 
-        $countAll = User::count();
-        $count = $countAll-1;
+        $count = (int) User::count();
+        $users = User::get();
+
+        return $this->sendResponse(['Num of users:' => $count,'Users:' => $users],
+            'Users retrieved successfully');
 
     }
 
     public function showAges() {
+        $countAll = (int) User::count();
 
+        $firstQuery = User::whereBetween('age', [0, 14]);
+        $countFirst = $firstQuery->count();
+        $first = $firstQuery->get();
 
+        $secondQuery = User::whereBetween('age', [15, 20]);
+        $countSecond = $secondQuery->count();
+        $second = $secondQuery->get();
+
+        $thirdQuery = User::where('age', '>', 20);
+        $countThird = $thirdQuery->count();
+        $third = $thirdQuery->get();
+
+        return $this->sendResponse([
+
+                        'Count of all users =' => $countAll,
+
+                        'Count of users less than 14 =' => $countFirst,
+                        'Users less than 14' => $first,
+
+                        'Count of users between 15 and 20 =' => $countSecond,
+                        'Users between 15 and 20' => $second,
+
+                        'Count of users grater than 20 =' => $countThird,
+                        'Users greater than 20' => $third],
+
+        'Users retrieved successfully as their ages');
 
     }
 }
