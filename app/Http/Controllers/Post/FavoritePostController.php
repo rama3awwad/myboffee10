@@ -13,31 +13,32 @@ use Illuminate\Support\Facades\Auth;
 class FavoritePostController extends BaseController
 {
 
-    public function addToFavorites($postId)
-{
+   /* public function addToFavorites($postId){
     $user = Auth::user();
     $post = Post::findOrFail($postId);
-
     if(!$post){
         return $this->sendError('post not found!');
     }
-
-    if ($user->id != $post->user_id) {
-        return $this->sendError('Oh man, don\'t touch! you can just add favorite to your own posts');
-    }
-
     $is_favorited = $user->favoritePosts()->where('post_id' , $postId)->exists();
-
         if($is_favorited){
             return $this->sendError('Post is favorited');
         }
-
        $user->favoritePosts()->attach($postId);
-
         return $this->sendResponse(null, 'Post added to favorites');
+}*/
 
+public function addToFavorites($post){
+
+       $user = auth()->user()->favoritePosts()->syncWithoutDetaching((array)$post);
+
+       $post = Post::findOrFail($post);
+       if(!$post){
+           return $this->sendError('post not found!');
+    }
+    return $this->sendResponse(null,'Post added to favorites');
 
 }
+
     public function countLikes($postId){
 
         $count = FavoritePost::where('post_id' , $postId)->count();
@@ -57,8 +58,7 @@ class FavoritePostController extends BaseController
 
     }
 
-    public function showUserFav($userId)
-    {
+    public function showUserFav($userId){
 
         $user = User::find($userId);
         $favorites = $user->favoritePosts;
