@@ -297,20 +297,21 @@ class BookController extends BaseController
                 $book = DB::table('books')
                     ->join('types', 'books.type_id', '=', 'types.id')
                     ->select(
-                        'books.title_en as title',
+                        'books.title as title',
                         'books.cover',
                         'books.file',
-                        'books.author_name_en as author_name',
+                        'books.author_name',
                         'books.total_pages',
                         'books.points',
                         'types.name as type_name'
                     )
-                    ->get();
+                    ->first();
 
-                //$file = $book->file;
+                $file = $book->file;
 
                 return $this->sendResponse([
                     'file' => $book,
+                    'shelf_id' => $newShelf->id,
                 ], 'Book opened successfully.');
             }
 
@@ -328,21 +329,23 @@ class BookController extends BaseController
                 $book = DB::table('books')
                     ->join('types', 'books.type_id', '=', 'types.id')
                     ->select(
-                        'books.title_en as title',
+                        'books.title',
                         'books.cover',
                         'books.file',
-                        'books.author_name_en as author_name',
+                        'books.author_name_en',
                         'books.total_pages',
                         'books.points',
                         'types.name as type_name'
                     )
-                    ->get();
+                    ->first();
 
 
-                // $file = $book->file;
+                 $file = $book->file;
 
                 return $this->sendResponse([
-                    'book_data' => $book,
+                    'file' => $book,
+                    'shelf_id' => $shelf->id
+
                 ], 'Book opened successfully.');
             }
 
@@ -351,20 +354,21 @@ class BookController extends BaseController
             $book = DB::table('books')
                 ->join('types', 'books.type_id', '=', 'types.id')
                 ->select(
-                    'books.title_en as title',
+                    'books.title',
                     'books.cover',
                     'books.file',
-                    'books.author_name_en as author_name',
+                    'books.author_name',
                     'books.total_pages',
                     'books.points',
                     'types.name as type_name'
                 )
-                ->get();
+                ->first();
 
-            //    $file = $book->file;
+                $file = $book->file;
 
             return $this->sendResponse([
                 'file' => $book,
+                'shelf_id' => $shelf->id
             ], 'Book opened successfully.');
         }}
 

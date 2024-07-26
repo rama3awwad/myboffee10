@@ -94,18 +94,18 @@ class ShelfController extends BaseController
     public function myShelf(Request $request): JsonResponse
     {
         $userId = Auth::user()->id;
-       // $status = $request->input('status');
+        $status = $request->input('status');
 
         $shelves = Shelf::with(['book'])
             ->where('user_id', $userId)
-           // ->where('status', $status)
+            ->where('status', $status)
             ->get();
 
         if ($shelves->isEmpty()) {
             return response()->json(['error' => 'No shelves found '], 404);
         }
 
-        //$bookCount = Shelf::where('user_id', $userId)->where('status', $status)->count();
+        $bookCount = Shelf::where('user_id', $userId)->where('status', $status)->count();
 
         $newShelves = [];
         foreach ($shelves as $shelf) {
@@ -116,7 +116,7 @@ class ShelfController extends BaseController
                     'cover' => $shelf->book->cover,
                     'file' => $shelf->book->file,
                 ],
-            //    'total_books_count' => $bookCount,
+               'total_books_count' => $bookCount,
             ];
         }
         return response()->json([

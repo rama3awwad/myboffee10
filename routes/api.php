@@ -82,7 +82,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::post('/shelf/later','storeLaterStatus')->middleware('auth:sanctum');
         Route::post('/shelf/{shelfId}','updateProgress')->middleware('auth:sanctum');
         Route::get('/count/{bookId}','count');
-        Route::get('/myShelf', 'myShelf')->middleware('auth:sanctum');
+        Route::post('/myShelf', 'myShelf')->middleware('auth:sanctum');
         Route::post('/countMine','countMine')->middleware('auth:sanctum');
     });
 
