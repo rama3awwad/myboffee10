@@ -15,8 +15,18 @@ class FavoritePostController extends BaseController
 
     public function addToFavorites($postId)
 {
-        $user = Auth::user();
-        $is_favorited = $user->favoritePosts()->where('post_id' , $postId)->exists();
+    $user = Auth::user();
+    $post = Post::findOrFail($postId);
+
+    if(!$post){
+        return $this->sendError('post not found!');
+    }
+
+    if ($user->id != $post->user_id) {
+        return $this->sendError('Oh man, don\'t touch! you can just add favorite to your own posts');
+    }
+
+    $is_favorited = $user->favoritePosts()->where('post_id' , $postId)->exists();
 
         if($is_favorited){
             return $this->sendError('Post is favorited');
@@ -43,7 +53,7 @@ class FavoritePostController extends BaseController
 
         return $this->sendResponse(null, 'Post removed from favorites');
 
-      
+
 
     }
 

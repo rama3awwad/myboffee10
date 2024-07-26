@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\FavoriteBook;
 use App\Models\Level;
 use App\Models\Note;
+use App\Models\Post;
 use App\Models\Rating;
 use App\Models\Report;
 use App\Models\Shelf;
@@ -33,6 +34,7 @@ class DatabaseSeeder extends Seeder
         FavoriteBook::factory(50)->create();
         Note::factory(70)->create();
         Report::factory(60)->create();
+        Post::factory(20)->create();
 
 
 
@@ -48,6 +50,7 @@ class DatabaseSeeder extends Seeder
             FavoriteSeeder::class,
             NoteSeeder::class,
             ReportSeeder::class,
+            PostSeeder::class,
 
         ]);
 

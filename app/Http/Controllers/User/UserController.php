@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 use App\Http\Requests\AuthRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\Level;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -21,10 +22,10 @@ class UserController extends BaseController
         'user_name' => $request->user_name,
         'email' => $request->email,
         'password' => bcrypt($request->password),
-        'age' => $request->age,
-        'my_points' => $request->my_points ?? 40,
+        'age' => (int) $request->age,
+        'my_points' => 40,
         'image' => $request->image,
-        'gendre_id' => $request->gendre_id,
+        'gendre_id' => (int) $request->gendre_id,
          'role_id' => $request->role_id,
     ]);
 
@@ -73,17 +74,64 @@ class UserController extends BaseController
         return $this->sendResponse(null,'User logged out successfully');
     }
 
+    public function show(){
+        $userId = Auth::user()->id;
+        $user = User::findOrFail($userId);
 
-    public function countUsers() {
+        $gender = $user->gendre_id == 1 ? 'male' : ($user->gendre_id == 2 ? 'female' : 'unknown');
 
-        $countAll = User::count();
-        $count = $countAll-1;
+        $response = [
+            'id' => $user->id,
+            'user_name' => $user->user_name,
+            'email' => $user->email,
+            'my_points' => (int) $user->my_points,
+            'age' => (int) $user->age,
+            'gender' => $gender,
+            'gendre_id' => $user->gendre_id,
+        ];
+
+        return $this->sendResponse($response, 'User details retrieved successfully');
+    }
+
+    public function showUsers() {
+
+        $count = (int) User::count();
+        $users = User::get();
+
+        return $this->sendResponse(['Num of users:' => $count,'Users:' => $users],
+            'Users retrieved successfully');
 
     }
 
     public function showAges() {
+        $countAll = (int) User::count();
 
+        $firstQuery = User::whereBetween('age', [0, 14]);
+        $countFirst = $firstQuery->count();
+        $first = $firstQuery->get();
 
+        $secondQuery = User::whereBetween('age', [15, 20]);
+        $countSecond = $secondQuery->count();
+        $second = $secondQuery->get();
+
+        $thirdQuery = User::where('age', '>', 20);
+        $countThird = $thirdQuery->count();
+        $third = $thirdQuery->get();
+
+        return $this->sendResponse([
+
+                        'Count of all users =' => $countAll,
+
+                        'Count of users less than 14 =' => $countFirst,
+                        'Users less than 14' => $first,
+
+                        'Count of users between 15 and 20 =' => $countSecond,
+                        'Users between 15 and 20' => $second,
+
+                        'Count of users grater than 20 =' => $countThird,
+                        'Users greater than 20' => $third],
+
+        'Users retrieved successfully as their ages');
 
     }
 }

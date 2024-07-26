@@ -32,7 +32,7 @@ class NoteController extends BaseController
 
 
     //show all of my notes
-    public function showMyNotes(): JsonResponse
+    public function index(): JsonResponse
     {
         $userId = Auth::user()->id;
 

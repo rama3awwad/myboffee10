@@ -81,15 +81,14 @@ class LevelController extends BaseController
             ->get();
     }
 
-    public function getUsersByLevel(Request $request)
+    public function getUsersByLevel($level, Request $request)
     {
-        $levelName = $request->input('level');
-        $numberOfUsers = Level::where('level', $levelName)->count();
+        $numberOfUsers = Level::where('level', $level)->count();
 
         $usersDetails = DB::table('levels')
             ->join('users', 'levels.user_id', '=', 'users.id')
             ->select('users.id as user_id', 'users.user_name', 'levels.books as book_value')
-            ->where('levels.level', $levelName)
+            ->where('levels.level', $level)
             ->get();
 
         $response = [];

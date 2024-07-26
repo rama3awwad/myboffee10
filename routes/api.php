@@ -46,6 +46,7 @@ Route::controller(GendreController::class)->group(function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
+    Route::get('/user/show', 'show')->middleware('auth:sanctum');
 
     });
 
@@ -81,7 +82,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::post('/shelf/later','storeLaterStatus')->middleware('auth:sanctum');
         Route::post('/shelf/{shelfId}','updateProgress')->middleware('auth:sanctum');
         Route::get('/count/{bookId}','count');
-        Route::get('/myShelf', 'myShelf')->middleware('auth:sanctum');
+        Route::post('/myShelf', 'myShelf')->middleware('auth:sanctum');
         Route::post('/countMine','countMine')->middleware('auth:sanctum');
     });
 
@@ -181,8 +182,9 @@ Route::controller(ReviweController::class)->group(function () {
   });
 
   //filter
-    Route::post('/level/user', [LevelController::class, 'getUsersByLevel']);
-
+    Route::get('/level/{level}', [LevelController::class, 'getUsersByLevel']);
+    Route::get('/ages', [UserController::class, 'showAges']);
+    Route::get('/users/show', [UserController::class,'showUsers']);
 
 
 
