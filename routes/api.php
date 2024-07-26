@@ -29,7 +29,7 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('/language', langController::class);
+Route::get('/language', langController::class)->middleware('auth:sanctum');
 
 //gendre routes
 Route::controller(GendreController::class)->group(function () {
@@ -59,7 +59,7 @@ Route::controller(GendreController::class)->group(function () {
 
 // Book routes
     Route::controller(BookController::class)->group(function () {
-        Route::get('/books', 'index');
+        Route::get('/books', 'index')->middleware('auth:sanctum');
         Route::post('/books', 'store');
         Route::get('/Abooks/{id}', 'Ashow');
         Route::get('/file/{id}','getFile');
