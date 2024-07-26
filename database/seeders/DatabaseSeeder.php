@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
             FavoriteSeeder::class,
             NoteSeeder::class,
             ReportSeeder::class,
+            PostSeeder::class,
 
         ]);
 
