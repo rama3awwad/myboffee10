@@ -15,6 +15,11 @@ class FavoritePostController extends BaseController
 
    /* public function addToFavorites($postId){
     $user = Auth::user();
+
+    if (!$user) {
+        return $this->sendError('User not found!');
+    }
+
     $post = Post::findOrFail($postId);
     if(!$post){
         return $this->sendError('post not found!');

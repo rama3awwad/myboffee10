@@ -310,8 +310,8 @@ class BookController extends BaseController
                 $file = $book->file;
 
                 return $this->sendResponse([
-                    'file' => $book,
-                    'shelf_id' => $newShelf->id,
+                    $book,
+                    'Shelf_id' => $newShelf->id,
                 ], 'Book opened successfully.');
             }
 
@@ -343,9 +343,8 @@ class BookController extends BaseController
                  $file = $book->file;
 
                 return $this->sendResponse([
-                    'file' => $book,
-                    'shelf_id' => $shelf->id
-
+                     $book,
+                    'Shelf_id' => $shelf->id
                 ], 'Book opened successfully.');
             }
 
@@ -367,8 +366,8 @@ class BookController extends BaseController
                 $file = $book->file;
 
             return $this->sendResponse([
-                'file' => $book,
-                'shelf_id' => $shelf->id
+                $book,
+                'Shelf_id' => $shelf->id
             ], 'Book opened successfully.');
         }}
 
