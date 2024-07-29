@@ -136,7 +136,7 @@ class ShelfController extends BaseController
 
         $book = Book::where('id', $shelf->book_id)->first();
 
-        if (($validated['progress']) >= ($book->total_pages)) {
+        if ( (int) ($validated['progress']) >= (int) ($book->total_pages)) {
             $shelf->update(['status' => 'finished']);
 
             $userId = Auth::user()->id;

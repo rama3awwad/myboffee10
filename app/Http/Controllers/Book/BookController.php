@@ -291,7 +291,7 @@ class BookController extends BaseController
                     'user_id' => $userId,
                     'book_id' => $id,
                     'status' => 'reading',
-                    'progress' => 1,
+                    'progress' => 0,
                 ]);
 
                 $book = DB::table('books')
@@ -311,7 +311,8 @@ class BookController extends BaseController
 
                 return $this->sendResponse([
                     'Shelf_id' => $newShelf->id,
-                    $book,
+                    'progress' => (int) $newShelf->progress,
+                    'file' => $book,
                 ], 'Book opened successfully.');
             }
 
@@ -324,7 +325,7 @@ class BookController extends BaseController
                 $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
                 $shelf->update([
                     'status' => 'reading',
-                    'progress' => 1,
+                    'progress' => 0,
                 ]);
                 $book = DB::table('books')
                     ->join('types', 'books.type_id', '=', 'types.id')
@@ -343,8 +344,8 @@ class BookController extends BaseController
 
                 return $this->sendResponse([
                     'Shelf_id' => $shelf->id,
-
-                     $book
+                    'progress' => (int) $shelf->progress,
+                     'file' => $book
                 ], 'Book opened successfully.');
             }
 
@@ -367,8 +368,8 @@ class BookController extends BaseController
 
             return $this->sendResponse([
                 'Shelf_id' => $shelf->id,
-                'progress' => $shelf->progress,
-                $book,
+                'progress' => (int) $shelf->progress,
+                'file' => $book,
             ], 'Book opened successfully.');
         }
     }
