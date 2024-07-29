@@ -310,8 +310,8 @@ class BookController extends BaseController
                 $file = $book->file;
 
                 return $this->sendResponse([
-                    $book,
                     'Shelf_id' => $newShelf->id,
+                    $book,
                 ], 'Book opened successfully.');
             }
 
@@ -339,12 +339,12 @@ class BookController extends BaseController
                     )
                     ->first();
 
-
                  $file = $book->file;
 
                 return $this->sendResponse([
-                     $book,
-                    'Shelf_id' => $shelf->id
+                    'Shelf_id' => $shelf->id,
+
+                     $book
                 ], 'Book opened successfully.');
             }
 
@@ -366,10 +366,12 @@ class BookController extends BaseController
                 $file = $book->file;
 
             return $this->sendResponse([
+                'Shelf_id' => $shelf->id,
+                'progress' => $shelf->progress,
                 $book,
-                'Shelf_id' => $shelf->id
             ], 'Book opened successfully.');
-        }}
+        }
+    }
 
     //update book
     public function update(BookRequest $request, $id): JsonResponse

@@ -27,7 +27,7 @@ class ShelfController extends BaseController
         if ($shelf) {
             $shelf->update([
                 'status' => 'read_later',
-                'progress' => 1,
+                'progress' => 0,
             ]);
             return $this->sendResponse($shelf, 'Shelf updated successfully.');
 
@@ -36,7 +36,7 @@ class ShelfController extends BaseController
                 'user_id' => $userId,
                 'book_id' => $bookId,
                 'status' => 'read_later',
-                'progress' => 1,
+                'progress' => 0,
             ]);
 
             return $this->sendResponse($shelf, 'Shelf created successfully.');
@@ -132,7 +132,7 @@ class ShelfController extends BaseController
         $validated = $request->validate([
             'progress' => ['required', 'integer'],
         ]);
-        $shelf->update(['progress' => $validated['progress'], 'status' => 'reading']);
+        $shelf->update(['progress' => (int) $validated['progress'], 'status' => 'reading']);
 
         $book = Book::where('id', $shelf->book_id)->first();
 
