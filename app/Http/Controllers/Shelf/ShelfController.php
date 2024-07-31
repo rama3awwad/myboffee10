@@ -163,7 +163,7 @@ class ShelfController extends BaseController
             }
         }
         return $this->sendResponse([
-            'updated Shelf' => $shelf,
+            'shelf' => $shelf,
         ], 'Progress updated.');
     }
 }
