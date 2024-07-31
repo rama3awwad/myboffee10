@@ -291,7 +291,7 @@ class BookController extends BaseController
                     'user_id' => $userId,
                     'book_id' => $id,
                     'status' => 'reading',
-                    'progress' => 1,
+                    'progress' => 0,
                 ]);
 
                 $book = DB::table('books')
@@ -310,8 +310,9 @@ class BookController extends BaseController
                 $file = $book->file;
 
                 return $this->sendResponse([
+                    'Shelf_id' => $newShelf->id,
+                    'progress' => (int) $newShelf->progress,
                     'file' => $book,
-                    'shelf_id' => $newShelf->id,
                 ], 'Book opened successfully.');
             }
 
@@ -324,7 +325,7 @@ class BookController extends BaseController
                 $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
                 $shelf->update([
                     'status' => 'reading',
-                    'progress' => 1,
+                    'progress' => 0,
                 ]);
                 $book = DB::table('books')
                     ->join('types', 'books.type_id', '=', 'types.id')
@@ -339,13 +340,12 @@ class BookController extends BaseController
                     )
                     ->first();
 
-
                  $file = $book->file;
 
                 return $this->sendResponse([
-                    'file' => $book,
-                    'shelf_id' => $shelf->id
-
+                    'Shelf_id' => $shelf->id,
+                    'progress' => (int) $shelf->progress,
+                     'file' => $book
                 ], 'Book opened successfully.');
             }
 
@@ -367,10 +367,12 @@ class BookController extends BaseController
                 $file = $book->file;
 
             return $this->sendResponse([
+                'Shelf_id' => $shelf->id,
+                'progress' => (int) $shelf->progress,
                 'file' => $book,
-                'shelf_id' => $shelf->id
             ], 'Book opened successfully.');
-        }}
+        }
+    }
 
     //update book
     public function update(BookRequest $request, $id): JsonResponse
