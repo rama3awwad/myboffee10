@@ -72,6 +72,7 @@ class PostController extends BaseController
                 'id' => $request->id,
                 'user_id' => $user_id,
                 'body' => $request->body,
+                'likes_count'=>$request->likes_count
             ]);
 
             return $this->sendResponse($post, 'Post updated successfully');

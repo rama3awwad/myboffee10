@@ -42,6 +42,10 @@ public function addToFavorites($post){
     public function countLikes($postId){
 
         $count = FavoritePost::where('post_id' , $postId)->count();
+        $post = Post::findOrFail($postId);
+        $post->likes_count = $count;
+        $post->save();
+
         return $this->sendResponse($count, 'update likes number');
     }
 
@@ -53,15 +57,12 @@ public function addToFavorites($post){
         $user->favoritePosts()->detach($postId);
 
         return $this->sendResponse(null, 'Post removed from favorites');
-
-
-
     }
 
     public function showUserFav($userId){
 
         $user = User::find($userId);
-        $favorites = $user->favoritePosts;
+        $favorites = $user->favoritePosts()->get();
 
         return $this->sendResponse($favorites, 'Favorites fetched successfully');
     }
@@ -69,7 +70,7 @@ public function addToFavorites($post){
     public function showMyFavorite(){
 
         $user = Auth::user();
-        $favorite_posts = $user->favoritePosts;
+        $favorite_posts = $user->favoritePosts()->get();
 
         return $this->sendResponse($favorite_posts, 'Favorites fetched successfully');
     }

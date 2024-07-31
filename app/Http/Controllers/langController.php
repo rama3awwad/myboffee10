@@ -12,7 +12,7 @@ class LangController extends BaseController
 
     public function __invoke()
     {
-        $user = auth()->user();
+        $user = auth()->user() ;
 
         $lang = 'en';
         if ($user->lang == 'en') {
