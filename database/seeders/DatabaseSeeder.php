@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Book;
 use App\Models\FavoriteBook;
+use App\Models\FavoritePost;
 use App\Models\Level;
 use App\Models\Note;
 use App\Models\Post;
@@ -28,14 +29,14 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(22)->create();
         Book::factory(30)->create();
-        Shelf::factory(10)->create();
+      //  Shelf::factory(1000)->create();
         Rating::factory(50)->create();
-        Level::factory(20)->create();
+        Level::factory(22)->create();
         FavoriteBook::factory(50)->create();
         Note::factory(70)->create();
         Report::factory(60)->create();
         Post::factory(20)->create();
-
+        FavoritePost::factory(20)->create();
 
 
         $this->call([
@@ -51,6 +52,7 @@ class DatabaseSeeder extends Seeder
             NoteSeeder::class,
             ReportSeeder::class,
             PostSeeder::class,
+            FavoritePostSeeder::class,
 
         ]);
 
