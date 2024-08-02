@@ -126,7 +126,7 @@ class BookController extends BaseController
             'type_id' => $request->type_id,
         ]);
 
-        return $this->sendResponse($book, 'Book created successfully.');
+        return $this->sendResponse($data, 'Book created successfully.');
     }
 
 //show avg rating of book
