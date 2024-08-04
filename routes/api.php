@@ -29,41 +29,41 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('/language', langController::class)->middleware('auth:sanctum');
+Route::middleware('setapplang')->prefix('{locale}')->group(function(){
+    //gendre routes
+    Route::controller(GendreController::class)->group(function () {
 
-//gendre routes
-Route::controller(GendreController::class)->group(function () {
+        Route::post('/gendres', 'store');
+        Route::get('/gendres/{id}', 'show');
+        Route::delete('/gendres/{id}', 'destroy');
 
-    Route::post('/gendres', 'store');
-    Route::get('/gendres/{id}', 'show');
-    Route::delete('/gendres/{id}', 'destroy');
-
-    });
-
-//user routes
+        });
+    //user routes
     Route::controller(UserController::class)->group(function () {
 
-    Route::post('/register', 'register');
-    Route::post('/login', 'login');
-    Route::post('/logout', 'logout')->middleware('auth:sanctum');
-    Route::get('/user/show', 'show')->middleware('auth:sanctum');
+        Route::post('/register', 'register');
+        Route::post('/login', 'login');
+        Route::post('/logout', 'logout')->middleware('auth:sanctum');
+        Route::get('/user/show', 'show')->middleware('auth:sanctum');
 
-    Route::post('password/email','userForgotPassword');
-    Route::post('password/code/check', 'userCheckCode');
-    Route::post('password/reset', 'userResetPassword');
-    });
+        });
 
-//type routes
-    Route::controller(TypeController::class)->group(function () {
-        Route::get('/types', 'index');
-        Route::get('/types/{id}', 'show');
-        Route::put('/types/{id}', 'update');
-        Route::delete('/types/{id}', 'destroy');
-    });
+    //type routes
+        Route::controller(TypeController::class)->group(function () {
+            Route::get('/types', 'index');
+            Route::get('/types/{id}', 'show');
+            Route::put('/types/{id}', 'update');
+            Route::delete('/types/{id}', 'destroy');
+        });
+
+
+});
+Route::get('/language', langController::class)->middleware('auth:sanctum');
+
 
 // Book routes
     Route::controller(BookController::class)->group(function () {
-        Route::get('/books', 'index')->middleware('auth:sanctum');
+        Route::get('/books', 'index');
         Route::post('/books', 'store');
         Route::get('/Abooks/{id}', 'Ashow');
         Route::get('/file/{id}','getFile');
@@ -76,6 +76,7 @@ Route::controller(GendreController::class)->group(function () {
         Route::get('/details/{id}','showDetails');
         Route::post('/author', 'author');
         Route::get('/mostReading','mostReading');
+        Route::get('/mostRating','mostRating');
 
     });
 
@@ -185,7 +186,7 @@ Route::controller(ReviweController::class)->group(function () {
   });
 
   //filter
-    Route::get('/level/count', [LevelController::class, 'countlevelusers']);
+    Route::get('/level/{level}', [LevelController::class, 'getUsersByLevel']);
     Route::get('/ages', [UserController::class, 'showAges']);
     Route::get('/users/show', [UserController::class,'showUsers']);
     Route::get('type/count',[BookController::class,'typeReading']);

@@ -184,6 +184,21 @@ class BookController extends BaseController
 
          return $this->sendResponse($mostReadBooks, 'Most reading books retrieved successfully');
 }
+    public function mostRating (){
+
+        $mostRateBooks = DB::table('ratings')
+            ->leftJoin('books', 'books.id', '=', 'ratings.book_id')
+            ->select('books.*', 'ratings.rate', DB::raw("AVG(ratings.rate) AS most_rating"))
+            ->groupBy('books.id', 'file', 'cover','title','author_name',
+                    'points','description', 'total_pages', 'type_id',
+                    'created_at','updated_at','ratings.rate')
+            ->orderBy('most_rating','desc')
+            ->take(15)
+            ->get();
+
+            return $this->sendResponse($mostRateBooks, 'Most rating books retrieved successfully');
+ }
+
 //show file only
     public function getFile($bookId)
     {
