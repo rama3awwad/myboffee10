@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Book;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class FavoriteBookFactory extends Factory
+class FavoritePostFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,16 +19,16 @@ class FavoriteBookFactory extends Factory
     public function definition()
     {
         $user = User::inRandomOrder()->first();
-        $book = Book::inRandomOrder()->first();
+        $post = Post::inRandomOrder()->first();
 
-        while ($user->favoriteBooks()->where('book_id', $book->id)->exists()) {
+        while ($user->favoritePosts()->where('post_id', $post->id)->exists()) {
             $user = User::inRandomOrder()->first();
-            $book = Book::inRandomOrder()->first();
+            $post = Post::inRandomOrder()->first();
         }
 
         return [
             'user_id'=>$user->id,
-            'book_id'=>$book->id,
-            ];
+            'post_id'=>$post->id,
+        ];
     }
 }

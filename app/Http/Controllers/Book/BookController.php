@@ -312,6 +312,7 @@ class BookController extends BaseController
                 $book = DB::table('books')
                     ->join('types', 'books.type_id', '=', 'types.id')
                     ->select(
+                        'books.id',
                         'books.title as title',
                         'books.cover',
                         'books.file',
@@ -345,6 +346,7 @@ class BookController extends BaseController
                 $book = DB::table('books')
                     ->join('types', 'books.type_id', '=', 'types.id')
                     ->select(
+                        'books.id',
                         'books.title',
                         'books.cover',
                         'books.file',
@@ -369,6 +371,7 @@ class BookController extends BaseController
             $book = DB::table('books')
                 ->join('types', 'books.type_id', '=', 'types.id')
                 ->select(
+                    'books.id',
                     'books.title',
                     'books.cover',
                     'books.file',
@@ -461,7 +464,8 @@ class BookController extends BaseController
         ]);
         return $this->sendResponse($book, 'Book updated successfully.');
 
-
-
     }
+
+
+
 }

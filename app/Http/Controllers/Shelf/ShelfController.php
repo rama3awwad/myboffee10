@@ -116,7 +116,7 @@ class ShelfController extends BaseController
                     'cover' => $shelf->book->cover,
                     'file' => $shelf->book->file,
                 ],
-               'total_books_count' => $bookCount,
+                'total_books_count' => $bookCount,
             ];
         }
         return response()->json([
@@ -137,15 +137,19 @@ class ShelfController extends BaseController
 
         $book = Book::where('id', $shelf->book_id)->first();
 
-        if ( (int) ($validated['progress']) >= (int) ($book->total_pages-1)) {
+        if ( (int) ($validated['progress']) >= (int) ($book->total_pages)) {
             $shelf->update(['status' => 'finished']);
 
             $userId = Auth::user()->id;
             User::find($userId)->increment('my_points', 5);
 
-            $level = Level::find($userId);
-            Level::find($userId)->increment('books', 1);
-            $count = Level::find($userId)->books;
+            $level = Level::where('user_id', $userId)->first();
+            $level->increment('books', 1);
+            $count = $level->books;
+
+         /*   $level = Level::find($userId);
+            $level->increment('books', 1);
+            $count = Level::find($userId)->books;*/
 
             if ($count > 0 && $count < 10) {
                 $level->update([

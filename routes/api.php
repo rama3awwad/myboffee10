@@ -92,7 +92,7 @@ Route::get('/language', langController::class)->middleware('auth:sanctum');
 
 //favorite routes
     Route::controller(FavoriteController::class)->group(function () {
-        Route::post('/add/{bookId}', 'add')->middleware('auth:sanctum');
+        Route::post('/add/{bookId}', 'addToFavorite')->middleware('auth:sanctum');
         Route::get('/favorites', 'showMine')->middleware('auth:sanctum');
     //    Route::get('/showUserFav','showUserFav');
         Route::delete('/remove/{bookId}','remove')->middleware('auth:sanctum');
@@ -189,6 +189,7 @@ Route::controller(ReviweController::class)->group(function () {
     Route::get('/level/{level}', [LevelController::class, 'getUsersByLevel']);
     Route::get('/ages', [UserController::class, 'showAges']);
     Route::get('/users/show', [UserController::class,'showUsers']);
+    Route::get('type/count',[BookController::class,'typeReading']);
 
 
 
