@@ -29,36 +29,35 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::middleware('setapplang')->prefix('{locale}')->group(function(){
-    //gendre routes
-    Route::controller(GendreController::class)->group(function () {
 
-        Route::post('/gendres', 'store');
-        Route::get('/gendres/{id}', 'show');
-        Route::delete('/gendres/{id}', 'destroy');
-
-        });
-    //user routes
-    Route::controller(UserController::class)->group(function () {
-
-        Route::post('/register', 'register');
-        Route::post('/login', 'login');
-        Route::post('/logout', 'logout')->middleware('auth:sanctum');
-        Route::get('/user/show', 'show')->middleware('auth:sanctum');
-
-        });
-
-    //type routes
-        Route::controller(TypeController::class)->group(function () {
-            Route::get('/types', 'index');
-            Route::get('/types/{id}', 'show');
-            Route::put('/types/{id}', 'update');
-            Route::delete('/types/{id}', 'destroy');
-        });
-
-
-});
 Route::get('/language', langController::class)->middleware('auth:sanctum');
+ //gendre routes
+ Route::controller(GendreController::class)->group(function () {
+
+    Route::post('/gendres', 'store');
+    Route::get('/gendres/{id}', 'show');
+    Route::delete('/gendres/{id}', 'destroy');
+
+    });
+//user routes
+Route::controller(UserController::class)->group(function () {
+
+    Route::post('/register', 'register');
+    Route::post('/login', 'login');
+    Route::post('/logout', 'logout')->middleware('auth:sanctum');
+    Route::get('/user/show', 'show')->middleware('auth:sanctum');
+
+    });
+
+//type routes
+    Route::controller(TypeController::class)->group(function () {
+        Route::get('/types', 'index');
+        Route::get('/types/{id}', 'show');
+        Route::put('/types/{id}', 'update');
+        Route::delete('/types/{id}', 'destroy');
+    });
+
+
 
 
 // Book routes
@@ -194,7 +193,8 @@ Route::controller(ReviweController::class)->group(function () {
 
 
 
-
+    Route::middleware('setapplang')->prefix('{locale}')->group(function(){
+    });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
