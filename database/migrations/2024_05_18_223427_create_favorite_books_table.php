@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('favorite_book', function (Blueprint $table) {
+        Schema::create('favorite_books', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id') ->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('book_id') ->references('id')->on('books')->onDelete('cascade');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('favorite_book');
+        Schema::dropIfExists('favorite_books');
     }
 };
