@@ -4,30 +4,34 @@ namespace App\Http\Controllers\User;
 use App\Http\Requests\AuthRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Mail\SendCodeResetPassword;
 use App\Models\Level;
+use App\Models\ResetCodePassword;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\HasApiTokens;
 
 class UserController extends BaseController
-{    use HasApiTokens, Notifiable;
+{
+    use HasApiTokens, Notifiable;
 
-    public function register(AuthRequest $request):JsonResponse
+    public function register(AuthRequest $request): JsonResponse
     {
         $user = User::create([
-        'user_name' => $request->user_name,
-        'email' => $request->email,
-        'password' => bcrypt($request->password),
-        'age' => (int) $request->age,
-        'my_points' => 40,
-        'image' => $request->image,
-        'gendre_id' => (int) $request->gendre_id,
-         'role_id' => $request->role_id,
-    ]);
+            'user_name' => $request->user_name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'age' => (int)$request->age,
+            'my_points' => 40,
+            'image' => $request->image,
+            'gendre_id' => (int)$request->gendre_id,
+            'role_id' => $request->role_id,
+        ]);
 
         $newLevel = Level::create([
             'user_id' => $user->id,
@@ -35,44 +39,120 @@ class UserController extends BaseController
             'level' => 'first',
         ]);
 
-    $token = $user->createToken("API TOKEN")->plainTextToken;
+        $token = $user->createToken("API TOKEN")->plainTextToken;
 
-    $success = [
-        'id' => $user->id,
-        'user_name' => $user->user_name,
-        'age' => (int) $user->age,
-        'email' => $user->email,
-        'token' => $token,
-        'my_points' => $user->my_points,
-        'gendre_id' => $user->gendre_id,
-        'user_id' => $user->role_id,
+        $success = [
+            'id' => $user->id,
+            'user_name' => $user->user_name,
+            'age' => (int)$user->age,
+            'email' => $user->email,
+            'token' => $token,
+            'my_points' => $user->my_points,
+            'gendre_id' => $user->gendre_id,
+            'user_id' => $user->role_id,
 
-    ];
+        ];
 
-        return $this->sendResponse($success,'User sing up successfully');
+        return $this->sendResponse($success, 'User sing up successfully');
     }
 
-    public function login(Request $request):JsonResponse{
-        if(Auth::attempt(['user_name'=> $request->user_name ,'password' => $request->password]))
-        {
-            $user =Auth::user();
+    public function login(Request $request): JsonResponse
+    {
+        if (Auth::attempt(['user_name' => $request->user_name, 'password' => $request->password])) {
+            $user = Auth::user();
             $success = [
                 'id' => $user->id,
                 'user_name' => $user->user_name,
                 'password' => $user->password,
                 'token' => $user->createToken("API TOKEN")->plainTextToken,
             ];
-            return $this->sendResponse($success,'User logged in successfully');
-        }
-        else{
-            return $this->sendError('Please check phone number or password',['error'=>'Unauthorized']);
+            return $this->sendResponse($success, 'User logged in successfully');
+        } else {
+            return $this->sendError('Please check phone number or password', ['error' => 'Unauthorized']);
         }
     }
 
-    public function logout() :JsonResponse {
+    public function logout(): JsonResponse
+    {
         Auth::user()->currentAccessToken()->delete();
-        return $this->sendResponse(null,'User logged out successfully');
+        return $this->sendResponse(null, 'User logged out successfully');
     }
+
+    public function userForgotPassword(Request $request): JsonResponse
+    {
+
+        $data = $request->validate([
+            'email' => 'required|email|exists:users',
+        ]);
+
+        // Delete all old code that user send before.
+        ResetCodePassword::where('email', $request->email)->delete();
+
+        // Generate random code
+        $data['code'] = mt_rand(100000, 999999);
+
+        // Create a new code
+        $codeData = ResetCodePassword::create($data);
+
+        // Send email to user
+        Mail::to($request->email)->send(new SendCodeResetPassword($codeData->code));
+
+        return $this->sendResponse(['message' => trans('code.sent')], 200);
+    }
+
+    public function userCheckCode(Request $request)
+    {
+
+        $request->validate([
+            'code' => 'required|string|exists:reset_code_passwords',
+        ]);
+
+        // find the code
+        $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
+
+        // check if it does not expired: the time is one hour
+        if ($passwordReset->created_at > now()->addDay()) {
+            $passwordReset->delete();
+            return response(['message' => trans('passwords.code_is_expire')], 422);
+        }
+
+        return response([
+            'code' => $passwordReset->code,
+            'message' => trans('passwords.code_is_valid')
+        ], 200);
+    }
+
+
+
+    public function userResetPassword (Request $request){
+        $request->validate([
+            'code' => 'required|string|exists:reset_code_passwords',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        // find the code
+        $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
+
+        // check if it does not expired: the time is one hour
+        if ($passwordReset->created_at > now()->addDay()) {
+            $passwordReset->delete();
+            return response(['message' => trans('passwords.code_is_expire')], 422);
+        }
+
+        // find user's email
+        $user = User::firstWhere('email', $passwordReset->email);
+
+        // update user password
+        $user->update($request->only('password'));
+
+        // delete current code
+        $passwordReset->delete();
+
+        return response(['message' =>'password has been successfully reset'], 200);
+    }
+
+
+
 
     public function show(){
         $userId = Auth::user()->id;

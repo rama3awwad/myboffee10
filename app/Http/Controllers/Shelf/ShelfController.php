@@ -44,7 +44,7 @@ class ShelfController extends BaseController
     }
 
 
-// Count shelves with status 'reading'  for a given book
+// Count 'reading'  for a given book
     public function count($bookId): \Illuminate\Http\JsonResponse
     {
         $count = Shelf::where('book_id', $bookId)
