@@ -186,7 +186,7 @@ Route::controller(ReviweController::class)->group(function () {
   });
 
   //filter
-    Route::get('/level/{level}', [LevelController::class, 'getUsersByLevel']);
+    Route::get('/level/count', [LevelController::class, 'getUsersByLevel']);
     Route::get('/ages', [UserController::class, 'showAges']);
     Route::get('/users/show', [UserController::class,'showUsers']);
     Route::get('type/count',[BookController::class,'typeReading']);
