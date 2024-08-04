@@ -451,6 +451,43 @@ class BookController extends BaseController
 
     }
 
+    public function typeReading()
+    {
+        $types = DB::table('types')->get();
+
+        $result = [];
+
+        foreach ($types as $type) {
+            $totalBooks = DB::table('books')
+                ->where('type_id', $type->id)
+                ->count();
+
+            $readingOrFinishedCount = DB::table('books')
+                ->join('shelves', 'books.id', '=', 'shelves.book_id')
+                ->where('books.type_id', $type->id)
+                ->whereIn('shelves.status', ['reading', 'finished'])
+                ->where('shelves.updated_at', '>=', now()->subMonth())
+                ->count();
+
+            if ($totalBooks > 0) {
+                $ratio = $readingOrFinishedCount / $totalBooks;
+            } else {
+                $ratio = 0;
+            }
+
+            $formattedRatio = (float) number_format($ratio, 2);
+
+            $result[] = [
+                'type_id' => $type->id,
+                'type_name' => $type->name,
+                'total_books' => $totalBooks,
+                'reading_or_finished_count' => $readingOrFinishedCount,
+                'ratio' => $formattedRatio
+            ];
+        }
+
+        return $this->sendResponse($result, 'Counts retrieved successfully.');
+    }
 
 
 }

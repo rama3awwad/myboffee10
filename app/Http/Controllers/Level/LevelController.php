@@ -65,24 +65,10 @@ class LevelController extends BaseController
         }
 
 
-    public function countLevelUsers(Request $request)
-    {
-        $levelName = $request->input('level');
-
-        $numberOfUsers = Level::where('level', $levelName)->count();
-
-        return response()->json(['number_of_users' => $numberOfUsers]);
-    }
-    public function index(Request $request){
-        // $levels =Level::with(['user']
-        $levels =DB::table('levels')
-            ->join('users','levels.user_id','=','users.id')
-            ->select('users.id as user_id', 'users.user_name', 'levels.id','levels.books','levels.level')
-            ->get();
-    }
 
     public function getUsersByLevel($level, Request $request)
     {
+        $countAll = Level::count();
         $numberOfUsers = Level::where('level', $level)->count();
 
         $usersDetails = DB::table('levels')
@@ -105,5 +91,37 @@ class LevelController extends BaseController
         ]);
     }
 
+    public function countlevelusers(Request $request){
+
+        $countAll = Level::count();
+
+        $countFirst = Level::where('level', 'first')->count();
+        $countSecond = Level::where('level', 'second')->count();
+        $countThird = Level::where('level', 'third')->count();
+
+        if ($countAll > 0) {
+            $ratioFirst = round($countFirst / $countAll, 2);
+            $ratioSecond = round($countSecond / $countAll, 2);
+            $ratioThird = round($countThird / $countAll, 2);
+        } else {
+            $ratioFirst = round(0, 2);
+            $ratioSecond = round(0, 2);
+            $ratioThird = round(0, 2);
+        }
+
+        return response()->json([
+            'counts' => [
+                'count_all' => $countAll,
+                'count_first' => $countFirst,
+                'count_second' => $countSecond,
+                'count_third' => $countThird
+            ],
+            'ratios' => [
+                'ratio_first' => $ratioFirst,
+                'ratio_second' => $ratioSecond,
+                'ratio_third' => $ratioThird
+            ]
+        ]);
+    }
 }
 

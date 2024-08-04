@@ -48,6 +48,9 @@ Route::controller(GendreController::class)->group(function () {
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
     Route::get('/user/show', 'show')->middleware('auth:sanctum');
 
+    Route::post('password/email','userForgotPassword');
+    Route::post('password/code/check', 'userCheckCode');
+    Route::post('password/reset', 'userResetPassword');
     });
 
 //type routes
@@ -182,7 +185,7 @@ Route::controller(ReviweController::class)->group(function () {
   });
 
   //filter
-    Route::get('/level/{level}', [LevelController::class, 'getUsersByLevel']);
+    Route::get('/level/count', [LevelController::class, 'countlevelusers']);
     Route::get('/ages', [UserController::class, 'showAges']);
     Route::get('/users/show', [UserController::class,'showUsers']);
     Route::get('type/count',[BookController::class,'typeReading']);

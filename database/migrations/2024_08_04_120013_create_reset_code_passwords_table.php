@@ -13,10 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('favorite_books', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id') ->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('book_id') ->references('id')->on('books')->onDelete('cascade');
+        Schema::create('reset_code_passwords', function (Blueprint $table) {
+            $table->string('email')->index();
+            $table->string('code');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('favorite_books');
+        Schema::dropIfExists('reset_code_passwords');
     }
 };
