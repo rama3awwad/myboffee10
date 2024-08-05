@@ -27,6 +27,7 @@ class UserController extends BaseController
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'age' => (int)$request->age,
+            'lang'=> $request->lang,
             'my_points' => 40,
             'image' => $request->image,
             'gendre_id' => (int)$request->gendre_id,
@@ -47,6 +48,7 @@ class UserController extends BaseController
             'age' => (int)$user->age,
             'email' => $user->email,
             'token' => $token,
+            'lang' => $user->lang,
             'my_points' => $user->my_points,
             'gendre_id' => $user->gendre_id,
             'user_id' => $user->role_id,
@@ -166,6 +168,7 @@ class UserController extends BaseController
             'email' => $user->email,
             'my_points' => (int) $user->my_points,
             'age' => (int) $user->age,
+            'lang' => $user->lang,
             'gender' => $gender,
             'gendre_id' => $user->gendre_id,
         ];
