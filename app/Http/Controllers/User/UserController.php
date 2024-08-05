@@ -113,7 +113,7 @@ class UserController extends BaseController
         $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
 
         // check if it does not expired: the time is one hour
-        if ($passwordReset->created_at > now()->addDay()) {
+        if ($passwordReset->created_at > now()->addHour()) {
             $passwordReset->delete();
             return response(['message' => trans('passwords.code_is_expire')], 422);
         }
@@ -126,7 +126,8 @@ class UserController extends BaseController
 
 
 
-    public function userResetPassword (Request $request){
+    public function userResetPassword(Request $request)
+    {
         $request->validate([
             'code' => 'required|string|exists:reset_code_passwords',
             'password' => 'required|string|min:6|confirmed',
@@ -135,23 +136,37 @@ class UserController extends BaseController
         // find the code
         $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
 
-        // check if it does not expired: the time is one hour
-        if ($passwordReset->created_at > now()->addDay()) {
-            $passwordReset->delete();
+        if (!$passwordReset) {
+            return response(['message' => trans('passwords.invalid_code')], 404);
+        }
+
+        // check if it is not expired: the time is one hour
+        if ($passwordReset->created_at < now()->subHour()) {
+            // Ensure passwordReset is not null before deleting
+            if ($passwordReset) {
+                $passwordReset->delete();
+            }
             return response(['message' => trans('passwords.code_is_expire')], 422);
         }
 
         // find user's email
         $user = User::firstWhere('email', $passwordReset->email);
 
+        if (!$user) {
+            return response(['message' => trans('passwords.user_not_found')], 404);
+        }
+
         // update user password
-        $user->update($request->only('password'));
+        $user->update(['password' => bcrypt($request->password)]);
 
-        // delete current code
-        $passwordReset->delete();
+        // delete the current code if exists
+        if ($passwordReset) {
+            $passwordReset->delete();
+        }
 
-        return response(['message' =>'password has been successfully reset'], 200);
+        return response(['message' => 'Password has been successfully reset'], 200);
     }
+
 
 
 
