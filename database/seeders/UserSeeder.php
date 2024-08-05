@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-         $email = 'zenab.sen0312@gmail.com';
+         $email = 'zenab.sen03@gmail.com';
 
          $existingUser = User::where('email', $email)->first();
 
@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
 
          User::Create([
              'user_name' => 'admin',
-             'email' => 'zenab.sen0312@gmail.com',
+             'email' => 'zenab.sen03@gmail.com',
              'password' => bcrypt('admin11'),
              'my_points' => '999999999',
              'age' => '40',
