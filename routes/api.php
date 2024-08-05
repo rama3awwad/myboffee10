@@ -41,12 +41,14 @@ Route::controller(GendreController::class)->group(function () {
 });
 //user routes
 Route::controller(UserController::class)->group(function () {
-
     Route::post('/register', 'register');
     Route::post('/login', 'login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
     Route::get('/user/show', 'show')->middleware('auth:sanctum');
 
+    Route::post('password/email', 'userForgotPassword');
+    Route::post('password/code/check', 'userCheckCode');
+    Route::post('password/reset', 'userResetPassword' );
 });
 
 //type routes

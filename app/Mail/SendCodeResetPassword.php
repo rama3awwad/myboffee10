@@ -25,9 +25,12 @@ class SendCodeResetPassword extends Mailable
 
     public function build()
     {
-        return $this->markdown('emails.send-code-reset-password');
+        return $this->subject('Reset Password')
+            ->view('emails.send-code-reset-password')
+            ->with([
+                'code' => $this->code,
+            ]);
     }
-
     /**
      * Get the message envelope.
      *
@@ -45,12 +48,7 @@ class SendCodeResetPassword extends Mailable
      *
      * @return \Illuminate\Mail\Mailables\Content
      */
-    public function content()
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
+
 
     /**
      * Get the attachments for the message.
