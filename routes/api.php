@@ -64,7 +64,7 @@ Route::controller(TypeController::class)->group(function () {
 
 // Book routes
 Route::controller(BookController::class)->group(function () {
-    Route::get('/books', 'index');
+    Route::get('/books', 'index')->middleware('auth:sanctum');
     Route::post('/books', 'store');
     Route::get('/Abooks/{id}', 'Ashow');
     Route::get('/file/{id}','getFile');
@@ -74,7 +74,7 @@ Route::controller(BookController::class)->group(function () {
     Route::post('upBooks/{id}', 'updateImage');
     Route::delete('/books/{id}','delete');
     Route::get('/books/type/{typeId}', 'showBooksByType');
-    Route::get('/details/{id}','showDetails');
+    Route::get('/details/{id}','showDetails')->middleware('auth:sanctum');
     Route::post('/author', 'author');
     Route::get('/mostReading','mostReading');
     Route::get('/mostRating','mostRating');

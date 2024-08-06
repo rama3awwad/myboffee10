@@ -44,7 +44,7 @@ class BookFactory extends Factory
 
        // $title = '';
         do {
-            $title = $this->faker->word();
+            $title = 'the title';
         } while (Book::where('title', $title)->exists());
 
 
@@ -55,7 +55,7 @@ class BookFactory extends Factory
             'cover' => $cover,
             'author_name' => fake()->name(),
             'points' => fake()->numberBetween(0, 10),
-            'description' => fake()->paragraph(),
+            'description' => 'you are reading now the book description',
             'total_pages' => 4,
             'type_id' => fake()->numberBetween(1, 6),
         ];

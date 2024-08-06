@@ -19,8 +19,8 @@ class setLocal
     {
 
         $userLocal = 'en';
-        if (\Auth::user()) {
-            $userLocal = \Auth::user()['lang'];
+        if (Auth::user()) {
+            $userLocal = Auth::user()['lang'];
         }
         if (in_array($userLocal, config('app.available_locales'))) {
             app()->setLocale($userLocal);

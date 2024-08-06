@@ -15,81 +15,285 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class BookController extends BaseController
 {
-
- /*  public function index(Request $request)
-    {
-        $languageCode = $request->header('Language_Code', 'en');
-        $selectedColumns = [
-            'id', 'file', 'cover','title_en','title_ar', 'author_name_en', 'author_name_ar',
-            'points', 'description_en', 'description_ar', 'total_pages', 'type_id'
-        ];
-
-        $filteredColumns = array_filter($selectedColumns, function ($column) use ($languageCode) {
-     return  (strpos($column, $languageCode. '_') === 0) ||
-             (strpos($column, 'en_')!== 0 && $languageCode === 'en')||
-             (strpos($column, 'ar_') === 0 && $languageCode === 'ar');
-        });
-
-        $books = Book::get();
-
-        $transformedBooks = [];
-      if($languageCode == 'en'){
-        foreach ($books as $book) {
-
-            $transformedBook = [
-                'id' => $book->id,
-                'title' => $book->title_en,
-                'file' => $book->file,
-                'cover' => $book->cover,
-                'author_name' => $book->author_name_en,
-                'points' => $book->points,
-                'description' => $book->description_en,
-                'total_pages' => $book->total_pages,
-                'type_id' => $book->type_id,
-
-            ];
-            $transformedBooks[] = $transformedBook;
-        }}
-        elseif ($languageCode == 'ar') {
-             foreach ($books as $book) {
-            $transformedBook = [
-                'id' => $book->id,
-                'title' => $book->title_ar,
-                'file' => $book->file,
-                'cover' => $book->cover,
-                'author_name' => $book->author_name_ar,
-                'points' => $book->points,
-                'description' => $book->description_ar,
-                'total_pages' => $book->total_pages,
-                'type_id' => $book->type_id,
-
-            ];
-            $transformedBooks[] = $transformedBook;
-        }
-        }
-
-
-        $response = [
-            'books' => $transformedBooks,
-                   ];
-
-        return $this->sendResponse($response, 'Books retrieved successfully.');
-    }*/
-
-
-
 //show all books
-     public function index(Request $request): JsonResponse
+       /*  public function index()
     {
         $books = Book::all();
-        return $this->sendResponse($books, 'Books retrieved successfully.');
+        $userLocale = auth()->user()->lang;
+        $translatedBooks = [];
+
+            if ($userLocale == 'ar') {
+                $translator = new GoogleTranslate();
+                $translator->setSource('en'); 
+                $translator->setTarget('ar'); 
+        
+                foreach ($books as $book) {
+                    $book->title = $translator->translate($book->title);
+                    $book->author_name = $translator->translate($book->author_name);
+                    $book->description = $translator->translate($book->description);
+                }
+            } 
+            
+            elseif ($userLocale == 'en') {
+                $translator = new GoogleTranslate();
+                $translator->setSource('ar'); 
+                $translator->setTarget('en'); 
+        
+                foreach ($books as $book) {
+                    $book->title = $translator->translate($book->title);
+                    $book->author_name = $translator->translate($book->author_name);
+                    $book->description = $translator->translate($book->description);
+                }
+            }
+        
+
+        return $this->sendResponse($book,"Books retrieved successfully.");
+    }*/
+
+    const BATCH_SIZE = 2;
+
+    
+    public function index()
+{
+    $books = Book::all();
+    $user = auth()->user();
+    $userLocale = $user ? $user->lang : 'en';
+    $translatedBooks = [];
+
+    if ($userLocale == 'ar' || $userLocale == 'en') {
+        $translator = new GoogleTranslate();
+        $translator->setSource($userLocale == 'ar' ? 'en' : 'ar');
+        $translator->setTarget($userLocale);
+
+        $batches = $this->divideIntoBatches($books, self::BATCH_SIZE);
+
+        foreach ($books as $book) {
+            // Check if translation is already available in database or cache
+            $translatedTitle = Cache::remember("book_{$book->id}_title_{$userLocale}", 3600, function() use ($translator, $book) {
+                return $translator->translate($book->title);
+            });
+
+            $translatedAuthorName = Cache::remember("book_{$book->id}_author_name_{$userLocale}", 3600, function() use ($translator, $book) {
+                return $translator->translate($book->author_name);
+            });
+
+            $translatedDescription = Cache::remember("book_{$book->id}_description_{$userLocale}", 3600, function() use ($translator, $book) {
+                return $translator->translate($book->description);
+            });
+
+            $translatedBooks[] = [
+                'id' => $book->id,
+                'title' => $translatedTitle,
+                'author_name' => $translatedAuthorName,
+                'description' => $translatedDescription,
+                'cover' => $book->cover,
+                'total_pages' => $book->total_pages,
+                'points' => $book->points,
+                'type_id' => $book->type_id
+            ];
+        }
+    } else {
+        // If the user's language is not 'ar' or 'en', return the books without translation
+        $translatedBooks = $books;
     }
+    
+
+    return $this->sendResponse($translatedBooks, "Books retrieved successfully.");
+}
+private static function divideIntoBatches($items, $batchSize)
+{
+    $itemsArray = $items->toArray(); // Convert the collection to an array
+    $batches = [];
+    for ($i = 0; $i < count($itemsArray); $i += $batchSize) {
+        $batches[] = array_slice($itemsArray, $i, $batchSize);
+    }
+    return $batches;
+}
+
+//enable book and createShelf
+    public function show($id, Request $request)
+{
+    $book = Book::findOrFail($id);
+    $userId = Auth::user()->id;
+    $shelf = Shelf::where('user_id', $userId)->where('book_id', $id)->first();
+    $userLocale = auth()->user()->lang;
+
+    if (!$shelf) {
+
+        if ($request->user()->my_points < $book->points) {
+            return $this->sendError('Oops! Your points aren\'t enough to open this book.');
+        } else {
+
+            $request->user()->update([
+                'my_points' => $request->user()->my_points - $book->points]);
+
+            $newShelf = Shelf::create([
+                'user_id' => $userId,
+                'book_id' => $id,
+                'status' => 'reading',
+                'progress' => 0,
+            ]);
+
+            $book = DB::table('books')
+                ->join('types', 'books.type_id', '=', 'types.id')
+                ->where('books.id', $id)
+                ->select(
+                    'books.id',
+                    'books.title as title',
+                    'books.cover',
+                    'books.file',
+                    'books.author_name',
+                    'books.description',
+                    'books.total_pages',
+                    'books.points',
+                    'types.name as type_name'
+                )
+                ->first();
+
+                if ($userLocale == 'ar') {
+                    $translator = new GoogleTranslate();
+                    $translator->setSource('en'); 
+                    $translator->setTarget('ar'); 
+        
+                    $book->title = $translator->translate($book->title);
+                    $book->author_name = $translator->translate($book->author_name);
+                    $book->description = $translator->translate($book->description);
+                    $book->type_name = $translator->translate($book->type_name);
+                }
+
+                if ($userLocale == 'en') {
+                    $translator = new GoogleTranslate();
+                    $translator->setSource('ar'); 
+                    $translator->setTarget('en'); 
+        
+                    $book->title = $translator->translate($book->title);
+                    $book->author_name = $translator->translate($book->author_name);
+                    $book->description = $translator->translate($book->description);
+                    $book->type_name = $translator->translate($book->type_name);
+                }
+
+            $file = $book->file;
+
+            return $this->sendResponse([
+                'Shelf_id' => $newShelf->id,
+                'progress' => (int) $newShelf->progress,
+                'file' => $book,
+            ], 'Book opened successfully.');
+        }
+
+    } elseif ($shelf->status == 'watch_later') {
+
+        if ($request->user()->my_points < $book->points) {
+            return $this->sendError('Oops! Your points aren\'t enough to open this book.');
+        } else {
+
+            $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
+            $shelf->update([
+                'status' => 'reading',
+                'progress' => 0,
+            ]);
+            $book = DB::table('books')
+                ->join('types', 'books.type_id', '=', 'types.id')
+                ->where('books.id', $id)
+                ->select(
+                    'books.id',
+                    'books.title',
+                    'books.cover',
+                    'books.file',
+                    'books.author_name',
+                    'books.description',
+                    'books.total_pages',
+                    'books.points',
+                    'types.name as type_name'
+                )
+                ->first();
+
+                if ($userLocale == 'ar') {
+                    $translator = new GoogleTranslate();
+                    $translator->setSource('en'); 
+                    $translator->setTarget('ar'); 
+        
+                    $book->title = $translator->translate($book->title);
+                    $book->author_name = $translator->translate($book->author_name);
+                    $book->description = $translator->translate($book->description);
+                    $book->type_name = $translator->translate($book->type_name);
+                }
+
+                if ($userLocale == 'en') {
+                    $translator = new GoogleTranslate();
+                    $translator->setSource('ar'); 
+                    $translator->setTarget('en'); 
+        
+                    $book->title = $translator->translate($book->title);
+                    $book->author_name = $translator->translate($book->author_name);
+                    $book->description = $translator->translate($book->description);
+                    $book->type_name = $translator->translate($book->type_name);
+                }
+
+             $file = $book->file;
+
+            return $this->sendResponse([
+                'Shelf_id' => $shelf->id,
+                'progress' => (int) $shelf->progress,
+                 'file' => $book
+            ], 'Book opened successfully.');
+        }
+
+    } elseif ($shelf->status == 'reading' || $shelf->status == 'finished') {
+
+        $book = DB::table('books')
+            ->join('types', 'books.type_id', '=', 'types.id')
+            ->where('books.id', $id)
+            ->select(
+                'books.id',
+                'books.title',
+                'books.cover',
+                'books.file',
+                'books.author_name',
+                'books.description',
+                'books.total_pages',
+                'books.points',
+                'types.name as type_name'
+            )
+            ->first();
+
+            if ($userLocale == 'ar') {
+                $translator = new GoogleTranslate();
+                $translator->setSource('en'); 
+                $translator->setTarget('ar'); 
+    
+                $book->title = $translator->translate($book->title);
+                $book->author_name = $translator->translate($book->author_name);
+                $book->description = $translator->translate($book->description);
+                $book->type_name = $translator->translate($book->type_name);
+            }
+
+            if ($userLocale == 'en') {
+                $translator = new GoogleTranslate();
+                $translator->setSource('ar'); 
+                $translator->setTarget('en'); 
+    
+                $book->title = $translator->translate($book->title);
+                $book->author_name = $translator->translate($book->author_name);
+                $book->description = $translator->translate($book->description);
+                $book->type_name = $translator->translate($book->type_name);
+            }
+            $file = $book->file;
+
+        return $this->sendResponse([
+            'Shelf_id' => $shelf->id,
+            'progress' => (int) $shelf->progress,
+            'file' => $book,
+        ], 'Book opened successfully.');
+    }
+}
 
 //store book
     public function store(BookRequest $request): JsonResponse
@@ -109,12 +313,7 @@ class BookController extends BaseController
         $file = '/books/files/' . $file;
 
         $data = $request->validated();
-        $lang = new GoogleTranslate();
-        $data['title'] = $lang->setTarget('en')->setSource('ar')->translate($data['title']);
-        $data['author_name'] = $lang->setTarget('en')->setSource('ar')->translate($data['author_name']);
-        $data['description'] = $lang->setTarget('en')->setSource('ar')->translate($data['description']);
-
-
+        
         $book = Book::create([
             'title' => $request->title,
             'file' => $file,
@@ -136,7 +335,7 @@ class BookController extends BaseController
         $sumOfRatings = Rating::where('book_id', $id)->sum('rate');
         $countOfRatings = Rating::where('book_id', $id)->count();
 
-        if ($countOfRatings >= 0) {
+        if ($countOfRatings > 0) {
             $averageRating = $sumOfRatings / $countOfRatings;
 
             return $averageRating;
@@ -147,20 +346,39 @@ class BookController extends BaseController
     }
 
 //show book details without 'file'
-    public function showDetails($id): JsonResponse
+    public function showDetails($id ,Request $request): JsonResponse
     {
         $book = Book::find($id);
+        $userLocale = $request->user()->lang;
 
         if (is_null($book)) {
             return $this->sendError('Book not found');
         }
-
         $rating = $this->avgRating($id);
 
         $details = Book::select('id', 'title', 'cover', 'total_pages', 'author_name', 'points', 'description', 'type_id',)
             ->where('id', $id)
             ->first();
 
+            if ($userLocale == 'ar') {
+                $translator = new GoogleTranslate();
+                $translator->setSource('en'); 
+                $translator->setTarget('ar'); 
+
+                $details->title = $translator->translate($details->title);
+                $details->author_name = $translator->translate($details->author_name);
+                $details->description = $translator->translate($details->description);
+            }
+
+            if ($userLocale == 'en') {
+                $translator = new GoogleTranslate();
+                $translator->setSource('ar'); 
+                $translator->setTarget('en'); 
+
+                $details->title = $translator->translate($details->title);
+                $details->author_name = $translator->translate($details->author_name);
+                $details->description = $translator->translate($details->description);
+            }
         return $this->sendResponse([
             'Rating' => $rating,
             'Details' => $details,
@@ -286,112 +504,6 @@ class BookController extends BaseController
         return $this->sendResponse($books, 'Books retrieved successfully.');
     }
 
-//enable book and createShelf
-    public function show($id, Request $request)
-    {
-        $book = Book::findOrFail($id);
-        $userId = Auth::user()->id;
-        $shelf = Shelf::where('user_id', $userId)->where('book_id', $id)->first();
-
-        if (!$shelf) {
-
-            if ($request->user()->my_points < $book->points) {
-                return $this->sendError('Oops! Your points aren\'t enough to open this book.');
-            } else {
-
-                $request->user()->update([
-                    'my_points' => $request->user()->my_points - $book->points]);
-
-                $newShelf = Shelf::create([
-                    'user_id' => $userId,
-                    'book_id' => $id,
-                    'status' => 'reading',
-                    'progress' => 0,
-                ]);
-
-                $book = DB::table('books')
-                    ->join('types', 'books.type_id', '=', 'types.id')
-                    ->select(
-                        'books.id',
-                        'books.title as title',
-                        'books.cover',
-                        'books.file',
-                        'books.author_name',
-                        'books.total_pages',
-                        'books.points',
-                        'types.name as type_name'
-                    )
-                    ->first();
-
-                $file = $book->file;
-
-                return $this->sendResponse([
-                    'Shelf_id' => $newShelf->id,
-                    'progress' => (int) $newShelf->progress,
-                    'file' => $book,
-                ], 'Book opened successfully.');
-            }
-
-        } elseif ($shelf->status == 'watch_later') {
-
-            if ($request->user()->my_points < $book->points) {
-                return $this->sendError('Oops! Your points aren\'t enough to open this book.');
-            } else {
-
-                $request->user()->update(['my_points' => $request->user()->my_points - $book->points]);
-                $shelf->update([
-                    'status' => 'reading',
-                    'progress' => 0,
-                ]);
-                $book = DB::table('books')
-                    ->join('types', 'books.type_id', '=', 'types.id')
-                    ->select(
-                        'books.id',
-                        'books.title',
-                        'books.cover',
-                        'books.file',
-                        'books.author_name_en',
-                        'books.total_pages',
-                        'books.points',
-                        'types.name as type_name'
-                    )
-                    ->first();
-
-                 $file = $book->file;
-
-                return $this->sendResponse([
-                    'Shelf_id' => $shelf->id,
-                    'progress' => (int) $shelf->progress,
-                     'file' => $book
-                ], 'Book opened successfully.');
-            }
-
-        } elseif ($shelf->status == 'reading' || $shelf->status == 'finished') {
-
-            $book = DB::table('books')
-                ->join('types', 'books.type_id', '=', 'types.id')
-                ->select(
-                    'books.id',
-                    'books.title',
-                    'books.cover',
-                    'books.file',
-                    'books.author_name',
-                    'books.total_pages',
-                    'books.points',
-                    'types.name as type_name'
-                )
-                ->first();
-
-                $file = $book->file;
-
-            return $this->sendResponse([
-                'Shelf_id' => $shelf->id,
-                'progress' => (int) $shelf->progress,
-                'file' => $book,
-            ], 'Book opened successfully.');
-        }
-    }
-
     //update book
     public function update(BookRequest $request, $id): JsonResponse
     {
@@ -420,19 +532,6 @@ class BookController extends BaseController
                 'file' => 'books/files/' . $file,
             ]);
 
-            $lang = new GoogleTranslate();
-
-            if ($request->has('title')) {
-                $data['title'] = $lang->setTarget('en')->setSource('ar')->translate($book['title']);
-            }
-
-            if ($request->has('author_name')) {
-                $data['author_name'] = $lang->setTarget('en')->setSource('ar')->translate($data['author_name']);
-            }
-
-            if ($request->has('description')) {
-                $data['description'] = $lang->setTarget('en')->setSource('ar')->translate($data['description']);
-            }
             $book->update($request->all());
             return $this->sendResponse($book, 'Book updated successfully.');
         }
