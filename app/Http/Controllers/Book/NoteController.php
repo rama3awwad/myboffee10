@@ -15,16 +15,16 @@ class NoteController extends BaseController
 {
 
     // Add a note
-    public function store(NoteRequest $request,$bookId): JsonResponse
+    public function store(NoteRequest $request, $bookId): JsonResponse
     {
         $request->validated();
         $user = Auth::user();
-        $note = Note::create ([
-            'user_id'=> (int) $request->user()->id,
-            'book_id'=> (int) $bookId,
+        $note = Note::create([
+            'user_id' => (int) $request->user()->id,
+            'book_id' => (int) $bookId,
             'page_num' =>  (int) $request->page_num,
-            'body'=>$request->body,
-            'color'=> (int) $request->color,
+            'body' => $request->body,
+            'color' => (int) $request->color,
         ]);
 
         return $this->sendResponse($note,  'Note created successfully.');
@@ -64,8 +64,8 @@ class NoteController extends BaseController
     // Show my notes on specific book
     public function showMine($bookId): JsonResponse
     {
-        $user_id =Auth::user()->id;
-        $notes = Note::where('book_id', $bookId)->where('user_id',$user_id)->get();
+        $user_id = Auth::user()->id;
+        $notes = Note::where('book_id', $bookId)->where('user_id', $user_id)->get();
 
         return $this->sendResponse($notes, 'Notes of this book retrieved successfully');
     }

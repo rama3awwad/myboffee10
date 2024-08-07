@@ -1,19 +1,20 @@
 <?php
 
 namespace App\Http\Controllers\User;
+
+use App\Http\Controllers\BaseController as BaseController;
 use App\Http\Requests\AuthRequest;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
 use App\Mail\SendCodeResetPassword;
 use App\Models\Level;
 use App\Models\ResetCodePassword;
 use App\Models\User;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\BaseController as BaseController;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule as ValidationRule;
 use Laravel\Sanctum\HasApiTokens;
 
 class UserController extends BaseController
@@ -26,11 +27,11 @@ class UserController extends BaseController
             'user_name' => $request->user_name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'age' => (int)$request->age,
-            'lang'=> $request->lang,
+            'age' => (int) $request->age,
+            'lang' => $request->lang,
             'my_points' => 40,
             'image' => $request->image,
-            'gendre_id' => (int)$request->gendre_id,
+            'gendre_id' => (int) $request->gendre_id,
             'role_id' => $request->role_id,
         ]);
 
@@ -45,7 +46,7 @@ class UserController extends BaseController
         $success = [
             'id' => $user->id,
             'user_name' => $user->user_name,
-            'age' => (int)$user->age,
+            'age' => (int) $user->age,
             'email' => $user->email,
             'token' => $token,
             'lang' => $user->lang,
@@ -72,6 +73,20 @@ class UserController extends BaseController
         } else {
             return $this->sendError('Please check phone number or password', ['error' => 'Unauthorized']);
         }
+    }
+
+    public function updateUserLang(Request $request)
+    {
+        $validatedData = $request->validate([
+            'lang' => ['required', ValidationRule::in(['ar', 'en'])],
+        ]);
+        $userId = auth()->user()->id;
+        $user = auth()->user();
+        if (is_null($userId)) {
+            return $this->sendError('User not found');
+        }
+        $user->update(['lang' => $validatedData['lang']]);
+        return $this->sendResponse($user, 'User language updated');
     }
 
     public function logout(): JsonResponse
@@ -120,11 +135,9 @@ class UserController extends BaseController
 
         return response([
             'code' => $passwordReset->code,
-            'message' => trans('passwords.code_is_valid')
+            'message' => trans('passwords.code_is_valid'),
         ], 200);
     }
-
-
 
     public function userResetPassword(Request $request)
     {
@@ -167,11 +180,8 @@ class UserController extends BaseController
         return response(['message' => 'Password has been successfully reset'], 200);
     }
 
-
-
-
-
-    public function show(){
+    public function show()
+    {
         $userId = Auth::user()->id;
         $user = User::findOrFail($userId);
 
@@ -191,17 +201,20 @@ class UserController extends BaseController
         return $this->sendResponse($response, 'User details retrieved successfully');
     }
 
-    public function showUsers() {
+    public function showUsers()
+    {
 
         $count = (int) User::count();
         $users = User::get();
 
-        return $this->sendResponse(['Num of users:' => $count,'Users:' => $users],
-            'Users retrieved successfully');
-
+        return $this->sendResponse(
+            ['Num of users:' => $count, 'Users:' => $users],
+            'Users retrieved successfully'
+        );
     }
 
-    public function showAges() {
+    public function showAges()
+    {
         $countAll = (int) User::count();
 
         $firstQuery = User::whereBetween('age', [0, 14]);
@@ -216,20 +229,22 @@ class UserController extends BaseController
         $countThird = $thirdQuery->count();
         $third = $thirdQuery->get();
 
-        return $this->sendResponse([
+        return $this->sendResponse(
+            [
 
-                        'Count of all users =' => $countAll,
+                'Count of all users =' => $countAll,
 
-                        'Count of users less than 14 =' => $countFirst,
-                        'Users less than 14' => $first,
+                'Count of users less than 14 =' => $countFirst,
+                'Users less than 14' => $first,
 
-                        'Count of users between 15 and 20 =' => $countSecond,
-                        'Users between 15 and 20' => $second,
+                'Count of users between 15 and 20 =' => $countSecond,
+                'Users between 15 and 20' => $second,
 
-                        'Count of users grater than 20 =' => $countThird,
-                        'Users greater than 20' => $third],
+                'Count of users grater than 20 =' => $countThird,
+                'Users greater than 20' => $third,
+            ],
 
-        'Users retrieved successfully as their ages');
-
+            'Users retrieved successfully as their ages'
+        );
     }
 }

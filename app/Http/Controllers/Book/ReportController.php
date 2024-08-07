@@ -17,7 +17,7 @@ class ReportController extends BaseController
     //show all reports
     public function index(): JsonResponse
     {
-       // $reports = Report::with(['user', 'book'])->get();
+        // $reports = Report::with(['user', 'book'])->get();
         $reports = Report::with(['user:id,user_name', 'book:id,title,file,cover'])->get();
 
         $response = [];
@@ -26,7 +26,7 @@ class ReportController extends BaseController
                 'id' => $report->id,
                 'body' => $report->body,
                 'user_name' => $report->user->user_name,
-                'book_title' => $report->book->title ,
+                'book_title' => $report->book->title,
             ];
         }
 
@@ -39,10 +39,10 @@ class ReportController extends BaseController
     {
         $request->validated();
         $user = Auth::user();
-        $report = Report::create ([
-            'user_id'=> (int) $request->user()->id,
-            'book_id'=> (int) $bookId,
-            'body'=>$request->body,
+        $report = Report::create([
+            'user_id' => (int) $request->user()->id,
+            'book_id' => (int) $bookId,
+            'body' => $request->body,
         ]);
 
         return $this->sendResponse($report, 'Report created successfully.');
@@ -52,7 +52,7 @@ class ReportController extends BaseController
     public function show($id): JsonResponse
     {
 
-    //    $report = Report::with(['user', 'book'])->find($id);
+        //    $report = Report::with(['user', 'book'])->find($id);
         $report = Report::with(['user:id,user_name', 'book:id,title,cover,file'])->find($id);
 
         if (is_null($report)) {
@@ -62,8 +62,8 @@ class ReportController extends BaseController
         $response = [
             'id' => $report->id,
             'body' => $report->body,
-            'user_name' => $report->user->user_name ,
-            'book_title' => $report->book->title ,
+            'user_name' => $report->user->user_name,
+            'book_title' => $report->book->title,
         ];
 
 
@@ -81,7 +81,7 @@ class ReportController extends BaseController
             $response[] = [
                 'id' => $report->id,
                 'body' => $report->body,
-                'user_name' => $report->user->user_name ,
+                'user_name' => $report->user->user_name,
                 'book_title' => $report->book->title,
             ];
         }
@@ -107,7 +107,6 @@ class ReportController extends BaseController
                 'user_name' => $report->user_name,
                 'book_title' => $report->book_title,
             ];
-
         }
 
         return $this->sendResponse($reports, 'Reports fetched successfully');
@@ -130,6 +129,4 @@ class ReportController extends BaseController
 
         return $this->sendResponse(null, 'All reports removed successfully');
     }
-
-
 }

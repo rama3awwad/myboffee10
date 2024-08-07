@@ -45,6 +45,7 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/login', 'login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
     Route::get('/user/show', 'show')->middleware('auth:sanctum');
+    Route::post('/changeLang','updateUserLang')->middleware('auth:sanctum');
 
     Route::post('password/email', 'userForgotPassword');
     Route::post('password/code/check', 'userCheckCode');
@@ -75,7 +76,7 @@ Route::controller(BookController::class)->group(function () {
     Route::delete('/books/{id}','delete');
     Route::get('/books/type/{typeId}', 'showBooksByType');
     Route::get('/details/{id}','showDetails')->middleware('auth:sanctum');
-    Route::post('/author', 'author');
+    Route::post('/author', 'author')->middleware('auth:sanctum');
     Route::get('/mostReading','mostReading');
     Route::get('/mostRating','mostRating');
 
