@@ -520,6 +520,31 @@ class BookController extends BaseController
     public function showBooksByType($typeId): JsonResponse
     {
         $books = Book::where('type_id', $typeId)->get();
+        $userLocal = auth()->user()->lang;
+
+        if($userLocal == 'ar'){
+            $translator = new GoogleTranslate();
+            $translator->setSource('en');
+            $translator->setTarget('ar');
+
+            forEach($books as $book){
+            $book->title = $translator->translate($book->title);
+            $book->author_name = $translator->translate($book->author_name);
+            $book->description = $translator->translate($book->description);
+        }
+    }
+
+        if($userLocal == 'en'){
+            $translator = new GoogleTranslate();
+            $translator->setSource('ar');
+            $translator->setTarget('en');
+
+            foreach($books as $book){
+            $book->title = $translator->translate($book->title);
+            $book->author_name = $translator->translate($book->author_name);
+            $book->description = $translator->translate($book->description);
+        }
+    }
 
         if ($books->isEmpty()) {
             return $this->sendError('No books found for this type.');

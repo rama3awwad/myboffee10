@@ -73,7 +73,7 @@ Route::controller(BookController::class)->group(function () {
     Route::post('/books/{id}', 'update');
     Route::post('upBooks/{id}', 'updateImage');
     Route::delete('/books/{id}', 'delete');
-    Route::get('/books/type/{typeId}', 'showBooksByType');
+    Route::get('/books/type/{typeId}', 'showBooksByType')->middleware('auth:sanctum');
     Route::get('/details/{id}', 'showDetails')->middleware('auth:sanctum');
     Route::post('/author', 'author')->middleware('auth:sanctum');
     Route::get('/mostReading', 'mostReading');
