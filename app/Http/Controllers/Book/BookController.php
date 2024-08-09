@@ -23,7 +23,7 @@ use App\Http\Controllers\BaseController as BaseController;
 class BookController extends BaseController
 {
 
-    const BATCH_SIZE = 5;
+    const BATCH_SIZE = 10;
 
 
     public function index()

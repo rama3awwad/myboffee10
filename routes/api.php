@@ -29,8 +29,9 @@ use App\Http\Controllers\Post\FavoritePostController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//translation route
+Route::get('/language', langController::class);
 
-Route::get('/language', langController::class)->middleware('auth:sanctum');
 //gendre routes
 Route::controller(GendreController::class)->group(function () {
 
