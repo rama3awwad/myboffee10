@@ -186,7 +186,7 @@ Route::controller(SuggestionController::class)->group(function () {
 Route::get('/level/count', [LevelController::class, 'countlevelusers']);
 Route::get('/ages', [UserController::class, 'showAges']);
 Route::get('/users/show', [UserController::class, 'showUsers']);
-Route::get('type/count', [BookController::class, 'typeReading']);
+Route::get('type/count/{periodVariable}', [BookController::class, 'typeReading']);
 
 
 
