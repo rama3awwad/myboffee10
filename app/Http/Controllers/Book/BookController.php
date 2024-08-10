@@ -612,41 +612,88 @@ class BookController extends BaseController
         return $this->sendResponse($book, 'Book updated successfully.');
     }
 
-    public function typeReading()
+    //calculate ratio of readings for each type in default - last week - last month - last year
+    public function typeReading($periodVariable)
     {
         $types = DB::table('types')->get();
 
         $result = [];
 
+        $countAllBooks = DB::table('books')->count();
+
+        switch ($periodVariable) {
+            case 0:
+                $period = null;
+                $periodLabel = 'default';
+                break;
+
+            case 1:
+                $period = now()->subWeek();
+                $periodLabel = 'last week';
+                break;
+
+            case 2:
+                $period = now()->subMonth();
+                $periodLabel = 'last month';
+                break;
+
+            case 3:
+                $period = now()->subYear();
+                $periodLabel = 'last year';
+                break;
+
+            default:
+                return $this->sendError('Invalid period specified.', 400);
+        }
+
         foreach ($types as $type) {
-            $totalBooks = DB::table('books')
+            $typeBooks = DB::table('books')
                 ->where('type_id', $type->id)
                 ->count();
 
-            $readingOrFinishedCount = DB::table('books')
+            $readingOrFinished = DB::table('books')
                 ->join('shelves', 'books.id', '=', 'shelves.book_id')
                 ->where('books.type_id', $type->id)
+                ->whereIn('shelves.status', ['reading', 'finished']);
+
+            $countAllReadingOrFinished = DB::table('books')
+                ->join('shelves', 'books.id', '=', 'shelves.book_id')
                 ->whereIn('shelves.status', ['reading', 'finished'])
-                ->where('shelves.updated_at', '>=', now()->subMonth())
                 ->count();
 
-            if ($totalBooks > 0) {
-                $ratio = $readingOrFinishedCount / $totalBooks;
-            } else {
-                $ratio = 0;
+
+            if ($period) {
+                $readingOrFinished->where('shelves.updated_at', '>=', $period);
             }
 
-            $formattedRatio = (float) number_format($ratio, 2);
+            $readingOrFinishedCount = $readingOrFinished->count();
+
+            if ($typeBooks > 0) {
+                $typeBookRatio = $typeBooks / $countAllBooks;
+                $readingOrFinishedRatio = $readingOrFinishedCount / $typeBooks;
+            } else {
+                $typeBookRatio = 0;
+                $readingOrFinishedRatio = 0;
+            }
+
+            $floatTypeBookRatio = round($typeBookRatio, 2);
+            $floatReadingOrFinishedRatio = round($readingOrFinishedRatio, 2);
 
             $result[] = [
                 'type_id' => $type->id,
                 'type_name' => $type->name,
-                'total_books' => $totalBooks,
-                'reading_or_finished_count' => $readingOrFinishedCount,
-                'ratio' => $formattedRatio
+                'count_type_books' => $typeBooks,
+                'type_book_ratio' => $floatTypeBookRatio,
+                'count_type_reading_or_finished' => $readingOrFinishedCount,
+                'reading_or_finished_ratio' => $floatReadingOrFinishedRatio
             ];
         }
 
-        return $this->sendResponse($result, 'Counts retrieved successfully.');
+        return $this->sendResponse([
+            'period' =>$periodLabel,
+            'count all books' => $countAllBooks,
+            'count all reading' => $countAllReadingOrFinished,
+            'result' => $result,
+            ], 'Counts retrieved successfully.');
     }
 }

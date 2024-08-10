@@ -64,8 +64,6 @@ class LevelController extends BaseController
             ], 'Level updated successfully');
         }
 
-
-
     public function getUsersByLevel($level, Request $request)
     {
         $countAll = Level::count();
@@ -123,5 +121,6 @@ class LevelController extends BaseController
             ]
         ]);
     }
+
 }
 
