@@ -10,7 +10,9 @@ use App\Models\Note;
 use App\Models\Post;
 use App\Models\Rating;
 use App\Models\Report;
+use App\Models\Reviwe;
 use App\Models\Shelf;
+use App\Models\Suggestion;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,7 +31,7 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(22)->create();
         Book::factory(30)->create();
-      //  Shelf::factory(1000)->create();
+        Shelf::factory(40)->create();
         Rating::factory(50)->create();
         Level::factory(22)->create();
         FavoriteBook::factory(50)->create();
@@ -37,6 +39,8 @@ class DatabaseSeeder extends Seeder
         Report::factory(60)->create();
         Post::factory(20)->create();
         FavoritePost::factory(20)->create();
+        Suggestion::factory(20)->create();
+        Reviwe::factory(20)->create();
 
 
         $this->call([
@@ -53,7 +57,8 @@ class DatabaseSeeder extends Seeder
             ReportSeeder::class,
             PostSeeder::class,
             FavoritePostSeeder::class,
-
+            SuggestionSeeder::class,
+            ReviewSeeder::class,
         ]);
 
     }
