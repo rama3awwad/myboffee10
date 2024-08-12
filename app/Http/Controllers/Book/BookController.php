@@ -683,9 +683,9 @@ class BookController extends BaseController
                 'type_id' => $type->id,
                 'type_name' => $type->name,
                 'count_type_books' => $typeBooks,
-                'type_book_ratio' => $floatTypeBookRatio,
+                'type_book_ratio' => (float) $floatTypeBookRatio,
                 'count_type_reading_or_finished' => $readingOrFinishedCount,
-                'reading_or_finished_ratio' => $floatReadingOrFinishedRatio
+                'reading_or_finished_ratio' => (float) $floatReadingOrFinishedRatio
             ];
         }
 
