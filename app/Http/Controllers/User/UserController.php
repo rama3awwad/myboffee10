@@ -28,7 +28,7 @@ class UserController extends BaseController
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'age' => (int) $request->age,
-            'lang' => $request->lang,
+            'lang' => $request->lang ?? 'en',
             'my_points' => 40,
             'image' => $request->image,
             'gendre_id' => (int) $request->gendre_id,
