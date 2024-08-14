@@ -9,6 +9,7 @@
         "darkaonline/l5-swagger": "^8.6",
         "fruitcake/laravel-cors": "^2.0.5",
         "guzzlehttp/guzzle": "*",
+        "kreait/laravel-firebase": "5.9",
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.7",

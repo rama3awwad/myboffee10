@@ -41,6 +41,16 @@ class FavoritePostController extends BaseController
         if (!$post) {
             return $this->sendError('post not found!');
         }
+
+        $postCreator = $post->user; // Assuming there is a 'user' relationship in Post model
+        $notificationService = new \App\Services\Api\NotificationService();
+        $notificationService->send(
+            $postCreator,
+            'Your post has been favorited',
+            "{$user->user_name} has added your post to their favorites.",
+            'post_favorited'
+        );
+
         return $this->sendResponse(null, 'Post added to favorites');
     }
 

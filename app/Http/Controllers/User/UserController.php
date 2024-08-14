@@ -43,6 +43,12 @@ class UserController extends BaseController
 
         $token = $user->createToken("API TOKEN")->plainTextToken;
 
+        if ($request->device_token) {
+            $user->devices()->create([
+                'device_token' => $request->device_token,
+            ]);
+        }
+
         $success = [
             'id' => $user->id,
             'user_name' => $user->user_name,
@@ -52,7 +58,7 @@ class UserController extends BaseController
             'lang' => $user->lang,
             'my_points' => $user->my_points,
             'gendre_id' => $user->gendre_id,
-            'user_id' => $user->role_id,
+            'device_token' => $request->device_token,
 
         ];
 
@@ -63,15 +69,27 @@ class UserController extends BaseController
     {
         if (Auth::attempt(['user_name' => $request->user_name, 'password' => $request->password])) {
             $user = Auth::user();
+
+            if ($request->device_token) {
+                $existingDevice = $user->devices()->where('device_token', $request->device_token)->first();
+
+                if (!$existingDevice) {
+                    $user->devices()->create([
+                        'device_token' => $request->device_token,
+                    ]);
+                }
+            }
+
             $success = [
                 'id' => $user->id,
                 'user_name' => $user->user_name,
                 'password' => $user->password,
                 'token' => $user->createToken("API TOKEN")->plainTextToken,
+                'device_token' => $request->device_token,
             ];
             return $this->sendResponse($success, 'User logged in successfully');
         } else {
-            return $this->sendError('Please check phone number or password', ['error' => 'Unauthorized']);
+            return $this->sendError('Please check user_name or password', ['error' => 'Unauthorized']);
         }
     }
 

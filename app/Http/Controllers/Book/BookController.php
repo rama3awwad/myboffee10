@@ -691,8 +691,8 @@ class BookController extends BaseController
 
         return $this->sendResponse([
             'period' =>$periodLabel,
-            'count all books' => $countAllBooks,
-            'count all reading' => $countAllReadingOrFinished,
+            'count all books' => (float) $countAllBooks,
+            'count all reading' => (float) $countAllReadingOrFinished,
             'result' => $result,
             ], 'Counts retrieved successfully.');
     }

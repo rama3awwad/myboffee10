@@ -115,6 +115,7 @@ class ShelfController extends BaseController
                     'title' => $shelf->book->title,
                     'cover' => $shelf->book->cover,
                     'file' => $shelf->book->file,
+                    'total_pages' => $shelf->book->total_pages,
                 ],
                 'total_books_count' => $bookCount,
             ];

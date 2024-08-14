@@ -83,6 +83,10 @@ class User extends Authenticatable
         return $this->hasMany(Rating::class);
     }
 
+    public function devices()
+    {
+        return $this->hasMany(UserDevice::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
