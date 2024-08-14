@@ -90,7 +90,6 @@ class ShelfController extends BaseController
     }
 
 
-//show books in my shelf
     public function myShelf(Request $request): JsonResponse
     {
         $userId = Auth::user()->id;
@@ -102,24 +101,34 @@ class ShelfController extends BaseController
             ->get();
 
         if ($shelves->isEmpty()) {
-            return response()->json(['error' => 'No shelves found '], 404);
+            return response()->json(['error' => 'No shelves found'], 404);
         }
 
         $bookCount = Shelf::where('user_id', $userId)->where('status', $status)->count();
 
         $newShelves = [];
         foreach ($shelves as $shelf) {
+            $totalPages = $shelf->book->total_pages;
+            $progress = $shelf->progress;
+
+            if ($totalPages > 0) {
+                $ratio = round($progress / $totalPages, 2);
+            } else {
+                $ratio = 0;
+            }
+
             $newShelves[] = [
-                'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status', 'progress']),
+                'shelf' => $shelf->only(['id', 'book_id', 'user_id', 'status']),
                 'book' => [
                     'title' => $shelf->book->title,
                     'cover' => $shelf->book->cover,
                     'file' => $shelf->book->file,
-                    'total_pages' => $shelf->book->total_pages,
                 ],
+                'ratio' => (float) $ratio,
                 'total_books_count' => $bookCount,
             ];
         }
+
         return response()->json([
             'shelves' => $newShelves,
         ], 200);
