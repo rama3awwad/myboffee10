@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Post;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\FavoritePost;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -31,28 +32,34 @@ class FavoritePostController extends BaseController
        $user->favoritePosts()->attach($postId);
         return $this->sendResponse(null, 'Post added to favorites');
 }*/
-
-    public function addToFavorites($post)
+    public function addToFavorites($postId)
     {
+        $user = auth()->user();
 
-        $user = auth()->user()->favoritePosts()->syncWithoutDetaching((array)$post);
+        // Add post to user's favorites
+        $user->favoritePosts()->syncWithoutDetaching([$postId]);
 
-        $post = Post::findOrFail($post);
-        if (!$post) {
-            return $this->sendError('post not found!');
-        }
+        // Find the post and its creator
+        $post = Post::findOrFail($postId);
+        $postCreator = $post->user;
 
-        $postCreator = $post->user; // Assuming there is a 'user' relationship in Post model
-        $notificationService = new \App\Services\Api\NotificationService();
-        $notificationService->send(
-            $postCreator,
-            'Your post has been favorited',
-            "{$user->user_name} has added your post to their favorites.",
-            'post_favorited'
-        );
+        // Create a pseudo-request object for sending notification
+        $request = new \Illuminate\Http\Request([
+            'user_id' => $postCreator->id,
+            'title' => 'New Favorite',
+            'body' => "{$user->name} added your post to their favorites!",
+        ]);
+
+        // Instantiate the NotificationService
+        $notificationService = new \App\Services\NotificationService();
+
+        // Send notification using the request object
+        $notificationService->sendFcmNotification($request);
 
         return $this->sendResponse(null, 'Post added to favorites');
     }
+
+
 
     public function countLikes($postId)
     {

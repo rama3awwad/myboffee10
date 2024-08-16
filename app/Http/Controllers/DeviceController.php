@@ -72,4 +72,6 @@ class DeviceController extends Controller
             \Log::error($e->getMessage());
         }
     }
+
+
 }

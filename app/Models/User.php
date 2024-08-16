@@ -25,7 +25,8 @@ class User extends Authenticatable
         'age',
         'lang',
         'image',
-        'gendre_id'
+        'gendre_id',
+        'fcm_token',
     ];
 
     public function gendre()
@@ -86,6 +87,11 @@ class User extends Authenticatable
     public function devices()
     {
         return $this->hasMany(UserDevice::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 
     /**

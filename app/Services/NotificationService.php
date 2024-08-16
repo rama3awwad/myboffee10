@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Services\Api;
+namespace App\Services;
 
-use App\Models\Notification as NotificationModel;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
-
+use Google\Client as GoogleClient;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use App\Models\Notification;
 class NotificationService
 {
 
@@ -15,71 +17,68 @@ class NotificationService
         return auth()->user()->notifications;
     }
 
-
-    public function send($user, $title, $message, $type = 'basic')
+    public function sendFcmNotification(Request $request)
     {
-        // Path to the service account key JSON file
-        $serviceAccountPath = storage_path('app/firebase/boffee-7fa4c-firebase-adminsdk-xp4k4-5bf998dd8d.json');
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'title' => 'required|string',
+            'body' => 'required|string',
+        ]);
 
-        // Initialize the Firebase Factory with the service account
-        $factory = (new Factory)->withServiceAccount($serviceAccountPath);
+        $userId = $request->user_id;
+        $title = $request->title;
+        $body = $request->body;
 
-        // Create the Messaging instance
-        $messaging = $factory->createMessaging();
+        // Retrieve devices from the database
+        $devices = \App\Models\UserDevice::where('user_id', $userId)->get();
 
-        // Prepare the notification array
-        $notification = [
-            'title' => $title,
-            'body' => $message,
-            'sound' => 'default',
-        ];
-
-        // Additional data payload
-        $data = [
-            'type' => $type,
-            'id' => $user['id'],
-            'message' => $message,
-        ];
-
-        // Create the CloudMessage instance
-        $cloudMessage = CloudMessage::withTarget('token', $user['fcm_token'])
-            ->withNotification($notification)
-            ->withData($data);
-
-        try {
-            // Send the notification
-            $messaging->send($cloudMessage);
-
-            // Save the notification to the database
-            NotificationModel::query()->create([
-                'type' => 'App\Notifications\UserFollow',
-                'notifiable_type' => 'App\Models\User',
-                'notifiable_id' => $user['id'],
-                'data' => json_encode([
-                    'user' => $user['first_name'] . ' ' . $user['last_name'],
-                    'message' => $message,
-                    'title' => $title,
-                ]), // The data of the notification
-            ]);
-            return 1;
-        } catch (\Kreait\Firebase\Exception\MessagingException $e) {
-            Log::error($e->getMessage());
-            return 0;
-        } catch (\Kreait\Firebase\Exception\FirebaseException $e) {
-            Log::error($e->getMessage());
-            return 0;
+        if ($devices->isEmpty()) {
+            return response()->json(['message' => 'User does not have any device tokens'], 400);
         }
+
+        $title = $request->title;
+        $body = $request->body;
+
+        $credentialsFilePath = Storage::path('app/firebase/boffee-7fa4c-firebase-adminsdk-xp4k4-5bf998dd8d.json');
+        $client = new GoogleClient();
+        $client->setAuthConfig($credentialsFilePath);
+        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+        $client->refreshTokenWithAssertion();
+        $token = $client->getAccessToken();
+
+        foreach ($devices as $device) {
+            $data = [
+                "message" => [
+                    "token" => $device->fcm_token,
+                    "notification" => [
+                        "title" => $title,
+                        "body" => $body,
+                    ],
+                ]
+            ];
+
+            // Send notification using cURL
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://fcm.googleapis.com/v1/projects/boffee-7fa4c/messages:send");
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_exec($ch);
+            curl_close($ch);
+        }
+
+        // Store notification in the database
+        Notification::create([
+            'user_id' => $user->id,
+            'title' => $title,
+            'body' => $body,
+        ]);
+
+        return response()->json(['message' => 'Notifications have been sent']);
     }
 
-    public function markAsRead($notificationId): bool
-    {
-        $notification = auth()->user()->notifications()->findOrFail($notificationId);
 
-        if(isset($notification)) {
-            $notification->markAsRead();
-            return true;
-        }else return false;
-    }
 
     public function destroy($id): bool
     {

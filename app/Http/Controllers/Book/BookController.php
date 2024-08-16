@@ -7,6 +7,7 @@ use App\Models\Book;
 use App\Models\Type;
 use App\Models\Shelf;
 use App\Models\Rating;
+use App\Models\User;
 use Cassandra\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -289,6 +290,23 @@ class BookController extends BaseController
             'total_pages' => $request->total_pages,
             'type_id' => $request->type_id,
         ]);
+
+        $userIds = Shelf::join('users', 'shelves.user_id', '=', 'users.id')
+            ->where('shelves.status', 'finished')
+            ->where('shelves.type_id', $book->type_id)
+            ->pluck('shelves.user_id');
+
+        $userDetails = User::whereIn('id', $userIds)
+            ->get(['id as user_id', 'updated_at']);
+
+        foreach ($userIds as $userId) {
+            $notificationService = new \App\Services\NotificationService();
+            $notificationService->sendFcmNotification(new \Illuminate\Http\Request([
+                'user_id' => $userId,
+                'title' => 'New Book Available',
+                'body' => "A new book titled '{$book->title}' has been added. Check it out!",
+            ]));
+        }
 
         return $this->sendResponse($data, 'Book created successfully.');
     }

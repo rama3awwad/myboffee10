@@ -43,9 +43,9 @@ class UserController extends BaseController
 
         $token = $user->createToken("API TOKEN")->plainTextToken;
 
-        if ($request->device_token) {
+        if ($request->fcm_token) {
             $user->devices()->create([
-                'device_token' => $request->device_token,
+                'fcm_token' => $request->fcm_token,
             ]);
         }
 
@@ -58,7 +58,7 @@ class UserController extends BaseController
             'lang' => $user->lang,
             'my_points' => $user->my_points,
             'gendre_id' => $user->gendre_id,
-            'device_token' => $request->device_token,
+            'fcm_token' => $request->fcm_token,
 
         ];
 
@@ -70,12 +70,12 @@ class UserController extends BaseController
         if (Auth::attempt(['user_name' => $request->user_name, 'password' => $request->password])) {
             $user = Auth::user();
 
-            if ($request->device_token) {
-                $existingDevice = $user->devices()->where('device_token', $request->device_token)->first();
+            if ($request->fcm_token) {
+                $existingDevice = $user->devices()->where('fcm_token', $request->fcm_token)->first();
 
                 if (!$existingDevice) {
                     $user->devices()->create([
-                        'device_token' => $request->device_token,
+                        'fcm_token' => $request->fcm_token,
                     ]);
                 }
             }
@@ -85,7 +85,7 @@ class UserController extends BaseController
                 'user_name' => $user->user_name,
                 'password' => $user->password,
                 'token' => $user->createToken("API TOKEN")->plainTextToken,
-                'device_token' => $request->device_token,
+                'fcm_token' => $request->fcm_token,
             ];
             return $this->sendResponse($success, 'User logged in successfully');
         } else {

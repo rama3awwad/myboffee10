@@ -189,6 +189,12 @@ Route::get('/users/show', [UserController::class, 'showUsers']);
 Route::get('/type/count/{periodVariable}', [BookController::class, 'typeReading']);
 
 
+//notifications
+
+
+
+
+
 
 
 Route::middleware('setapplang')->prefix('{locale}')->group(function () {

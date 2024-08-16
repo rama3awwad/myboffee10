@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('age');
             $table->string('lang')->nullable()->default('en');
             $table->string('image')->nullable();
-            $table->string('device_token');
             $table->integer('role_id')->foreign()->references('id')->on('roles')->nullable();
             $table->integer('gendre_id')->foreign()->references('id')->on('gendres')->onDelete('cascade');
             $table->rememberToken();
