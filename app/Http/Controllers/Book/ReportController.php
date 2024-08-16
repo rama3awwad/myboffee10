@@ -6,6 +6,8 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReportRequest;
 use App\Models\Report;
+use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,7 +46,19 @@ class ReportController extends BaseController
             'book_id' => (int) $bookId,
             'body' => $request->body,
         ]);
+        $adminUser = User::where('user_name', 'adminn')->first();
 
+        if ($adminUser) {
+            $notificationData = new \Illuminate\Http\Request();
+            $notificationData->replace([
+                'user_id' => $adminUser->id,
+                'title' => 'New Report Submitted',
+                'body' => "{$user->user_name} has submitted a new report for Book ID: $bookId.",
+            ]);
+
+            $notificationService = new NotificationService();
+            $notificationService->sendFcmNotification($notificationData);
+        }
         return $this->sendResponse($report, 'Report created successfully.');
     }
 

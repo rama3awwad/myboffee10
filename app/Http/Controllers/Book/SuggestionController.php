@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Book;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\SuggestionRequest;
 use App\Models\Suggestion;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,17 +31,32 @@ class SuggestionController extends BaseController
     {
         $user_id = Auth::user()->id;
         $user = auth()->user()->user_name;
+
         $suggestion = Suggestion::create([
             'id'=> $request->id,
             'user_id' => $user_id,
             'user_name' => $user,
             'body' => $request->body,
             'author_name'=> $request->author_name,
-
         ]);
+
+        $adminUser = \App\Models\User::where('user_name', 'adminn')->first();
+
+        if ($adminUser) {
+            $notificationData = new Request();
+            $notificationData->replace([
+                'user_id' => $adminUser->id,
+                'title' => 'New Suggestion Created',
+                'body' => "$user has created a new suggestion. Check it out!",
+            ]);
+
+            $notificationService = new NotificationService();
+            $notificationService->sendFcmNotification($notificationData);
+        }
 
         return $this->sendResponse($suggestion, 'Suggestion created successfully.');
     }
+
 
     public function showSuggestion($id)
     {
