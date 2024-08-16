@@ -8,6 +8,7 @@ use App\Models\Type;
 use App\Models\Shelf;
 use App\Models\Rating;
 use App\Models\User;
+use App\Services\NotificationService;
 use Cassandra\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -291,23 +292,39 @@ class BookController extends BaseController
             'type_id' => $request->type_id,
         ]);
 
-        $userIds = Shelf::join('users', 'shelves.user_id', '=', 'users.id')
-            ->where('shelves.status', 'finished')
-            ->where('shelves.type_id', $book->type_id)
-            ->pluck('shelves.user_id');
+        $bookType = Type::find($book->type_id);
 
-        $userDetails = User::whereIn('id', $userIds)
-            ->get(['id as user_id', 'updated_at']);
-
-        foreach ($userIds as $userId) {
-            $notificationService = new \App\Services\NotificationService();
-            $notificationService->sendFcmNotification(new \Illuminate\Http\Request([
-                'user_id' => $userId,
-                'title' => 'New Book Available',
-                'body' => "A new book titled '{$book->title}' has been added. Check it out!",
-            ]));
+        if ($bookType) {
+            $typeName = $bookType->name;
+        } else {
+            $typeName = 'this type';
         }
 
+        $users = User::all();
+        $notificationService = new NotificationService();
+
+        foreach ($users as $user) {
+            $latestFinishedShelf = Shelf::where('user_id', $user->id)
+                ->where('status', 'finished')
+                ->orderBy('updated_at', 'desc')
+                ->first();
+
+            if ($latestFinishedShelf) {
+                $finishedBook = Book::find($latestFinishedShelf->book_id);
+
+                if ($finishedBook && $finishedBook->type_id == $book->type_id) {
+                    $notificationData = new Request();
+
+                    $notificationData->replace([
+                        'user_id' => $user->id,
+                        'title' => 'New Book Available',
+                        'body' => 'A new book of the same type ($typeName) you recently finished is now available. Check it out!',
+                    ]);
+
+                    $notificationService->sendFcmNotification($notificationData);
+                }
+            }
+        }
         return $this->sendResponse($data, 'Book created successfully.');
     }
 
