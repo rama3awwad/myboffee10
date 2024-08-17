@@ -39,7 +39,7 @@ class FavoriteController extends BaseController
                 'books.title',
                 'books.cover',
                 'books.file',
-                'books.author_name_en as author_name',
+                'books.author_name',
                 'books.total_pages',
                 'books.points',
                 'types.name as type_name'
