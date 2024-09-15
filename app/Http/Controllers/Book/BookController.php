@@ -142,10 +142,10 @@ class BookController extends BaseController
                     $translator->setSource('ar');
                     $translator->setTarget('en');
 
-                    $book->title = $translator->translate($book->title);
-                    $book->author_name = $translator->translate($book->author_name);
-                    $book->description = $translator->translate($book->description);
-                    $book->type_name = $translator->translate($book->type_name);
+                    // $book->title = $translator->translate($book->title);
+                    // $book->author_name = $translator->translate($book->author_name);
+                    // $book->description = $translator->translate($book->description);
+                    // $book->type_name = $translator->translate($book->type_name);
                 }
 
                 $file = $book->file;
